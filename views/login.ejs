@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel — Empreendedores do Reino</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Mulish:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body class="login-body">
+  <div class="login-card">
+    <div class="login-card__logo">
+      <%- include('partials/logo', { cls: 'erlogo--login', cidade: 'TOLEDO/PR' }) %>
+    </div>
+    <h1 class="login-card__title">Painel Administrativo</h1>
+    <p class="login-card__sub">Empreendedores do Reino</p>
+
+    <% if (erro) { %>
+      <div class="login-card__error"><%= erro %></div>
+    <% } %>
+
+    <form method="POST" action="/admin/login" class="login-form">
+      <label for="senha">Senha de acesso</label>
+      <input type="password" id="senha" name="senha" placeholder="Digite a senha" required autofocus />
+      <button type="submit" class="btn-admin btn-admin--gold btn-admin--block">Entrar</button>
+    </form>
+
+    <a href="/" class="login-card__back">← Voltar ao site</a>
+  </div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+{
+  "site": {
+    "nome": "Empreendedores do Reino",
+    "sigla": "EDR",
+    "cidade": "TOLEDO/PR",
+    "logo": ""
+  },
+  "nav": [
+    {
+      "label": "INÍCIO",
+      "href": "#inicio"
+    },
+    {
+      "label": "SOBRE NÓS",
+      "href": "#inicio"
+    },
+    {
+      "label": "ENCONTROS",
+      "href": "#encontros"
+    },
+    {
+      "label": "DIRETORIA",
+      "href": "#diretoria"
+    },
+    {
+      "label": "EMPRESAS PARCEIRAS",
+      "href": "#parceiras"
+    },
+    {
+      "label": "CONTATO",
+      "href": "#rodape"
+    }
+  ],
+  "hero": {
+    "titulo1": "CONECTANDO PROPÓSITOS.",
+    "titulo2": "GERANDO IMPACTO.",
+    "paragrafos": [
+      "O Empreendedores do Reino (EDR) é um movimento cristão que reúne empresários e profissionais liberais com o propósito de conectar pessoas, fortalecer relacionamentos e promover crescimento pessoal, profissional e espiritual.",
+      "Acreditamos que quando os negócios são conduzidos com princípios do Reino, transformamos ambientes, impactamos vidas e geramos um legado que honra a Deus."
+    ],
+    "imagem": "/uploads/img_1780763326535_875988.jpeg",
+    "imagem_legenda": "CONECTANDO PROPÓSITOS. GERANDO IMPACTO.",
+    "pastoral_titulo": "PALAVRA PASTORAL",
+    "pastoral_texto": "Em breve uma palavra de encorajamento e direcionamento para nossa caminhada."
+  },
+  "encontros": {
+    "titulo": "NOSSOS ENCONTROS",
+    "fotos": [],
+    "botao_texto": "VER MAIS FOTOS",
+    "botao_link": "#"
+  },
+  "diretoria": {
+    "titulo": "DIRETORIA EDR",
+    "membros": [
+      {
+        "nome": "NOME",
+        "cargo": "CARGO",
+        "foto": ""
+      },
+      {
+        "nome": "NOME",
+        "cargo": "CARGO",
+        "foto": ""
+      },
+      {
+        "nome": "NOME",
+        "cargo": "CARGO",
+        "foto": ""
+      },
+      {
+        "nome": "NOME",
+        "cargo": "CARGO",
+        "foto": ""
+      },
+      {
+        "nome": "NOME",
+        "cargo": "CARGO",
+        "foto": ""
+      }
+    ],
+    "botao_texto": "CONHEÇA NOSSA DIRETORIA",
+    "botao_link": "#"
+  },
+  "parceiras": {
+    "titulo": "EMPRESAS PARCEIRAS",
+    "texto": "Conheça as empresas que caminham conosco e fazem parte dessa rede que transforma.",
+    "botao_texto": "CONHECER PARCEIROS",
+    "botao_link": "#",
+    "lista": []
+  },
+  "pilares": {
+    "titulo": "NOSSOS PILARES",
+    "itens": [
+      {
+        "icone": "crown",
+        "titulo": "FÉ",
+        "descricao": "Deus no centro de tudo o que fazemos."
+      },
+      {
+        "icone": "users",
+        "titulo": "CONEXÃO",
+        "descricao": "Relacionamentos que fortalecem e geram valor."
+      },
+      {
+        "icone": "growth",
+        "titulo": "CRESCIMENTO",
+        "descricao": "Desenvolvimento contínuo pessoal e profissional."
+      },
+      {
+        "icone": "target",
+        "titulo": "PROPÓSITO",
+        "descricao": "Negócios que geram impacto e deixam legado."
+      }
+    ]
+  },
+  "footer": {
+    "titulo": "EMPREENDEDORES DO REINO",
+    "subtitulo": "3 ANOS CONECTANDO PROPÓSITOS E TRANSFORMANDO VIDAS.",
+    "instagram": "#",
+    "facebook": "#",
+    "whatsapp": "#"
+  }
+}

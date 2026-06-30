@@ -1,0 +1,29 @@
+<%
+/* Logo ER em SVG. Uso: include('partials/logo', { cls: 'logo--hero' }) */
+var cls = (typeof cls !== 'undefined') ? cls : '';
+%>
+<svg class="erlogo <%= cls %>" viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Empreendedores do Reino">
+  <defs>
+    <path id="er-arc" d="M 110,120 m -74,0 a 74,74 0 1,1 148,0 a 74,74 0 1,1 -148,0" />
+  </defs>
+
+  <!-- texto circular -->
+  <text class="erlogo__ring" font-size="13.5" letter-spacing="3.2">
+    <textPath href="#er-arc" startOffset="50%" text-anchor="middle">
+      EMPREENDEDORES&#160;&#160;&#8226;&#160;&#160;DO&#160;&#160;REINO&#160;&#160;&#8226;
+    </textPath>
+  </text>
+
+  <!-- coroa -->
+  <path class="erlogo__crown" d="M82 56 L90 74 L110 60 L130 74 L138 56 L134 80 L86 80 Z" />
+
+  <!-- circulo interno -->
+  <circle class="erlogo__disc" cx="110" cy="124" r="58" />
+
+  <!-- letras E R -->
+  <text class="erlogo__e" x="74" y="158" text-anchor="middle">E</text>
+  <text class="erlogo__r" x="138" y="158" text-anchor="middle">R</text>
+
+  <!-- cidade -->
+  <text class="erlogo__city" x="110" y="214" text-anchor="middle" letter-spacing="5"><%= (typeof cidade !== 'undefined' ? cidade : 'TOLEDO/PR') %></text>
+</svg>

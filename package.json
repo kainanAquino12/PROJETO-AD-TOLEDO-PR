@@ -1,0 +1,25 @@
+{
+  "name": "edr-site",
+  "version": "1.0.0",
+  "description": "Site institucional do Empreendedores do Reino (EDR) - Toledo/PR, com painel administrativo para edicao de conteudo.",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "edr",
+    "empreendedores-do-reino",
+    "site",
+    "cms"
+  ],
+  "author": "AD Toledo",
+  "license": "MIT",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "multer": "^2.1.1"
+  }
+}

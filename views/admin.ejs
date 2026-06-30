@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel — Empreendedores do Reino</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Mulish:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body class="admin-body">
+
+  <header class="admin-top">
+    <div class="admin-top__brand">
+      <span class="admin-top__mark">ER</span>
+      <span>Painel <strong>Empreendedores do Reino</strong></span>
+    </div>
+    <div class="admin-top__actions">
+      <a href="/" target="_blank" class="btn-admin btn-admin--ghost">Ver site ↗</a>
+      <button id="btnSalvar" class="btn-admin btn-admin--gold">Salvar alterações</button>
+      <form method="POST" action="/admin/logout" class="inline"><button class="btn-admin btn-admin--ghost">Sair</button></form>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <aside class="admin-side">
+      <nav class="admin-menu" id="adminMenu">
+        <button class="admin-menu__item is-active" data-tab="identidade">Identidade</button>
+        <button class="admin-menu__item" data-tab="menu">Menu</button>
+        <button class="admin-menu__item" data-tab="inicio">Início / Hero</button>
+        <button class="admin-menu__item" data-tab="encontros">Encontros</button>
+        <button class="admin-menu__item" data-tab="diretoria">Diretoria</button>
+        <button class="admin-menu__item" data-tab="parceiras">Empresas Parceiras</button>
+        <button class="admin-menu__item" data-tab="pilares">Pilares</button>
+        <button class="admin-menu__item" data-tab="rodape">Rodapé</button>
+        <button class="admin-menu__item" data-tab="senha">Trocar Senha</button>
+      </nav>
+    </aside>
+
+    <main class="admin-main" id="adminMain">
+      <div class="admin-loading">Carregando conteúdo…</div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

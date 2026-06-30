@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= c.site.nome %> — <%= c.site.cidade %></title>
+  <meta name="description" content="<%= c.hero.paragrafos[0] || c.site.nome %>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Mulish:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+  <!-- ====================== HEADER ====================== -->
+  <header class="header" id="header">
+    <div class="container header__inner">
+      <a href="#inicio" class="brand" aria-label="<%= c.site.nome %>">
+        <% if (c.site.logo) { %>
+          <img src="<%= c.site.logo %>" alt="<%= c.site.nome %>" class="brand__img" />
+        <% } else { %>
+          <%- include('partials/logo', { cls: 'erlogo--nav', cidade: c.site.cidade }) %>
+        <% } %>
+      </a>
+
+      <nav class="nav" id="nav">
+        <ul class="nav__list">
+          <% c.nav.forEach(function(item, i){ %>
+            <li><a href="<%= item.href %>" class="nav__link <%= i === 0 ? 'is-active' : '' %>"><%= item.label %></a></li>
+          <% }); %>
+        </ul>
+      </nav>
+
+      <button class="nav__toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ====================== HERO ====================== -->
+  <section class="hero" id="inicio">
+    <div class="container hero__grid">
+
+      <div class="hero__left">
+        <% if (c.site.logo) { %>
+          <img src="<%= c.site.logo %>" alt="<%= c.site.nome %>" class="hero__logo-img" />
+        <% } else { %>
+          <%- include('partials/logo', { cls: 'erlogo--hero', cidade: c.site.cidade }) %>
+        <% } %>
+
+        <h1 class="hero__title">
+          <span class="hero__title-1"><%= c.hero.titulo1 %></span>
+          <span class="hero__title-2"><%= c.hero.titulo2 %></span>
+        </h1>
+        <span class="divider" id="sobre"></span>
+        <div class="hero__text">
+          <% c.hero.paragrafos.forEach(function(p){ %>
+            <p><%= p %></p>
+          <% }); %>
+        </div>
+      </div>
+
+      <div class="hero__right">
+        <figure class="hero__media">
+          <% if (c.hero.imagem) { %>
+            <img src="<%= c.hero.imagem %>" alt="Encontro do <%= c.site.sigla %>" />
+          <% } else { %>
+            <div class="media-placeholder"><%- include('partials/icon', { name: 'users' }) %></div>
+          <% } %>
+          <% if (c.hero.imagem_legenda) { %>
+            <figcaption><%= c.hero.imagem_legenda %></figcaption>
+          <% } %>
+        </figure>
+
+        <div class="pastoral">
+          <%- include('partials/icon', { name: 'quote', cls: 'pastoral__quote' }) %>
+          <%- include('partials/icon', { name: 'crown', cls: 'pastoral__watermark' }) %>
+          <h2 class="pastoral__title"><%= c.hero.pastoral_titulo %></h2>
+          <p class="pastoral__text"><%= c.hero.pastoral_texto %></p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ====================== ENCONTROS ====================== -->
+  <section class="encontros" id="encontros">
+    <div class="container">
+      <h2 class="section-title"><%= c.encontros.titulo %><span class="section-title__bar"></span></h2>
+
+      <div class="gallery">
+        <% var fotos = (c.encontros.fotos && c.encontros.fotos.length) ? c.encontros.fotos : ['','','','']; %>
+        <% fotos.slice(0,8).forEach(function(foto){ %>
+          <% if (foto) { %>
+            <a href="<%= foto %>" class="gallery__item" data-lightbox>
+              <img src="<%= foto %>" alt="Foto do encontro" loading="lazy" />
+            </a>
+          <% } else { %>
+            <div class="gallery__item gallery__item--empty"><%- include('partials/icon', { name: 'users' }) %></div>
+          <% } %>
+        <% }); %>
+      </div>
+
+      <div class="center">
+        <a href="<%= c.encontros.botao_link %>" class="btn btn--gold"><%= c.encontros.botao_texto %></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== DIRETORIA + PARCEIRAS ====================== -->
+  <section class="dual" id="diretoria">
+    <div class="container dual__grid">
+
+      <div class="board">
+        <h2 class="section-title section-title--center"><%= c.diretoria.titulo %><span class="section-title__bar"></span></h2>
+        <div class="board__list">
+          <% c.diretoria.membros.forEach(function(m){ %>
+            <div class="member">
+              <div class="member__avatar">
+                <% if (m.foto) { %>
+                  <img src="<%= m.foto %>" alt="<%= m.nome %>" />
+                <% } else { %>
+                  <%- include('partials/icon', { name: 'user' }) %>
+                <% } %>
+              </div>
+              <p class="member__name"><%= m.nome %></p>
+              <p class="member__role"><%= m.cargo %></p>
+            </div>
+          <% }); %>
+        </div>
+        <div class="center">
+          <a href="<%= c.diretoria.botao_link %>" class="btn btn--navy"><%= c.diretoria.botao_texto %></a>
+        </div>
+      </div>
+
+      <div class="partners" id="parceiras">
+        <div class="partners__icon"><%- include('partials/icon', { name: 'handshake' }) %></div>
+        <h2 class="partners__title"><%= c.parceiras.titulo %></h2>
+        <p class="partners__text"><%= c.parceiras.texto %></p>
+
+        <% if (c.parceiras.lista && c.parceiras.lista.length) { %>
+          <div class="partners__logos">
+            <% c.parceiras.lista.forEach(function(p){ %>
+              <a href="<%= p.link || '#' %>" class="partners__logo" target="_blank" rel="noopener" title="<%= p.nome %>">
+                <% if (p.logo) { %><img src="<%= p.logo %>" alt="<%= p.nome %>" /><% } else { %><span><%= p.nome %></span><% } %>
+              </a>
+            <% }); %>
+          </div>
+        <% } %>
+
+        <a href="<%= c.parceiras.botao_link %>" class="btn btn--gold"><%= c.parceiras.botao_texto %></a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ====================== PILARES ====================== -->
+  <section class="pilares">
+    <div class="pilares__deco pilares__deco--1"></div>
+    <div class="pilares__deco pilares__deco--2"></div>
+    <div class="container">
+      <h2 class="section-title section-title--center section-title--light"><%= c.pilares.titulo %><span class="section-title__bar"></span></h2>
+      <div class="pilares__grid">
+        <% c.pilares.itens.forEach(function(item){ %>
+          <div class="pilar">
+            <div class="pilar__icon"><%- include('partials/icon', { name: item.icone }) %></div>
+            <h3 class="pilar__title"><%= item.titulo %></h3>
+            <p class="pilar__text"><%= item.descricao %></p>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== RODAPÉ ====================== -->
+  <footer class="footer" id="rodape">
+    <div class="container footer__inner">
+      <div class="footer__text">
+        <h2 class="footer__title"><%= c.footer.titulo %></h2>
+        <p class="footer__subtitle"><%= c.footer.subtitulo %></p>
+      </div>
+      <div class="footer__social">
+        <% if (c.footer.instagram) { %><a href="<%= c.footer.instagram %>" class="social" target="_blank" rel="noopener" aria-label="Instagram"><%- include('partials/icon', { name: 'instagram' }) %></a><% } %>
+        <% if (c.footer.facebook) { %><a href="<%= c.footer.facebook %>" class="social" target="_blank" rel="noopener" aria-label="Facebook"><%- include('partials/icon', { name: 'facebook' }) %></a><% } %>
+        <% if (c.footer.whatsapp) { %><a href="<%= c.footer.whatsapp %>" class="social" target="_blank" rel="noopener" aria-label="WhatsApp"><%- include('partials/icon', { name: 'whatsapp' }) %></a><% } %>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="lightbox__close" id="lightboxClose" aria-label="Fechar">&times;</button>
+    <img src="" alt="" id="lightboxImg" />
+  </div>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

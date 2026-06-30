@@ -1,0 +1,187 @@
+/* =========================================================================
+   EDR — Painel administrativo
+   ========================================================================= */
+:root {
+  --navy: #15314f;
+  --navy-deep: #0e2238;
+  --gold: #c49a4e;
+  --gold-dark: #a9842f;
+  --cream: #f4efe6;
+  --line: #e3e6ea;
+  --ink: #243140;
+  --muted: #6f7a86;
+  --bg: #eef1f5;
+  --radius: 12px;
+  --font-display: 'Montserrat', system-ui, sans-serif;
+  --font-body: 'Mulish', system-ui, sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font-body); color: var(--ink); background: var(--bg); -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+.inline { display: inline; }
+
+/* ----------------------------------------------------- LOGIN ----------- */
+.login-body {
+  min-height: 100vh; display: grid; place-items: center; padding: 24px;
+  background: radial-gradient(1200px 600px at 50% -10%, #1c3d61 0%, var(--navy-deep) 60%);
+}
+.login-card {
+  background: #fff; width: 100%; max-width: 400px; border-radius: 18px;
+  padding: 40px 36px; text-align: center; box-shadow: 0 30px 70px -30px rgba(0,0,0,.6);
+}
+.login-card__logo { display: grid; place-items: center; margin-bottom: 14px; }
+/* logo SVG (reaproveitado na tela de login) */
+.erlogo { display: block; }
+.erlogo__ring  { fill: var(--gold); font-family: var(--font-display); font-weight: 600; }
+.erlogo__crown { fill: var(--gold); }
+.erlogo__disc  { fill: none; stroke: var(--navy); stroke-width: 6; }
+.erlogo__e     { fill: var(--navy); font-family: var(--font-display); font-weight: 900; font-size: 86px; }
+.erlogo__r     { fill: var(--gold); font-family: var(--font-display); font-weight: 900; font-size: 86px; }
+.erlogo__city  { fill: var(--navy); font-family: var(--font-display); font-weight: 700; font-size: 17px; }
+.erlogo--login { width: 130px; }
+.login-card__title { font-family: var(--font-display); font-weight: 800; color: var(--navy); font-size: 1.3rem; }
+.login-card__sub { color: var(--gold-dark); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: .72rem; margin-bottom: 22px; }
+.login-card__error { background: #fdecec; color: #b3261e; border: 1px solid #f5c2c0; border-radius: 8px; padding: 10px 12px; font-size: .88rem; margin-bottom: 16px; }
+.login-form { text-align: left; }
+.login-form label { font-weight: 600; font-size: .85rem; color: var(--muted); display: block; margin-bottom: 6px; }
+.login-form input {
+  width: 100%; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 9px;
+  font-size: 1rem; font-family: var(--font-body); margin-bottom: 18px; transition: border-color .2s;
+}
+.login-form input:focus { outline: none; border-color: var(--gold); }
+.login-card__back { display: inline-block; margin-top: 18px; color: var(--muted); font-size: .85rem; }
+.login-card__back:hover { color: var(--navy); }
+
+/* ----------------------------------------------------- BOTÕES ---------- */
+.btn-admin {
+  font-family: var(--font-display); font-weight: 700; font-size: .85rem;
+  padding: 11px 20px; border-radius: 9px; border: 1.5px solid transparent; cursor: pointer;
+  transition: transform .15s ease, background .2s ease, color .2s ease; display: inline-flex; align-items: center; gap: 7px;
+}
+.btn-admin--gold { background: var(--gold); color: #fff; }
+.btn-admin--gold:hover { background: var(--gold-dark); }
+.btn-admin--navy { background: var(--navy); color: #fff; }
+.btn-admin--navy:hover { background: var(--navy-deep); }
+.btn-admin--ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.4); }
+.btn-admin--ghost:hover { background: rgba(255,255,255,.12); }
+.btn-admin--block { width: 100%; justify-content: center; padding: 13px; }
+.btn-admin--sm { padding: 8px 14px; font-size: .78rem; }
+.btn-admin:active { transform: translateY(1px); }
+
+/* ----------------------------------------------------- TOP BAR --------- */
+.admin-top {
+  position: sticky; top: 0; z-index: 30; background: var(--navy);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 22px; box-shadow: 0 2px 0 rgba(196,154,78,.3);
+}
+.admin-top__brand { display: flex; align-items: center; gap: 12px; color: #dfe6ee; font-size: .95rem; }
+.admin-top__brand strong { color: #fff; }
+.admin-top__mark {
+  font-family: var(--font-display); font-weight: 900; color: var(--navy);
+  background: var(--gold); width: 38px; height: 38px; border-radius: 9px;
+  display: grid; place-items: center; letter-spacing: .5px;
+}
+.admin-top__actions { display: flex; align-items: center; gap: 10px; }
+
+/* ----------------------------------------------------- LAYOUT ---------- */
+.admin-layout { display: grid; grid-template-columns: 244px 1fr; min-height: calc(100vh - 62px); }
+.admin-side { background: #fff; border-right: 1px solid var(--line); padding: 18px 14px; }
+.admin-menu { display: flex; flex-direction: column; gap: 4px; position: sticky; top: 80px; }
+.admin-menu__item {
+  text-align: left; background: none; border: 0; cursor: pointer; font-family: var(--font-body);
+  padding: 11px 14px; border-radius: 9px; color: var(--muted); font-weight: 600; font-size: .92rem;
+  transition: .18s;
+}
+.admin-menu__item:hover { background: var(--cream); color: var(--navy); }
+.admin-menu__item.is-active { background: var(--navy); color: #fff; }
+
+.admin-main { padding: 30px 34px 70px; max-width: 920px; }
+.admin-loading { color: var(--muted); padding: 40px 0; }
+
+/* ----------------------------------------------------- CARDS / FORM ---- */
+.panel { display: none; }
+.panel.is-active { display: block; animation: fade .3s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.panel__head { margin-bottom: 22px; }
+.panel__title { font-family: var(--font-display); font-weight: 800; color: var(--navy); font-size: 1.45rem; }
+.panel__desc { color: var(--muted); font-size: .92rem; margin-top: 4px; }
+
+.card {
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 22px 22px 8px; margin-bottom: 18px;
+}
+.card__title { font-family: var(--font-display); font-weight: 700; color: var(--navy); font-size: 1rem; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+
+.field { margin-bottom: 16px; }
+.field > label { display: block; font-weight: 600; font-size: .82rem; color: var(--muted); margin-bottom: 6px; }
+.field input[type=text], .field input[type=url], .field input[type=password], .field textarea, .field select {
+  width: 100%; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 9px;
+  font-size: .95rem; font-family: var(--font-body); color: var(--ink); background: #fff; transition: border-color .2s;
+}
+.field textarea { min-height: 92px; resize: vertical; line-height: 1.55; }
+.field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--gold); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+
+/* ------------------------------------------------ upload de imagem ----- */
+.imgfield { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.imgfield__preview {
+  width: 120px; height: 84px; border-radius: 9px; border: 1.5px dashed var(--line);
+  background: var(--cream); display: grid; place-items: center; overflow: hidden; flex-shrink: 0; color: var(--muted); font-size: .72rem; text-align: center;
+}
+.imgfield__preview img { width: 100%; height: 100%; object-fit: cover; }
+.imgfield__actions { display: flex; flex-direction: column; gap: 8px; }
+.imgfield__hint { color: var(--muted); font-size: .76rem; }
+
+/* ------------------------------------------------ itens de lista ------- */
+.repeat-item {
+  background: #fbfcfd; border: 1px solid var(--line); border-radius: 11px;
+  padding: 16px 16px 2px; margin-bottom: 14px; position: relative;
+}
+.repeat-item__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.repeat-item__label { font-family: var(--font-display); font-weight: 700; color: var(--navy); font-size: .9rem; }
+.btn-remove {
+  background: #fdecec; color: #b3261e; border: 1px solid #f5c2c0; border-radius: 8px;
+  padding: 6px 12px; font-size: .78rem; font-weight: 600; cursor: pointer; font-family: var(--font-body);
+}
+.btn-remove:hover { background: #f9d9d8; }
+.btn-add {
+  background: var(--cream); color: var(--navy); border: 1.5px dashed var(--gold);
+  border-radius: 9px; padding: 11px 16px; font-weight: 700; font-size: .85rem; cursor: pointer;
+  font-family: var(--font-display); width: 100%; transition: .18s;
+}
+.btn-add:hover { background: #efe6d2; }
+
+/* galeria de fotos no admin */
+.photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.photo-tile { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 4/3; border: 1px solid var(--line); background: var(--cream); }
+.photo-tile img { width: 100%; height: 100%; object-fit: cover; }
+.photo-tile__del {
+  position: absolute; top: 6px; right: 6px; background: rgba(179,38,30,.92); color: #fff;
+  border: 0; border-radius: 7px; width: 26px; height: 26px; cursor: pointer; font-size: 1rem; line-height: 1;
+}
+
+/* select de ícone */
+.icon-pick { display: flex; gap: 12px; align-items: center; }
+
+/* ----------------------------------------------------- TOAST ----------- */
+.toast {
+  position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--navy-deep); color: #fff; padding: 13px 22px; border-radius: 10px;
+  font-weight: 600; font-size: .9rem; opacity: 0; pointer-events: none; transition: .3s; z-index: 80;
+  box-shadow: 0 18px 40px -16px rgba(0,0,0,.5);
+}
+.toast.is-show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast--ok { border-left: 4px solid var(--gold); }
+.toast--err { border-left: 4px solid #e5484d; }
+
+/* ----------------------------------------------------- RESPONSIVO ------ */
+@media (max-width: 820px) {
+  .admin-layout { grid-template-columns: 1fr; }
+  .admin-side { border-right: 0; border-bottom: 1px solid var(--line); padding: 10px; }
+  .admin-menu { flex-direction: row; flex-wrap: wrap; position: static; }
+  .admin-menu__item { font-size: .82rem; padding: 8px 12px; }
+  .admin-main { padding: 22px 16px 60px; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .admin-top { flex-wrap: wrap; gap: 10px; }
+}
