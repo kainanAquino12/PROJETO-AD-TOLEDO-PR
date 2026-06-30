@@ -53,24 +53,9 @@
     "titulo": "DIRETORIA EDR",
     "membros": [
       {
-        "nome": "NOME",
-        "cargo": "CARGO",
-        "foto": ""
-      },
-      {
-        "nome": "NOME",
-        "cargo": "CARGO",
-        "foto": ""
-      },
-      {
-        "nome": "NOME",
-        "cargo": "CARGO",
-        "foto": ""
-      },
-      {
-        "nome": "NOME",
-        "cargo": "CARGO",
-        "foto": ""
+        "nome": "JOCIMAR LIRA",
+        "cargo": "DIRETOR",
+        "foto": "/uploads/img_1782785131713_214203.jpeg"
       },
       {
         "nome": "NOME",
@@ -85,8 +70,16 @@
     "titulo": "EMPRESAS PARCEIRAS",
     "texto": "Conheça as empresas que caminham conosco e fazem parte dessa rede que transforma.",
     "botao_texto": "CONHECER PARCEIROS",
-    "botao_link": "#",
-    "lista": []
+    "botao_link": "#parceiras",
+    "lista": [
+      {
+        "nome": "Magston",
+        "logo": "/uploads/img_1782783406366_505624.jpeg",
+        "link": "https://www.magston.com.br/",
+        "segmento": "",
+        "descricao": ""
+      }
+    ]
   },
   "pilares": {
     "titulo": "NOSSOS PILARES",

@@ -179,7 +179,10 @@
         '<div class="grid-2">' +
         fieldText('Nome', 'parceiras.lista.' + i + '.nome') +
         fieldText('Link (site)', 'parceiras.lista.' + i + '.link') +
-        '</div></div>';
+        '</div>' +
+        fieldText('Segmento / Ramo (ex: Tecnologia, Construção)', 'parceiras.lista.' + i + '.segmento') +
+        fieldArea('Descrição (mais informações sobre a empresa)', 'parceiras.lista.' + i + '.descricao') +
+        '</div>';
     });
     html += '<button type="button" class="btn-add" data-action="add" data-arr="parceiras.lista">+ Adicionar empresa</button></div>';
     html += '<div class="card"><div class="card__title">Botão</div><div class="grid-2">' +
@@ -248,7 +251,7 @@
       case 'nav': return { label: 'NOVO', href: '#' };
       case 'hero.paragrafos': return '';
       case 'diretoria.membros': return { nome: 'NOME', cargo: 'CARGO', foto: '' };
-      case 'parceiras.lista': return { nome: 'Empresa', logo: '', link: '#' };
+      case 'parceiras.lista': return { nome: 'Empresa', logo: '', link: '#', segmento: '', descricao: '' };
       case 'pilares.itens': return { icone: 'crown', titulo: 'NOVO', descricao: '' };
       default: return {};
     }

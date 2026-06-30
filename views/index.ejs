@@ -107,11 +107,10 @@
     </div>
   </section>
 
-  <!-- ====================== DIRETORIA + PARCEIRAS ====================== -->
+  <!-- ====================== DIRETORIA ====================== -->
   <section class="dual" id="diretoria">
-    <div class="container dual__grid">
-
-      <div class="board">
+    <div class="container">
+      <div class="board board--solo">
         <h2 class="section-title section-title--center"><%= c.diretoria.titulo %><span class="section-title__bar"></span></h2>
         <div class="board__list">
           <% c.diretoria.membros.forEach(function(m){ %>
@@ -132,25 +131,43 @@
           <a href="<%= c.diretoria.botao_link %>" class="btn btn--navy"><%= c.diretoria.botao_texto %></a>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="partners" id="parceiras">
-        <div class="partners__icon"><%- include('partials/icon', { name: 'handshake' }) %></div>
-        <h2 class="partners__title"><%= c.parceiras.titulo %></h2>
-        <p class="partners__text"><%= c.parceiras.texto %></p>
+  <!-- ====================== EMPRESAS PARCEIRAS ====================== -->
+  <section class="partners-section" id="parceiras">
+    <div class="container">
+      <h2 class="section-title section-title--center"><%= c.parceiras.titulo %><span class="section-title__bar"></span></h2>
+      <% if (c.parceiras.texto) { %>
+        <p class="partners-section__text"><%= c.parceiras.texto %></p>
+      <% } %>
 
-        <% if (c.parceiras.lista && c.parceiras.lista.length) { %>
-          <div class="partners__logos">
-            <% c.parceiras.lista.forEach(function(p){ %>
-              <a href="<%= p.link || '#' %>" class="partners__logo" target="_blank" rel="noopener" title="<%= p.nome %>">
-                <% if (p.logo) { %><img src="<%= p.logo %>" alt="<%= p.nome %>" /><% } else { %><span><%= p.nome %></span><% } %>
-              </a>
-            <% }); %>
-          </div>
-        <% } %>
-
-        <a href="<%= c.parceiras.botao_link %>" class="btn btn--gold"><%= c.parceiras.botao_texto %></a>
-      </div>
-
+      <% if (c.parceiras.lista && c.parceiras.lista.length) { %>
+        <div class="pgrid">
+          <% c.parceiras.lista.forEach(function(p){
+               var hasLink = p.link && p.link !== '#';
+               var hasInfo = p.segmento || p.descricao; %>
+            <a class="pcard<%= hasLink ? '' : ' pcard--nolink' %>"<% if (hasLink) { %> href="<%= p.link %>" target="_blank" rel="noopener"<% } %> title="<%= p.nome %>">
+              <div class="pcard__logo">
+                <% if (p.logo) { %>
+                  <img src="<%= p.logo %>" alt="<%= p.nome %>" />
+                <% } else { %>
+                  <span class="pcard__logo-fallback"><%= p.nome %></span>
+                <% } %>
+              </div>
+              <% if (hasInfo) { %>
+                <div class="pcard__body">
+                  <% if (p.segmento) { %><span class="pcard__tag"><%= p.segmento %></span><% } %>
+                  <% if (p.descricao) { %><p class="pcard__desc"><%= p.descricao %></p><% } %>
+                </div>
+              <% } %>
+              <% if (hasLink) { %><span class="pcard__cta">Visitar empresa ↗</span><% } %>
+            </a>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <p class="ppage-empty">Em breve apresentaremos nossas empresas parceiras.</p>
+      <% } %>
     </div>
   </section>
 
