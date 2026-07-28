@@ -72,7 +72,7 @@
 
   /* ---------- reveal ao rolar ---------- */
   var revealTargets = document.querySelectorAll(
-    '.hero__left, .hero__right, .gallery__item, .board, .partners, .pilar, .footer__inner'
+    '.hero__left, .hero__right, .stat, .gallery__item, .board, .partners, .pilar, .footer__inner'
   );
   revealTargets.forEach(function (el, i) {
     el.classList.add('reveal');

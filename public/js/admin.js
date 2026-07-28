@@ -65,6 +65,45 @@
       (desc ? '<div class="panel__desc">' + desc + '</div>' : '') + '</div>';
   }
 
+  // icones disponiveis em views/partials/icon.ejs
+  var ICONS = ['crown', 'users', 'growth', 'target', 'handshake', 'calendar', 'impact', 'quote', 'user'];
+
+  function fieldRange(label, path, opt) {
+    var val = getByPath(data, path);
+    if (val === undefined || val === null || val === '') val = opt.padrao;
+    return '<div class="field field--range">' +
+      '<label>' + label + '<span class="range-val">' + escHtml(val) + '%</span></label>' +
+      '<input type="range" data-bind="' + path + '" min="' + opt.min + '" max="' + opt.max +
+      '" step="' + (opt.passo || 1) + '" value="' + escAttr(val) + '">' +
+      '<div class="range-hint"><span>' + escHtml(opt.rotuloMin) + '</span><span>' + escHtml(opt.rotuloMax) + '</span></div>' +
+      '</div>';
+  }
+
+  function fieldSelect(label, path, options) {
+    var atual = String(getByPath(data, path) == null ? '' : getByPath(data, path));
+    var opts = options.map(function (o) {
+      return '<option value="' + escAttr(o.value) + '"' + (atual === o.value ? ' selected' : '') + '>' + escHtml(o.label) + '</option>';
+    }).join('');
+    return '<div class="field"><label>' + label + '</label>' +
+      '<select data-bind="' + path + '">' + opts + '</select></div>';
+  }
+
+  function fieldIcon(label, path) {
+    var atual = getByPath(data, path);
+    var opts = ICONS.map(function (ic) {
+      return '<option value="' + ic + '"' + (atual === ic ? ' selected' : '') + '>' + ic + '</option>';
+    }).join('');
+    return '<div class="field"><label>' + label + '</label>' +
+      '<select data-bind="' + path + '">' + opts + '</select></div>';
+  }
+
+  function cardBotao(titulo, pathTexto, pathLink) {
+    return '<div class="card"><div class="card__title">' + titulo + '</div><div class="grid-2">' +
+      fieldText('Texto do botão', pathTexto) +
+      fieldText('Link (ex: #encontros, #rodape ou https://…)', pathLink) +
+      '</div></div>';
+  }
+
   /* ----------------------------------------------------- builders ------ */
   var builders = {};
 
@@ -98,8 +137,21 @@
   };
 
   builders.inicio = function () {
-    var html = panelHead('Início / Hero', 'O topo do site: títulos, textos e a Palavra Pastoral.');
+    var html = panelHead('Início / Hero', 'O topo do site: foto de fundo, títulos, textos, botões e os destaques ao lado da logo.');
+
+    html += '<div class="card"><div class="card__title">Foto de fundo do topo</div>' +
+      '<div class="panel__desc" style="margin-bottom:14px">Aparece atrás da logo, no lado escuro do topo. Use uma foto horizontal e larga — uma vista da cidade ou um encontro do EDR funcionam bem. Sem foto, o fundo fica azul-marinho liso.</div>' +
+      imgField('Foto de fundo', 'hero.imagem', 'JPG ou PNG, até 8MB. De preferência com 1600px de largura ou mais.') +
+      fieldRange('Zoom da foto', 'hero.imagem_zoom', { min: 100, max: 200, padrao: 100, rotuloMin: 'foto inteira', rotuloMax: 'bem aproximada' }) +
+      fieldSelect('Intensidade da foto', 'hero.imagem_intensidade', [
+        { value: 'suave', label: 'Suave — quase só uma textura' },
+        { value: 'media', label: 'Média — equilibrada (padrão)' },
+        { value: 'forte', label: 'Forte — a foto aparece bem' }
+      ]) +
+      '</div>';
+
     html += '<div class="card"><div class="card__title">Títulos</div>' +
+      fieldText('Antetítulo (linha pequena dourada acima do título)', 'hero.eyebrow') +
       fieldText('Título — linha 1', 'hero.titulo1') +
       fieldText('Título — linha 2 (dourado)', 'hero.titulo2') +
       '</div>';
@@ -113,15 +165,45 @@
     });
     html += '<button type="button" class="btn-add" data-action="add" data-arr="hero.paragrafos">+ Adicionar parágrafo</button></div>';
 
-    html += '<div class="card"><div class="card__title">Imagem do topo</div>' +
-      imgField('Foto principal (encontro)', 'hero.imagem') +
-      fieldText('Legenda sobre a imagem', 'hero.imagem_legenda') +
-      '</div>';
+    html += cardBotao('Botão 1 (escuro)', 'hero.botao1_texto', 'hero.botao1_link');
+    html += cardBotao('Botão 2 (contorno dourado)', 'hero.botao2_texto', 'hero.botao2_link');
+
+    html += '<div class="card"><div class="card__title">Destaques (ao lado da logo)</div>';
+    (data.hero.destaques || []).forEach(function (d, i) {
+      html += '<div class="repeat-item"><div class="repeat-item__head">' +
+        '<span class="repeat-item__label">Destaque ' + (i + 1) + '</span>' +
+        '<button type="button" class="btn-remove" data-action="remove" data-arr="hero.destaques" data-index="' + i + '">Remover</button>' +
+        '</div>' +
+        fieldIcon('Ícone', 'hero.destaques.' + i + '.icone') +
+        fieldText('Título (ex: NETWORKING)', 'hero.destaques.' + i + '.titulo') +
+        fieldText('Descrição', 'hero.destaques.' + i + '.texto') +
+        '</div>';
+    });
+    html += '<button type="button" class="btn-add" data-action="add" data-arr="hero.destaques">+ Adicionar destaque</button></div>';
 
     html += '<div class="card"><div class="card__title">Palavra Pastoral</div>' +
+      '<div class="panel__desc" style="margin-bottom:14px">Aparece logo abaixo da faixa de números. Deixe os dois campos vazios para esconder a seção.</div>' +
       fieldText('Título', 'hero.pastoral_titulo') +
       fieldArea('Texto', 'hero.pastoral_texto') +
       '</div>';
+    return html;
+  };
+
+  builders.numeros = function () {
+    var html = panelHead('Números / Destaques', 'A faixa clara logo abaixo do topo do site.');
+    html += '<div class="card">';
+    (data.numeros.itens || []).forEach(function (n, i) {
+      html += '<div class="repeat-item"><div class="repeat-item__head">' +
+        '<span class="repeat-item__label">Item ' + (i + 1) + '</span>' +
+        '<button type="button" class="btn-remove" data-action="remove" data-arr="numeros.itens" data-index="' + i + '">Remover</button>' +
+        '</div>' +
+        fieldIcon('Ícone', 'numeros.itens.' + i + '.icone') +
+        '<div class="grid-2">' +
+        fieldText('Destaque (ex: +120)', 'numeros.itens.' + i + '.valor') +
+        fieldText('Descrição (ex: EMPRESÁRIOS CONECTADOS)', 'numeros.itens.' + i + '.texto') +
+        '</div></div>';
+    });
+    html += '<button type="button" class="btn-add" data-action="add" data-arr="numeros.itens">+ Adicionar item</button></div>';
     return html;
   };
 
@@ -154,6 +236,7 @@
         '<span class="repeat-item__label">Membro ' + (i + 1) + '</span>' +
         '<button type="button" class="btn-remove" data-action="remove" data-arr="diretoria.membros" data-index="' + i + '">Remover</button>' +
         '</div>' + imgField('Foto', 'diretoria.membros.' + i + '.foto') +
+        fieldRange('Zoom da foto', 'diretoria.membros.' + i + '.zoom', { min: 100, max: 250, padrao: 100, rotuloMin: 'foto inteira', rotuloMax: 'perto do rosto' }) +
         '<div class="grid-2">' +
         fieldText('Nome', 'diretoria.membros.' + i + '.nome') +
         fieldText('Cargo', 'diretoria.membros.' + i + '.cargo') +
@@ -176,6 +259,7 @@
         '<span class="repeat-item__label">Empresa ' + (i + 1) + '</span>' +
         '<button type="button" class="btn-remove" data-action="remove" data-arr="parceiras.lista" data-index="' + i + '">Remover</button>' +
         '</div>' + imgField('Logo', 'parceiras.lista.' + i + '.logo') +
+        fieldRange('Zoom da logo', 'parceiras.lista.' + i + '.zoom', { min: 100, max: 220, padrao: 108, rotuloMin: 'logo inteira', rotuloMax: 'sem margem sobrando' }) +
         '<div class="grid-2">' +
         fieldText('Nome', 'parceiras.lista.' + i + '.nome') +
         fieldText('Link (site)', 'parceiras.lista.' + i + '.link') +
@@ -193,18 +277,14 @@
   };
 
   builders.pilares = function () {
-    var icons = ['crown', 'users', 'growth', 'target', 'handshake', 'quote', 'user'];
     var html = panelHead('Nossos Pilares', 'Os pilares do movimento (ícone, título e descrição).');
     html += '<div class="card">' + fieldText('Título da seção', 'pilares.titulo') + '</div><div class="card">';
     (data.pilares.itens || []).forEach(function (item, i) {
-      var opts = icons.map(function (ic) {
-        return '<option value="' + ic + '"' + (item.icone === ic ? ' selected' : '') + '>' + ic + '</option>';
-      }).join('');
       html += '<div class="repeat-item"><div class="repeat-item__head">' +
         '<span class="repeat-item__label">Pilar ' + (i + 1) + '</span>' +
         '<button type="button" class="btn-remove" data-action="remove" data-arr="pilares.itens" data-index="' + i + '">Remover</button>' +
         '</div>' +
-        '<div class="field"><label>Ícone</label><select data-bind="pilares.itens.' + i + '.icone">' + opts + '</select></div>' +
+        fieldIcon('Ícone', 'pilares.itens.' + i + '.icone') +
         fieldText('Título', 'pilares.itens.' + i + '.titulo') +
         fieldText('Descrição', 'pilares.itens.' + i + '.descricao') +
         '</div>';
@@ -250,8 +330,10 @@
     switch (arrPath) {
       case 'nav': return { label: 'NOVO', href: '#' };
       case 'hero.paragrafos': return '';
-      case 'diretoria.membros': return { nome: 'NOME', cargo: 'CARGO', foto: '' };
-      case 'parceiras.lista': return { nome: 'Empresa', logo: '', link: '#', segmento: '', descricao: '' };
+      case 'hero.destaques': return { icone: 'crown', titulo: 'NOVO DESTAQUE', texto: '' };
+      case 'numeros.itens': return { icone: 'crown', valor: '+0', texto: 'DESCRIÇÃO' };
+      case 'diretoria.membros': return { nome: 'NOME', cargo: 'CARGO', foto: '', zoom: 100 };
+      case 'parceiras.lista': return { nome: 'Empresa', logo: '', link: '#', segmento: '', descricao: '', zoom: 108 };
       case 'pilares.itens': return { icone: 'crown', titulo: 'NOVO', descricao: '' };
       default: return {};
     }
@@ -269,7 +351,15 @@
   // edição de campos (texto / textarea / select)
   main.addEventListener('input', function (e) {
     var el = e.target;
-    if (el.dataset && el.dataset.bind) setByPath(data, el.dataset.bind, el.value);
+    if (!el.dataset || !el.dataset.bind) return;
+    setByPath(data, el.dataset.bind, el.value);
+
+    // slider: atualiza o valor mostrado ao lado do rótulo
+    if (el.type === 'range') {
+      var campo = el.closest('.field');
+      var saida = campo && campo.querySelector('.range-val');
+      if (saida) saida.textContent = el.value + '%';
+    }
   });
   main.addEventListener('change', function (e) {
     var el = e.target;
@@ -379,6 +469,9 @@
       data = json;
       // garante estruturas mínimas
       data.site = data.site || {}; data.hero = data.hero || {}; data.hero.paragrafos = data.hero.paragrafos || [];
+      data.hero.destaques = data.hero.destaques || [];
+      data.hero.imagem_intensidade = data.hero.imagem_intensidade || 'media';
+      data.numeros = data.numeros || {}; data.numeros.itens = data.numeros.itens || [];
       data.nav = data.nav || []; data.encontros = data.encontros || {}; data.encontros.fotos = data.encontros.fotos || [];
       data.diretoria = data.diretoria || {}; data.diretoria.membros = data.diretoria.membros || [];
       data.parceiras = data.parceiras || {}; data.parceiras.lista = data.parceiras.lista || [];

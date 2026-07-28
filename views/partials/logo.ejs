@@ -2,7 +2,7 @@
 /* Logo ER em SVG. Uso: include('partials/logo', { cls: 'logo--hero' }) */
 var cls = (typeof cls !== 'undefined') ? cls : '';
 %>
-<svg class="erlogo <%= cls %>" viewBox="0 0 220 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Empreendedores do Reino">
+<svg class="erlogo <%= cls %>" viewBox="0 0 220 252" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Empreendedores do Reino">
   <defs>
     <path id="er-arc" d="M 110,120 m -74,0 a 74,74 0 1,1 148,0 a 74,74 0 1,1 -148,0" />
   </defs>
@@ -25,5 +25,5 @@ var cls = (typeof cls !== 'undefined') ? cls : '';
   <text class="erlogo__r" x="138" y="158" text-anchor="middle">R</text>
 
   <!-- cidade -->
-  <text class="erlogo__city" x="110" y="214" text-anchor="middle" letter-spacing="5"><%= (typeof cidade !== 'undefined' ? cidade : 'TOLEDO/PR') %></text>
+  <text class="erlogo__city" x="110" y="234" text-anchor="middle" letter-spacing="5"><%= (typeof cidade !== 'undefined' ? cidade : 'TOLEDO/PR') %></text>
 </svg>

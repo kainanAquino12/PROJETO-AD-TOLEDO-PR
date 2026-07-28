@@ -39,39 +39,85 @@
 
   <!-- ====================== HERO ====================== -->
   <section class="hero" id="inicio">
+    <div class="hero__bg hero__bg--<%= c.hero.imagem_intensidade || 'media' %>" style="--zoom: <%= (Number(c.hero.imagem_zoom) || 100) / 100 %>" aria-hidden="true">
+      <% if (c.hero.imagem) { %><img src="<%= c.hero.imagem %>" alt="" /><% } %>
+    </div>
+    <div class="hero__cut" aria-hidden="true"></div>
+
     <div class="container hero__grid">
 
       <div class="hero__left">
-        <% if (c.site.logo) { %>
-          <img src="<%= c.site.logo %>" alt="<%= c.site.nome %>" class="hero__logo-img" />
-        <% } else { %>
-          <%- include('partials/logo', { cls: 'erlogo--hero', cidade: c.site.cidade }) %>
-        <% } %>
+        <% if (c.hero.eyebrow) { %><span class="hero__eyebrow"><%= c.hero.eyebrow %></span><% } %>
 
         <h1 class="hero__title">
           <span class="hero__title-1"><%= c.hero.titulo1 %></span>
           <span class="hero__title-2"><%= c.hero.titulo2 %></span>
         </h1>
-        <span class="divider" id="sobre"></span>
-        <div class="hero__text">
-          <% c.hero.paragrafos.forEach(function(p){ %>
+
+        <div class="hero__text" id="sobre">
+          <% (c.hero.paragrafos || []).forEach(function(p){ %>
             <p><%= p %></p>
           <% }); %>
+        </div>
+
+        <div class="hero__actions">
+          <% if (c.hero.botao1_texto) { %>
+            <a href="<%= c.hero.botao1_link || '#' %>" class="btn btn--navy btn--icon"><%= c.hero.botao1_texto %><%- include('partials/icon', { name: 'arrow', cls: 'btn__arrow' }) %></a>
+          <% } %>
+          <% if (c.hero.botao2_texto) { %>
+            <a href="<%= c.hero.botao2_link || '#' %>" class="btn btn--outline"><%= c.hero.botao2_texto %></a>
+          <% } %>
         </div>
       </div>
 
       <div class="hero__right">
-        <figure class="hero__media">
-          <% if (c.hero.imagem) { %>
-            <img src="<%= c.hero.imagem %>" alt="Encontro do <%= c.site.sigla %>" />
+        <div class="hero__mark">
+          <% if (c.site.logo) { %>
+            <img src="<%= c.site.logo %>" alt="<%= c.site.nome %>" class="hero__logo-img" />
           <% } else { %>
-            <div class="media-placeholder"><%- include('partials/icon', { name: 'users' }) %></div>
+            <%- include('partials/logo', { cls: 'erlogo--hero erlogo--dark', cidade: c.site.cidade }) %>
           <% } %>
-          <% if (c.hero.imagem_legenda) { %>
-            <figcaption><%= c.hero.imagem_legenda %></figcaption>
-          <% } %>
-        </figure>
+        </div>
 
+        <% if (c.hero.destaques && c.hero.destaques.length) { %>
+          <ul class="hero__points">
+            <% c.hero.destaques.forEach(function(d){ %>
+              <li class="hpoint">
+                <span class="hpoint__icon"><%- include('partials/icon', { name: d.icone || 'crown' }) %></span>
+                <div>
+                  <h2 class="hpoint__title"><%= d.titulo %></h2>
+                  <% if (d.texto) { %><p class="hpoint__text"><%= d.texto %></p><% } %>
+                </div>
+              </li>
+            <% }); %>
+          </ul>
+        <% } %>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ====================== NÚMEROS ====================== -->
+  <% if (c.numeros && c.numeros.itens && c.numeros.itens.length) { %>
+    <section class="stats">
+      <div class="container stats__grid">
+        <% c.numeros.itens.forEach(function(n){ %>
+          <div class="stat">
+            <span class="stat__icon"><%- include('partials/icon', { name: n.icone || 'crown' }) %></span>
+            <div>
+              <strong class="stat__value"><%= n.valor %></strong>
+              <% if (n.texto) { %><span class="stat__label"><%= n.texto %></span><% } %>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    </section>
+  <% } %>
+
+  <!-- ====================== PALAVRA PASTORAL ====================== -->
+  <% if (c.hero.pastoral_titulo || c.hero.pastoral_texto) { %>
+    <section class="pastoral-band">
+      <div class="container">
         <div class="pastoral">
           <%- include('partials/icon', { name: 'quote', cls: 'pastoral__quote' }) %>
           <%- include('partials/icon', { name: 'crown', cls: 'pastoral__watermark' }) %>
@@ -79,9 +125,8 @@
           <p class="pastoral__text"><%= c.hero.pastoral_texto %></p>
         </div>
       </div>
-
-    </div>
-  </section>
+    </section>
+  <% } %>
 
   <!-- ====================== ENCONTROS ====================== -->
   <section class="encontros" id="encontros">
@@ -117,7 +162,7 @@
             <div class="member">
               <div class="member__avatar">
                 <% if (m.foto) { %>
-                  <img src="<%= m.foto %>" alt="<%= m.nome %>" />
+                  <img src="<%= m.foto %>" alt="<%= m.nome %>" style="--zoom: <%= (Number(m.zoom) || 100) / 100 %>" />
                 <% } else { %>
                   <%- include('partials/icon', { name: 'user' }) %>
                 <% } %>
@@ -150,7 +195,7 @@
             <a class="pcard<%= hasLink ? '' : ' pcard--nolink' %>"<% if (hasLink) { %> href="<%= p.link %>" target="_blank" rel="noopener"<% } %> title="<%= p.nome %>">
               <div class="pcard__logo">
                 <% if (p.logo) { %>
-                  <img src="<%= p.logo %>" alt="<%= p.nome %>" />
+                  <img src="<%= p.logo %>" alt="<%= p.nome %>" style="--zoom: <%= (Number(p.zoom) || 108) / 100 %>" />
                 <% } else { %>
                   <span class="pcard__logo-fallback"><%= p.nome %></span>
                 <% } %>

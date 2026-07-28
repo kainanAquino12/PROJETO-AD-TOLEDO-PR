@@ -38,10 +38,58 @@
       "O Empreendedores do Reino (EDR) é um movimento cristão que reúne empresários e profissionais liberais com o propósito de conectar pessoas, fortalecer relacionamentos e promover crescimento pessoal, profissional e espiritual.",
       "Acreditamos que quando os negócios são conduzidos com princípios do Reino, transformamos ambientes, impactamos vidas e geramos um legado que honra a Deus."
     ],
-    "imagem": "/uploads/img_1780763326535_875988.jpeg",
+    "imagem": "/uploads/img_1785261203579_727284.webp",
     "imagem_legenda": "CONECTANDO PROPÓSITOS. GERANDO IMPACTO.",
     "pastoral_titulo": "PALAVRA PASTORAL",
-    "pastoral_texto": "Em breve uma palavra de encorajamento e direcionamento para nossa caminhada."
+    "pastoral_texto": "Em breve uma palavra de encorajamento e direcionamento para nossa caminhada.",
+    "eyebrow": "EMPREENDEDORES DO REINO",
+    "botao1_texto": "CONHEÇA O EDR",
+    "botao1_link": "#encontros",
+    "botao2_texto": "QUERO PARTICIPAR",
+    "botao2_link": "#rodape",
+    "destaques": [
+      {
+        "icone": "users",
+        "titulo": "NETWORKING",
+        "texto": "Conexões que geram oportunidades"
+      },
+      {
+        "icone": "growth",
+        "titulo": "CRESCIMENTO",
+        "texto": "Mentorias, capacitações e trocas que impulsionam"
+      },
+      {
+        "icone": "crown",
+        "titulo": "PROPÓSITO",
+        "texto": "Negócios alinhados aos princípios do Reino"
+      }
+    ],
+    "imagem_intensidade": "forte",
+    "imagem_zoom": "100"
+  },
+  "numeros": {
+    "itens": [
+      {
+        "icone": "users",
+        "valor": "+120",
+        "texto": "EMPRESÁRIOS CONECTADOS"
+      },
+      {
+        "icone": "calendar",
+        "valor": "+30",
+        "texto": "ENCONTROS REALIZADOS"
+      },
+      {
+        "icone": "impact",
+        "valor": "1 PROPÓSITO",
+        "texto": "TRANSFORMAR NEGÓCIOS E GERAR IMPACTO"
+      },
+      {
+        "icone": "handshake",
+        "valor": "COMUNIDADE",
+        "texto": "DE FÉ, INTEGRIDADE E EXCELÊNCIA"
+      }
+    ]
   },
   "encontros": {
     "titulo": "NOSSOS ENCONTROS",
@@ -55,12 +103,14 @@
       {
         "nome": "JOCIMAR LIRA",
         "cargo": "DIRETOR",
-        "foto": "/uploads/img_1782785131713_214203.jpeg"
+        "foto": "/uploads/img_1782785131713_214203.jpeg",
+        "zoom": "172"
       },
       {
         "nome": "NOME",
         "cargo": "CARGO",
-        "foto": ""
+        "foto": "",
+        "zoom": 100
       }
     ],
     "botao_texto": "CONHEÇA NOSSA DIRETORIA",
@@ -77,7 +127,32 @@
         "logo": "/uploads/img_1782783406366_505624.jpeg",
         "link": "https://www.magston.com.br/",
         "segmento": "",
-        "descricao": ""
+        "descricao": "",
+        "zoom": 108
+      },
+      {
+        "nome": "Edilu",
+        "logo": "/uploads/img_1785256298271_844213.png",
+        "link": "https://www.instagram.com/edilulingerie?igsh=ZnRxbXJ3Y3hrN2k1",
+        "segmento": "",
+        "descricao": "",
+        "zoom": 108
+      },
+      {
+        "nome": "Ultragaz",
+        "logo": "/uploads/img_1785265973595_591271.png",
+        "link": "https://www.instagram.com/ultragaztoledo?igsh=MW9xcG13c2UzeGF0YQ==",
+        "segmento": "",
+        "descricao": "",
+        "zoom": "156"
+      },
+      {
+        "nome": "OesteVans ",
+        "logo": "/uploads/img_1785266329842_971493.png",
+        "link": "https://api.whatsapp.com/send/?phone=%2B554599573846&text&type=phone_number&app_absent=0",
+        "segmento": "",
+        "descricao": "",
+        "zoom": 108
       }
     ]
   },
