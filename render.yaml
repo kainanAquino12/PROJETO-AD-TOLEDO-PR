@@ -1,0 +1,45 @@
+# Blueprint do Render — https://render.com/docs/blueprint-spec
+#
+# O painel do EDR grava conteudo e imagens em disco, entao o servico precisa
+# de um disco persistente. As variaveis DATA_DIR e UPLOAD_DIR apontam para
+# dentro dele; no primeiro deploy o servidor copia o conteudo e as fotos que
+# vem no repositorio para la (ver semearDisco() em server.js).
+#
+# ATENCAO: disco persistente exige plano pago (Starter). No plano gratuito o
+# sistema de arquivos e apagado a cada restart e tudo que for editado pelo
+# painel se perde.
+
+services:
+  - type: web
+    name: edr-toledo
+    runtime: node
+    plan: starter
+    region: oregon
+    branch: main
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /
+
+    disk:
+      name: edr-dados
+      mountPath: /var/edr
+      sizeGB: 1
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # onde o painel grava; devem ficar dentro do mountPath acima
+      - key: DATA_DIR
+        value: /var/edr/data
+      - key: UPLOAD_DIR
+        value: /var/edr/uploads
+
+      # gerada pelo Render; mantem o login em pe entre reinicios
+      - key: SESSION_SECRET
+        generateValue: true
+
+      # defina no painel do Render ANTES do primeiro deploy.
+      # sem ela o painel sobe com a senha padrao "edr2024", que e publica.
+      - key: ADMIN_PASSWORD
+        sync: false

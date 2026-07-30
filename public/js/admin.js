@@ -66,7 +66,7 @@
   }
 
   // icones disponiveis em views/partials/icon.ejs
-  var ICONS = ['crown', 'users', 'growth', 'target', 'handshake', 'calendar', 'impact', 'quote', 'user'];
+  var ICONS = ['crown', 'users', 'growth', 'target', 'handshake', 'calendar', 'coffee', 'impact', 'quote', 'user'];
 
   function fieldRange(label, path, opt) {
     var val = getByPath(data, path);
@@ -182,10 +182,18 @@
     html += '<button type="button" class="btn-add" data-action="add" data-arr="hero.destaques">+ Adicionar destaque</button></div>';
 
     html += '<div class="card"><div class="card__title">Palavra Pastoral</div>' +
-      '<div class="panel__desc" style="margin-bottom:14px">Aparece logo abaixo da faixa de números. Deixe os dois campos vazios para esconder a seção.</div>' +
-      fieldText('Título', 'hero.pastoral_titulo') +
-      fieldArea('Texto', 'hero.pastoral_texto') +
+      '<div class="panel__desc" style="margin-bottom:14px">O card escuro logo abaixo da faixa de números. Deixe o título e o texto vazios para esconder a seção inteira.</div>' +
+      fieldText('Título (o rótulo dourado)', 'hero.pastoral_titulo') +
+      fieldArea('Texto / frase', 'hero.pastoral_texto') +
+      '<div class="grid-2">' +
+        fieldText('Nome do pastor (ex: Pr. Marcos Oliveira)', 'hero.pastoral_autor') +
+        fieldText('Cargo (ex: Líder do EDR Toledo/PR)', 'hero.pastoral_autor_cargo') +
+      '</div>' +
+      imgField('Foto do pastor (coluna da esquerda do card)', 'hero.pastoral_foto', 'De preferência uma foto em pé / retrato. Sem foto, o card fica só com o texto.') +
+      fieldRange('Zoom da foto', 'hero.pastoral_foto_zoom', { min: 100, max: 250, padrao: 100, rotuloMin: 'foto inteira', rotuloMax: 'perto do rosto' }) +
       '</div>';
+
+    html += cardBotao('Botão da Palavra Pastoral (vazio esconde o botão)', 'hero.pastoral_botao_texto', 'hero.pastoral_botao_link');
     return html;
   };
 
@@ -208,39 +216,89 @@
   };
 
   builders.encontros = function () {
-    var html = panelHead('Nossos Encontros', 'Galeria de fotos dos encontros.');
-    html += '<div class="card">' + fieldText('Título da seção', 'encontros.titulo') + '</div>';
+    var html = panelHead('Nossos Encontros', 'Um destaque grande em carrossel, a faixa de miniaturas e o bloco contador.');
+    html += '<div class="card">' +
+      fieldText('Título da seção', 'encontros.titulo') +
+      fieldText('Subtítulo (frase abaixo do título)', 'encontros.subtitulo') +
+      '</div>';
 
-    html += '<div class="card"><div class="card__title">Fotos da galeria</div><div class="photo-grid">';
-    (data.encontros.fotos || []).forEach(function (foto, i) {
+    html += '<div class="card"><div class="card__title">Encontros em destaque (carrossel)</div>' +
+      '<div class="panel__desc" style="margin-bottom:14px">Aparece um por vez no banner grande; as setas passam para o próximo. Todo campo vazio simplesmente não aparece.</div>';
+    (data.encontros.cards || []).forEach(function (k, i) {
+      var p = 'encontros.cards.' + i + '.';
+      html += '<div class="repeat-item"><div class="repeat-item__head">' +
+        '<span class="repeat-item__label">Encontro ' + (i + 1) + (i === 0 ? ' — o primeiro do carrossel' : '') + '</span>' +
+        '<button type="button" class="btn-remove" data-action="remove" data-arr="encontros.cards" data-index="' + i + '">Remover</button>' +
+        '</div>' +
+        imgField('Foto de fundo', p + 'foto') +
+        fieldRange('Zoom da foto', p + 'zoom', { min: 100, max: 200, padrao: 100, rotuloMin: 'foto inteira', rotuloMax: 'bem aproximada' }) +
+        '<div class="grid-2">' +
+        fieldText('Selo dourado (ex: DESTAQUE)', p + 'selo') +
+        fieldText('Etiqueta (ex: ENCONTRO #31)', p + 'badge') +
+        '</div>' +
+        fieldText('Título (ex: Café com Propósito)', p + 'titulo') +
+        '<div class="grid-2">' +
+        fieldText('Data (ex: 12 de julho de 2026)', p + 'data') +
+        fieldText('Local (ex: Toledo/PR)', p + 'local') +
+        '</div>' +
+        fieldText('Público (ex: +120 empresários presentes)', p + 'publico') +
+        '<div class="grid-2">' +
+        fieldText('Texto do botão', p + 'botao_texto') +
+        fieldText('Link do botão', p + 'botao_link') +
+        '</div>' +
+        '</div>';
+    });
+    html += '<button type="button" class="btn-add" data-action="add" data-arr="encontros.cards">+ Adicionar encontro</button></div>';
+
+    html += '<div class="card"><div class="card__title">Faixa de miniaturas</div>' +
+      '<div class="panel__desc" style="margin-bottom:14px">As 5 primeiras fotos aparecem na faixa, ao lado do bloco contador. Clicar numa miniatura abre a foto ampliada.</div>' +
+      '<div class="photo-grid">';
+    (data.encontros.galeria.fotos || []).forEach(function (foto, i) {
       html += '<div class="photo-tile"><img src="' + escAttr(foto) + '">' +
-        '<button type="button" class="photo-tile__del" data-action="remove" data-arr="encontros.fotos" data-index="' + i + '">&times;</button></div>';
+        '<button type="button" class="photo-tile__del" data-action="remove" data-arr="encontros.galeria.fotos" data-index="' + i + '">&times;</button></div>';
     });
     html += '</div>';
-    var id = 'upgal' + (++uid);
-    html += '<button type="button" class="btn-add" data-action="pick" data-target="' + id + '">+ Adicionar foto(s)</button>' +
-      '<input type="file" accept="image/*" hidden multiple data-upload-arr="encontros.fotos" id="' + id + '"></div>';
+    var idg = 'upgal' + (++uid);
+    html += '<button type="button" class="btn-add" data-action="pick" data-target="' + idg + '">+ Adicionar foto(s)</button>' +
+      '<input type="file" accept="image/*" hidden multiple data-upload-arr="encontros.galeria.fotos" id="' + idg + '"></div>';
 
-    html += '<div class="card"><div class="card__title">Botão</div><div class="grid-2">' +
-      fieldText('Texto do botão', 'encontros.botao_texto') +
-      fieldText('Link do botão', 'encontros.botao_link') +
+    html += '<div class="card"><div class="card__title">Bloco contador (último quadrado da faixa)</div>' +
+      '<div class="grid-2">' +
+      fieldText('Destaque (ex: +150 FOTOS)', 'encontros.galeria.titulo') +
+      fieldText('Linha menor (ex: em nossa galeria)', 'encontros.galeria.subtitulo') +
+      '</div><div class="grid-2">' +
+      fieldText('Texto do botão', 'encontros.galeria.botao_texto') +
+      fieldText('Link do botão', 'encontros.galeria.botao_link') +
       '</div></div>';
+
+    html += cardBotao('Botão do rodapé da seção', 'encontros.botao_texto', 'encontros.botao_link');
     return html;
   };
 
   builders.diretoria = function () {
-    var html = panelHead('Diretoria', 'Membros da diretoria do EDR.');
-    html += '<div class="card">' + fieldText('Título da seção', 'diretoria.titulo') + '</div><div class="card">';
+    var html = panelHead('Diretoria', 'O primeiro membro aparece em destaque; os outros entram no carrossel pelas setas.');
+    html += '<div class="card">' +
+      fieldText('Título da seção', 'diretoria.titulo') +
+      fieldText('Subtítulo (frase abaixo do título)', 'diretoria.subtitulo') +
+      '</div><div class="card"><div class="card__title">Membros</div>' +
+      '<div class="panel__desc" style="margin-bottom:14px">A ordem aqui é a ordem do carrossel. Cada contato preenchido vira um botão redondo; os vazios não aparecem.</div>';
     (data.diretoria.membros || []).forEach(function (m, i) {
       html += '<div class="repeat-item"><div class="repeat-item__head">' +
-        '<span class="repeat-item__label">Membro ' + (i + 1) + '</span>' +
+        '<span class="repeat-item__label">Membro ' + (i + 1) + (i === 0 ? ' — em destaque' : '') + '</span>' +
         '<button type="button" class="btn-remove" data-action="remove" data-arr="diretoria.membros" data-index="' + i + '">Remover</button>' +
         '</div>' + imgField('Foto', 'diretoria.membros.' + i + '.foto') +
         fieldRange('Zoom da foto', 'diretoria.membros.' + i + '.zoom', { min: 100, max: 250, padrao: 100, rotuloMin: 'foto inteira', rotuloMax: 'perto do rosto' }) +
         '<div class="grid-2">' +
         fieldText('Nome', 'diretoria.membros.' + i + '.nome') +
         fieldText('Cargo', 'diretoria.membros.' + i + '.cargo') +
-        '</div></div>';
+        '</div>' +
+        fieldArea('Descrição (só aparece no membro em destaque)', 'diretoria.membros.' + i + '.descricao') +
+        fieldText('E-mail', 'diretoria.membros.' + i + '.email') +
+        '<div class="grid-2">' +
+        fieldText('LinkedIn (link completo)', 'diretoria.membros.' + i + '.linkedin') +
+        fieldText('Instagram (link completo)', 'diretoria.membros.' + i + '.instagram') +
+        '</div>' +
+        '</div>';
     });
     html += '<button type="button" class="btn-add" data-action="add" data-arr="diretoria.membros">+ Adicionar membro</button></div>';
     html += '<div class="card"><div class="card__title">Botão</div><div class="grid-2">' +
@@ -332,7 +390,9 @@
       case 'hero.paragrafos': return '';
       case 'hero.destaques': return { icone: 'crown', titulo: 'NOVO DESTAQUE', texto: '' };
       case 'numeros.itens': return { icone: 'crown', valor: '+0', texto: 'DESCRIÇÃO' };
-      case 'diretoria.membros': return { nome: 'NOME', cargo: 'CARGO', foto: '', zoom: 100 };
+      case 'encontros.cards': return { foto: '', zoom: 100, selo: '', badge: 'ENCONTRO #', titulo: 'Novo encontro', data: '', local: '', publico: '', botao_texto: 'VER GALERIA COMPLETA', botao_link: '#' };
+      case 'encontros.galeria.fotos': return '';
+      case 'diretoria.membros': return { nome: 'NOME', cargo: 'CARGO', foto: '', zoom: 100, descricao: '', email: '', linkedin: '', instagram: '' };
       case 'parceiras.lista': return { nome: 'Empresa', logo: '', link: '#', segmento: '', descricao: '', zoom: 108 };
       case 'pilares.itens': return { icone: 'crown', titulo: 'NOVO', descricao: '' };
       default: return {};
@@ -472,7 +532,8 @@
       data.hero.destaques = data.hero.destaques || [];
       data.hero.imagem_intensidade = data.hero.imagem_intensidade || 'media';
       data.numeros = data.numeros || {}; data.numeros.itens = data.numeros.itens || [];
-      data.nav = data.nav || []; data.encontros = data.encontros || {}; data.encontros.fotos = data.encontros.fotos || [];
+      data.nav = data.nav || []; data.encontros = data.encontros || {}; data.encontros.cards = data.encontros.cards || [];
+      data.encontros.galeria = data.encontros.galeria || {}; data.encontros.galeria.fotos = data.encontros.galeria.fotos || [];
       data.diretoria = data.diretoria || {}; data.diretoria.membros = data.diretoria.membros || [];
       data.parceiras = data.parceiras || {}; data.parceiras.lista = data.parceiras.lista || [];
       data.pilares = data.pilares || {}; data.pilares.itens = data.pilares.itens || [];

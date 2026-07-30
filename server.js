@@ -13,14 +13,22 @@ const multer = require('multer');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const png = require('./lib/png');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-const DATA_DIR = path.join(__dirname, 'data');
+// Em producao (Render/Railway) estas duas variaveis apontam para o disco
+// persistente; sem elas o comportamento e o mesmo de sempre, gravando dentro
+// da propria pasta do projeto.
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
+const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, 'public', 'uploads');
 const CONTENT_FILE = path.join(DATA_DIR, 'content.json');
 const ADMIN_FILE = path.join(DATA_DIR, 'admin.json');
-const UPLOAD_DIR = path.join(__dirname, 'public', 'uploads');
+
+// copias que vem no repositorio, usadas para popular o disco no primeiro deploy
+const SEMENTE_DATA = path.join(__dirname, 'data');
+const SEMENTE_UPLOADS = path.join(__dirname, 'public', 'uploads');
 
 // ----------------------------------------------------------------------------
 // Utilidades de armazenamento (JSON em arquivo)
@@ -28,6 +36,31 @@ const UPLOAD_DIR = path.join(__dirname, 'public', 'uploads');
 function ensureDirs() {
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
   if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
+
+/**
+ * No primeiro deploy o disco persistente esta vazio. Copia o conteudo e as
+ * imagens versionados no repositorio para dentro dele, sem sobrescrever nada
+ * que ja exista (o que o painel gravou sempre vence).
+ */
+function semearDisco() {
+  const semente = path.join(SEMENTE_DATA, 'content.json');
+  if (semente !== CONTENT_FILE && fs.existsSync(semente) && !fs.existsSync(CONTENT_FILE)) {
+    fs.copyFileSync(semente, CONTENT_FILE);
+    console.log('  conteudo inicial copiado para ' + CONTENT_FILE);
+  }
+
+  if (SEMENTE_UPLOADS !== UPLOAD_DIR && fs.existsSync(SEMENTE_UPLOADS)) {
+    let n = 0;
+    for (const arquivo of fs.readdirSync(SEMENTE_UPLOADS)) {
+      if (arquivo === '.gitkeep') continue;
+      const destino = path.join(UPLOAD_DIR, arquivo);
+      if (fs.existsSync(destino)) continue;
+      fs.copyFileSync(path.join(SEMENTE_UPLOADS, arquivo), destino);
+      n++;
+    }
+    if (n) console.log('  ' + n + ' imagem(ns) copiada(s) para ' + UPLOAD_DIR);
+  }
 }
 
 function readContent() {
@@ -46,7 +79,9 @@ function writeContent(data) {
 // ----------------------------------------------------------------------------
 // Senha do administrador (hash scrypt em data/admin.json)
 // ----------------------------------------------------------------------------
-const DEFAULT_PASSWORD = 'edr2024';
+// Em producao defina ADMIN_PASSWORD no painel do host. Sem ela o painel sobe
+// com a senha padrao, que e publica — ver o aviso em avisarSenhaPadrao().
+const DEFAULT_PASSWORD = process.env.ADMIN_PASSWORD || 'edr2024';
 
 function hashPassword(password, salt) {
   salt = salt || crypto.randomBytes(16).toString('hex');
@@ -104,7 +139,8 @@ const upload = multer({
 // App config
 // ----------------------------------------------------------------------------
 ensureDirs();
-readAdmin(); // garante criacao do admin.json na primeira execucao
+semearDisco(); // popula o disco persistente no primeiro deploy
+readAdmin();   // garante criacao do admin.json na primeira execucao
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -112,6 +148,9 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+// quando UPLOAD_DIR aponta para fora de /public (disco persistente), as
+// imagens precisam desta rota para continuarem acessiveis em /uploads
+app.use('/uploads', express.static(UPLOAD_DIR));
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'edr-toledo-secret-' + crypto.randomBytes(8).toString('hex'),
@@ -178,6 +217,18 @@ app.post('/api/content', requireAuth, (req, res) => {
 
 app.post('/api/upload', requireAuth, upload.single('imagem'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'Nenhum arquivo enviado' });
+
+  // Recortes em PNG costumam vir com as bordas misturadas com branco, o que
+  // vira um halo claro sobre fundo escuro. Corrige aqui, no upload, para nao
+  // depender de quem exportou a imagem.
+  if (/\.png$/i.test(req.file.filename)) {
+    const r = png.limparArquivo(req.file.path);
+    if (r) {
+      console.log('  imagem tratada: ' + req.file.filename +
+        ' (contaminacao ' + r.contaminacao + ', ' + r.bordas + ' bordas, ' + r.pintados + ' px preenchidos)');
+    }
+  }
+
   res.json({ url: '/uploads/' + req.file.filename });
 });
 
@@ -203,8 +254,22 @@ app.use((err, req, res, next) => {
   next();
 });
 
+// Avisa alto e claro se o painel subir em producao com a senha publica.
+function avisarSenhaPadrao() {
+  if (DEFAULT_PASSWORD !== 'edr2024' || !checkPassword('edr2024')) return;
+  const linha = '  ' + '!'.repeat(66);
+  console.warn('\n' + linha);
+  console.warn('  ATENCAO: o painel esta com a senha padrao "edr2024".');
+  console.warn('  Ela e publica (esta no codigo). Troque em /admin > Trocar Senha,');
+  console.warn('  ou defina a variavel ADMIN_PASSWORD antes do primeiro deploy.');
+  console.warn(linha + '\n');
+}
+
 app.listen(PORT, () => {
   console.log('\n  Empreendedores do Reino - servidor no ar');
   console.log('  Site:   http://localhost:' + PORT);
-  console.log('  Painel: http://localhost:' + PORT + '/admin\n');
+  console.log('  Painel: http://localhost:' + PORT + '/admin');
+  console.log('  Dados:  ' + DATA_DIR);
+  console.log('  Fotos:  ' + UPLOAD_DIR + '\n');
+  avisarSenhaPadrao();
 });

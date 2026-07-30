@@ -4,6 +4,9 @@
   "description": "Site institucional do Empreendedores do Reino (EDR) - Toledo/PR, com painel administrativo para edicao de conteudo.",
   "main": "server.js",
   "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"

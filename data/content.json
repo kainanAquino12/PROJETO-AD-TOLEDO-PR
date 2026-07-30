@@ -41,10 +41,10 @@
     "imagem": "/uploads/img_1785261203579_727284.webp",
     "imagem_legenda": "CONECTANDO PROPÓSITOS. GERANDO IMPACTO.",
     "pastoral_titulo": "PALAVRA PASTORAL",
-    "pastoral_texto": "Em breve uma palavra de encorajamento e direcionamento para nossa caminhada.",
+    "pastoral_texto": "Empreender também é servir, transformar e gerar oportunidades para outras pessoas.",
     "eyebrow": "EMPREENDEDORES DO REINO",
     "botao1_texto": "CONHEÇA O EDR",
-    "botao1_link": "#encontros",
+    "botao1_link": "https://www.instagram.com/edrtoledo/",
     "botao2_texto": "QUERO PARTICIPAR",
     "botao2_link": "#rodape",
     "destaques": [
@@ -65,7 +65,13 @@
       }
     ],
     "imagem_intensidade": "forte",
-    "imagem_zoom": "100"
+    "imagem_zoom": "100",
+    "pastoral_autor": "PR. VICENTE MARIANO",
+    "pastoral_foto": "/uploads/img_1785435223001_2762.png",
+    "pastoral_foto_zoom": "100",
+    "pastoral_autor_cargo": "PASTOR PRESIDENTE ",
+    "pastoral_botao_texto": "LER MENSAGEM COMPLETA",
+    "pastoral_botao_link": "#"
   },
   "numeros": {
     "itens": [
@@ -93,8 +99,65 @@
   },
   "encontros": {
     "titulo": "NOSSOS ENCONTROS",
-    "fotos": [],
-    "botao_texto": "VER MAIS FOTOS",
+    "subtitulo": "Cada encontro é uma oportunidade de crescer, conectar e impactar vidas.",
+    "cards": [
+      {
+        "foto": "/uploads/img_1785435802820_861978.jpeg",
+        "zoom": 100,
+        "selo": "DESTAQUE",
+        "badge": "ENCONTRO #28",
+        "titulo": "Café de Empresários",
+        "data": "12 de julho de 2026",
+        "local": "Toledo/PR",
+        "publico": "+120 empresários presentes",
+        "botao_texto": "VER GALERIA COMPLETA",
+        "botao_link": "#"
+      },
+      {
+        "foto": "/uploads/img_1785435807058_949710.jpeg",
+        "zoom": 100,
+        "selo": "",
+        "badge": "ENCONTRO #29",
+        "titulo": "Encontro de Líderes",
+        "data": "Conexão, propósito e crescimento",
+        "local": "",
+        "publico": "",
+        "botao_texto": "VER GALERIA COMPLETA",
+        "botao_link": "#"
+      },
+      {
+        "foto": "/uploads/img_1785435812177_179635.jpeg",
+        "zoom": 100,
+        "selo": "",
+        "badge": "ENCONTRO #30",
+        "titulo": "Noite de Networking",
+        "data": "Empresários compartilhando experiências",
+        "local": "",
+        "publico": "",
+        "botao_texto": "VER GALERIA COMPLETA",
+        "botao_link": "#"
+      },
+      {
+        "foto": "",
+        "zoom": 100,
+        "selo": "",
+        "badge": "ENCONTRO #31",
+        "titulo": "Café com Propósito",
+        "data": "Negócios que geram impacto",
+        "local": "",
+        "publico": "",
+        "botao_texto": "VER GALERIA COMPLETA",
+        "botao_link": "#"
+      }
+    ],
+    "galeria": {
+      "fotos": [],
+      "titulo": "+150 FOTOS",
+      "subtitulo": "em nossa galeria",
+      "botao_texto": "VER TODAS",
+      "botao_link": "#"
+    },
+    "botao_texto": "VER TODOS OS ENCONTROS",
     "botao_link": "#"
   },
   "diretoria": {
@@ -104,13 +167,21 @@
         "nome": "JOCIMAR LIRA",
         "cargo": "DIRETOR",
         "foto": "/uploads/img_1782785131713_214203.jpeg",
-        "zoom": "172"
+        "zoom": "132",
+        "descricao": "Fundador da Magston Imobiliária, Jocimar Lira construiu sua trajetória com base na ética, excelência e valorização das pessoas. Como diretor do EDR Toledo, dedica-se a fortalecer conexões entre empresários, promovendo uma liderança guiada por princípios e negócios que geram impacto positivo na comunidade.",
+        "email": "",
+        "linkedin": "https://www.linkedin.com/in/jocimarlira/",
+        "instagram": "https://www.instagram.com/jocimarlira_imoveis/"
       },
       {
         "nome": "NOME",
         "cargo": "CARGO",
         "foto": "",
-        "zoom": 100
+        "zoom": 100,
+        "descricao": "",
+        "email": "",
+        "linkedin": "",
+        "instagram": ""
       }
     ],
     "botao_texto": "CONHEÇA NOSSA DIRETORIA",
@@ -132,11 +203,11 @@
       },
       {
         "nome": "Edilu",
-        "logo": "/uploads/img_1785256298271_844213.png",
+        "logo": "/uploads/img_1785275242401_363571.png",
         "link": "https://www.instagram.com/edilulingerie?igsh=ZnRxbXJ3Y3hrN2k1",
         "segmento": "",
         "descricao": "",
-        "zoom": 108
+        "zoom": "137"
       },
       {
         "nome": "Ultragaz",
