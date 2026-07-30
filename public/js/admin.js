@@ -383,6 +383,17 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  /**
+   * Redesenha a aba atual sem sair do lugar. Enviar uma foto, adicionar ou
+   * remover um item reconstroi o painel inteiro; sem guardar a rolagem, a
+   * pagina saltava para o topo a cada acao.
+   */
+  function redesenha() {
+    var y = window.scrollY;
+    main.innerHTML = (builders[currentTab] || function () { return ''; })();
+    window.scrollTo(0, y);
+  }
+
   /* ----------------------------------------------------- add templates - */
   function makeNew(arrPath) {
     switch (arrPath) {
@@ -429,7 +440,7 @@
     if (el.dataset && el.dataset.upload && el.files && el.files[0]) {
       var path = el.dataset.upload;
       uploadFile(el.files[0]).then(function (j) {
-        setByPath(data, path, j.url); showTab(currentTab); toast('Imagem enviada.');
+        setByPath(data, path, j.url); redesenha(); toast('Imagem enviada.');
       }).catch(function (err) { toast(err.message, 'err'); });
     }
 
@@ -442,7 +453,7 @@
       Promise.all(files.map(function (f) { return uploadFile(f); }))
         .then(function (results) {
           results.forEach(function (j) { arr.push(j.url); });
-          setByPath(data, arrPath, arr); showTab(currentTab); toast('Foto(s) adicionada(s).');
+          setByPath(data, arrPath, arr); redesenha(); toast('Foto(s) adicionada(s).');
         }).catch(function (err) { toast(err.message, 'err'); });
     }
   });
@@ -460,18 +471,18 @@
       var inp = document.getElementById(btn.dataset.target);
       if (inp) inp.click();
     } else if (action === 'clear') {
-      setByPath(data, btn.dataset.path, ''); showTab(currentTab);
+      setByPath(data, btn.dataset.path, ''); redesenha();
     } else if (action === 'add') {
       var arrP = btn.dataset.arr;
       var arr = getByPath(data, arrP) || [];
       arr.push(makeNew(arrP));
-      setByPath(data, arrP, arr); showTab(currentTab);
+      setByPath(data, arrP, arr); redesenha();
     } else if (action === 'remove') {
       var ap = btn.dataset.arr;
       var idx = parseInt(btn.dataset.index, 10);
       var a = getByPath(data, ap) || [];
       a.splice(idx, 1);
-      setByPath(data, ap, a); showTab(currentTab);
+      setByPath(data, ap, a); redesenha();
     }
   });
 

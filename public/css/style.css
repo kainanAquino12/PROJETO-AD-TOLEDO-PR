@@ -273,21 +273,82 @@ a { color: inherit; text-decoration: none; }
 /* ====================================================== ENCONTROS ======== */
 /* padding-top maior porque o card da Palavra Pastoral invade essa seção */
 .encontros { padding: 96px 0 68px; background: var(--cream-soft); }
-.ecrest { display: grid; place-items: center; margin-bottom: 16px; }
-.ecrest .icon { width: 36px; height: 36px; color: var(--gold); }
-.esub {
-  text-align: center; color: var(--muted); max-width: 44em;
-  margin: -18px auto 36px; font-size: 1.02rem;
+/* coluna de texto à esquerda + mosaico de fotos à direita */
+.elayout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 38px; align-items: start; }
+
+.eside { display: flex; flex-direction: column; align-items: flex-start; }
+.ecrest .icon { width: 34px; height: 34px; color: var(--gold); }
+.etitle {
+  font-family: var(--font-serif); font-weight: 500; color: var(--navy);
+  text-transform: uppercase; font-size: clamp(1.7rem, 2.5vw, 2.4rem);
+  line-height: 1.12; letter-spacing: .5px; margin-top: 18px;
 }
+.etitle__bar { display: block; width: 62px; height: 3px; background: var(--gold); margin-top: 20px; }
+.esub { color: var(--muted); font-size: .95rem; line-height: 1.6; margin-top: 20px; }
+.eside__btn { margin-top: 26px; }
+
+/* bloco contador: claro na coluna lateral, escuro dentro do mosaico */
+.econta__icone { width: 38px; height: 38px; color: var(--gold); flex: none; }
+.econta__total {
+  display: block; font-family: var(--font-display); font-weight: 800;
+  color: var(--navy); font-size: 1.06rem; letter-spacing: .4px;
+}
+.econta__sub { display: block; color: var(--muted); font-size: .85rem; margin-top: 2px; }
+
+.econta--claro {
+  margin-top: 26px; width: 100%;
+  border: 1px solid var(--cream-line); border-radius: 14px;
+  background: rgba(255, 255, 255, .55); padding: 22px 20px 22px;
+}
+.econta--claro .econta__topo { display: flex; align-items: center; gap: 14px; }
+.econta--claro .econta__btn { margin-top: 18px; width: 100%; justify-content: center; padding: 11px 16px; font-size: .72rem; }
+
+
+/* mosaico: destaque ocupa 3 colunas x 2 linhas; o resto se acomoda sozinho */
+.emosaico { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.emosaico > .ehero { grid-column: 1 / 4; grid-row: 1 / 3; }
+.emosaico--solo { grid-template-columns: 1fr; }
+.emosaico--solo > .ehero { grid-column: 1 / -1; grid-row: auto; min-height: 520px; }
+
 
 /* ---- destaque grande, um encontro por vez ---- */
 .ehero {
-  position: relative; overflow: hidden; border-radius: 18px;
+  position: relative; overflow: hidden; border-radius: 16px;
   background: linear-gradient(140deg, var(--navy), var(--navy-deep));
-  box-shadow: var(--shadow); margin-bottom: 22px;
+  box-shadow: var(--shadow); min-height: 430px;
 }
-.eslide { display: none; position: relative; min-height: 392px; }
-.eslide.is-active { display: block; }
+/* Slides empilhados no mesmo lugar: a altura do card nao muda ao trocar de
+   encontro (era isso que fazia a foto "pular") e da para cruzar um no outro. */
+.eslide {
+  position: absolute; inset: 0;
+  opacity: 0; visibility: hidden;
+  transition: opacity .5s ease, visibility 0s linear .5s;
+}
+.eslide.is-active {
+  opacity: 1; visibility: visible;
+  transition: opacity .5s ease, visibility 0s;
+  z-index: 1;
+}
+/* o conteudo entra um instante depois da foto, para nao parecer seco */
+/* 'backwards' e nao 'both': terminada a animacao o elemento volta a obedecer
+   o CSS normal, senao o transform congelado mataria o hover do botao */
+.eslide.is-active .eslide__body > * { animation: subirEntrando .5s ease backwards; }
+.eslide.is-active .eslide__badge { animation-delay: .05s; }
+.eslide.is-active .eslide__title { animation-delay: .1s; }
+.eslide.is-active .eslide__rule { animation-delay: .15s; }
+.eslide.is-active .eslide__meta { animation-delay: .2s; }
+.eslide.is-active .eslide__btn { animation-delay: .25s; }
+
+@keyframes subirEntrando {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes surgir { from { opacity: 0; } to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .eslide, .eslide.is-active .eslide__body > *,
+  .dmember.is-active, .dmember.is-next { animation: none; transition: none; }
+}
 .eslide__img {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
   /* --zoom vem do painel (Encontros → Zoom da foto) */
@@ -336,27 +397,15 @@ a { color: inherit; text-decoration: none; }
 .enav__btn--on { background: var(--gold); border-color: var(--gold); color: #fff; }
 .enav__btn:hover { background: var(--gold); border-color: var(--gold); color: #fff; }
 
-/* ---- faixa de miniaturas + bloco contador ---- */
-.estrip { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 40px; }
+/* ---- miniaturas do mosaico ---- */
 .ethumb {
-  position: relative; overflow: hidden; border-radius: 12px; aspect-ratio: 1 / 1;
+  position: relative; overflow: hidden; border-radius: 12px; aspect-ratio: 4 / 3;
   background: linear-gradient(150deg, var(--navy), var(--navy-deep));
   box-shadow: var(--shadow-soft); transition: transform .3s ease, box-shadow .3s ease;
 }
 a.ethumb:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
 .ethumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; }
 a.ethumb:hover img { transform: scale(1.07); }
-.ethumb--conta {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; padding: 18px 14px; gap: 2px;
-}
-.ethumb__icon { width: 38px; height: 38px; color: var(--gold); margin-bottom: 10px; }
-.ethumb__total {
-  font-family: var(--font-display); font-weight: 800; color: #fff;
-  font-size: 1.05rem; letter-spacing: .5px;
-}
-.ethumb__sub { color: #b6c2d0; font-size: .82rem; }
-.ethumb__btn { margin-top: 14px; padding: 9px 18px; font-size: .72rem; }
 
 /* ====================================================== BOTÕES =========== */
 .btn {
@@ -379,12 +428,12 @@ a.ethumb:hover img { transform: scale(1.07); }
 .btn--icon:hover .btn__arrow { transform: translateX(5px); }
 
 /* ====================================================== DUAL (DIRETORIA + PARCEIRAS) */
-.dual { padding: 66px 0; }
+.dual { padding: 46px 0 50px; }
 .dual__grid { display: grid; grid-template-columns: 1.45fr 1fr; gap: 28px; align-items: stretch; }
 
 .board {
   background: var(--cream); border: 1px solid var(--cream-line);
-  border-radius: 18px; padding: 46px 40px 42px; position: relative;
+  border-radius: 18px; padding: 30px 24px 26px; position: relative;
   box-shadow: var(--shadow-soft);
 }
 .board::before {
@@ -392,9 +441,9 @@ a.ethumb:hover img { transform: scale(1.07); }
   border-radius: 12px; pointer-events: none;
 }
 /* brasão: coroa entre dois filetes, acima do título */
-.board__crest { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 20px; }
-.board__crest span { width: 46px; height: 1px; background: var(--gold); }
-.board__crest .icon { width: 30px; height: 30px; color: var(--gold); }
+.board__crest { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px; }
+.board__crest span { width: 40px; height: 1px; background: var(--gold); }
+.board__crest .icon { width: 26px; height: 26px; color: var(--gold); }
 .board__sub {
   text-align: center; color: var(--muted); max-width: 40em;
   margin: -18px auto 34px; font-size: 1rem;
@@ -404,12 +453,17 @@ a.ethumb:hover img { transform: scale(1.07); }
    As larguras abaixo estão calibradas para a coluna de texto do destaque
    ficar em ~434px dentro do board de 1200px. Mexer numa exige refazer a
    conta das outras, senão a descrição volta a quebrar em muitas linhas. */
-.dcarousel { position: relative; padding: 0 58px; margin-bottom: 34px; }
-.dtrack { display: flex; align-items: stretch; gap: 36px; }
+.dcarousel { position: relative; padding: 0 38px; margin-bottom: 22px; }
+.dtrack {
+  display: flex; align-items: stretch; gap: 24px;
+  transition: opacity .22s ease, transform .22s ease;
+}
+/* etapa de saída, antes de trocar o membro em destaque */
+.dtrack.is-saindo { opacity: 0; transform: translateY(10px); }
 
 .dnav {
   position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
-  width: 46px; height: 46px; border: 0; border-radius: 50%; cursor: pointer;
+  width: 38px; height: 38px; border: 0; border-radius: 50%; cursor: pointer;
   background: #fff; color: var(--navy); display: grid; place-items: center;
   box-shadow: 0 6px 18px -6px rgba(14, 34, 56, .38);
   transition: background .2s ease, color .2s ease, box-shadow .2s ease;
@@ -420,12 +474,20 @@ a.ethumb:hover img { transform: scale(1.07); }
 .dnav--prev .icon { transform: scaleX(-1); }
 .dnav--next { right: 0; }
 
-/* fora do slot ativo e do próximo, o membro não aparece */
+/* fora do slot ativo e do próximo, o membro não aparece.
+   Sem 'both' no fill: acabada a animação o hover volta a mandar no transform. */
 .dmember { display: none; }
+.dmember.is-active { animation: entrarDiretor .5s cubic-bezier(.22, .7, .3, 1); }
+.dmember.is-next { animation: surgir .5s ease .08s backwards; }
+
+@keyframes entrarDiretor {
+  from { opacity: 0; transform: translateY(16px) scale(.985); }
+  to { opacity: 1; transform: none; }
+}
 
 /* ---- membro em destaque ---- */
 .dmember.is-active {
-  display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 34px;
+  display: grid; grid-template-columns: 155px minmax(0, 1fr); gap: 24px;
   align-items: center; flex: 1 1 auto;
 }
 .dmember__photo { position: relative; }
@@ -443,38 +505,38 @@ a.ethumb:hover img { transform: scale(1.07); }
 .dmember__ph { width: 64px; height: 64px; color: rgba(196, 154, 78, .5); }
 .dmember__crown {
   position: absolute; top: -11px; right: -11px;
-  width: 52px; height: 52px; border-radius: 50%; background: var(--gold);
+  width: 42px; height: 42px; border-radius: 50%; background: var(--gold);
   display: grid; place-items: center; color: #fff;
   box-shadow: 0 8px 18px -6px rgba(14, 34, 56, .45);
 }
-.dmember__crown .icon { width: 25px; height: 25px; }
+.dmember__crown .icon { width: 20px; height: 20px; }
 
 .dmember__role {
   display: block; font-family: var(--font-display); font-weight: 700; color: var(--gold-dark);
-  text-transform: uppercase; letter-spacing: 2px; font-size: .8rem;
+  text-transform: uppercase; letter-spacing: 2px; font-size: .76rem;
 }
 .dmember__name {
   font-family: var(--font-display); font-weight: 800; color: var(--navy);
-  font-size: clamp(1.4rem, 2.1vw, 1.85rem); letter-spacing: .5px;
+  font-size: clamp(1.2rem, 1.6vw, 1.45rem); letter-spacing: .5px;
   line-height: 1.15; margin-top: 7px;
 }
-.dmember__rule { display: block; width: 68px; height: 2px; background: var(--gold); margin: 16px 0 18px; }
-.dmember__bio { color: #5c6470; font-size: .95rem; line-height: 1.58; max-width: 32em; }
-.dmember__social { display: flex; gap: 12px; margin-top: 22px; }
+.dmember__rule { display: block; width: 54px; height: 2px; background: var(--gold); margin: 12px 0 14px; }
+.dmember__bio { color: #5c6470; font-size: .88rem; line-height: 1.5; max-width: 32em; }
+.dmember__social { display: flex; gap: 10px; margin-top: 15px; }
 .dsocial {
-  width: 40px; height: 40px; border-radius: 50%; flex: none;
+  width: 35px; height: 35px; border-radius: 50%; flex: none;
   border: 1.5px solid var(--gold); color: var(--gold-dark);
   display: grid; place-items: center;
   transition: background .2s ease, color .2s ease, transform .2s ease;
 }
 .dsocial:hover { background: var(--gold); color: #fff; transform: translateY(-3px); }
-.dsocial .icon { width: 19px; height: 19px; }
+.dsocial .icon { width: 17px; height: 17px; }
 
 /* ---- membro seguinte, em card compacto ---- */
 .dmember.is-next {
-  position: relative; flex: 0 0 260px; cursor: pointer;
+  position: relative; flex: 0 0 185px; cursor: pointer;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; padding: 30px 24px 28px;
+  text-align: center; padding: 20px 16px 18px;
   border: 1px solid rgba(217, 205, 182, .9); border-radius: 16px;
   background: rgba(255, 255, 255, .38);
   transition: background .25s ease, border-color .25s ease, transform .25s ease;
@@ -485,7 +547,7 @@ a.ethumb:hover img { transform: scale(1.07); }
   content: ''; position: absolute; left: -18px; top: 8px; bottom: 8px;
   width: 1px; background: rgba(217, 205, 182, .95);
 }
-.dmember.is-next .dmember__photo { width: 158px; margin-bottom: 18px; }
+.dmember.is-next .dmember__photo { width: 112px; margin-bottom: 12px; }
 .dmember.is-next .dmember__frame {
   aspect-ratio: 1 / 1; border-radius: 50%; border: 0;
   box-shadow: 0 0 0 6px #fff, 0 12px 26px -12px rgba(14, 34, 56, .4);
@@ -528,11 +590,22 @@ a.ethumb:hover img { transform: scale(1.07); }
 .partners__name { display: block; line-height: 1.25; letter-spacing: .3px; }
 
 /* ============================ EMPRESAS PARCEIRAS (cards na home) ======== */
-.board--solo { max-width: 1200px; margin-left: auto; margin-right: auto; }
+.board--solo { max-width: 920px; margin-left: auto; margin-right: auto; }
 
-.partners-section { padding: 6px 0 78px; }
+/* seção com fundo proprio: separa da diretoria e da mais peso as empresas */
+.partners-section {
+  padding: 80px 0 92px; background: var(--cream-soft);
+  border-top: 1px solid rgba(217, 205, 182, .7);
+  border-bottom: 1px solid rgba(217, 205, 182, .7);
+}
+.pcrest { display: grid; place-items: center; margin-bottom: 18px; }
+.pcrest .icon { width: 44px; height: 44px; color: var(--gold); }
+/* título maior que o das outras seções: as parceiras são foco */
+.partners-section .section-title { font-size: clamp(1.5rem, 3vw, 2.1rem); }
+.partners-section .section-title__bar { width: 76px; }
 .partners-section__text {
-  text-align: center; color: var(--muted); max-width: 46em; margin: -20px auto 42px;
+  text-align: center; color: var(--muted); max-width: 46em; margin: -20px auto 44px;
+  font-size: 1.04rem;
 }
 .pgrid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px;
@@ -540,14 +613,17 @@ a.ethumb:hover img { transform: scale(1.07); }
 .pcard {
   display: flex; flex-direction: column; background: #fff;
   border: 1px solid var(--cream-line); border-radius: 16px; overflow: hidden;
-  box-shadow: var(--shadow-soft); transition: transform .25s ease, box-shadow .25s ease;
+  box-shadow: 0 14px 34px -20px rgba(14, 34, 56, .42);
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
-a.pcard:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
+a.pcard:hover {
+  transform: translateY(-8px); box-shadow: var(--shadow); border-color: var(--gold);
+}
 .pcard--nolink { cursor: default; }
 .pcard__logo {
   background: #fff;
-  min-height: 200px; display: grid; place-items: center;
-  padding: 20px; overflow: hidden;
+  min-height: 280px; display: grid; place-items: center;
+  padding: 26px 24px; overflow: hidden;
   /* cresce até a altura do card para a logo ficar sempre no meio,
      independente da proporção do arquivo que for enviado */
   flex: 1 1 auto;
@@ -580,13 +656,14 @@ a.pcard:hover .pcard__logo img { transform: scale(calc(var(--zoom, 1.08) * 1.06)
 }
 .pcard__desc { color: var(--muted); font-size: .92rem; margin-top: 14px; }
 .pcard__cta {
-  display: flex; align-items: center; gap: 6px; margin-top: auto;
-  padding: 16px 24px; color: var(--gold-dark);
-  font-family: var(--font-display); font-weight: 700; font-size: .8rem;
+  display: flex; align-items: center; gap: 7px; margin-top: auto;
+  padding: 17px 24px; color: var(--gold-dark);
+  font-family: var(--font-display); font-weight: 700; font-size: .82rem;
   text-transform: uppercase; letter-spacing: 1px;
-  border-top: 1px solid var(--cream-line); transition: color .2s ease, gap .2s ease;
+  border-top: 1px solid var(--cream-line);
+  transition: color .2s ease, gap .2s ease, background .2s ease;
 }
-a.pcard:hover .pcard__cta { color: var(--navy); gap: 12px; }
+a.pcard:hover .pcard__cta { color: var(--navy); gap: 13px; background: rgba(196, 154, 78, .08); }
 .ppage-empty { text-align: center; color: var(--muted); padding: 50px 0; font-size: 1.05rem; }
 
 /* ====================================================== PILARES ========== */
@@ -662,7 +739,14 @@ a.pcard:hover .pcard__cta { color: var(--navy); gap: 12px; }
   .hero__left { background: #f8f6f2; border-bottom: 5px solid var(--gold); padding: 48px 4% 46px; }
   .hero__right { padding: 46px 4% 52px; }
   .dual__grid { grid-template-columns: 1fr; }
-  .estrip { grid-template-columns: repeat(3, 1fr); }
+  /* coluna lateral vira faixa acima do mosaico */
+  .elayout { grid-template-columns: 1fr; gap: 30px; }
+  .eside { align-items: center; text-align: center; }
+  .etitle__bar { margin-left: auto; margin-right: auto; }
+  .esub { max-width: 40em; }
+  .econta--claro { max-width: 420px; }
+  .emosaico { grid-template-columns: repeat(2, 1fr); }
+  .emosaico > .ehero { grid-column: 1 / 3; grid-row: auto; }
   .eslide__body { max-width: none; padding: 34px 30px 88px; }
   .eslide::after {
     background: linear-gradient(120deg,
@@ -710,8 +794,7 @@ a.pcard:hover .pcard__cta { color: var(--navy); gap: 12px; }
 }
 
 @media (max-width: 480px) {
-  .estrip { grid-template-columns: repeat(2, 1fr); }
-  .eslide { min-height: 340px; }
+  .ehero { min-height: 340px; }
   .eslide__body { padding: 28px 22px 82px; }
   .enav__btn { width: 42px; height: 42px; }
   .pilares__grid { grid-template-columns: 1fr; }

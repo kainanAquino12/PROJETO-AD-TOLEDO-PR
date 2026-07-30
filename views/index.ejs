@@ -156,19 +156,50 @@
 
   <!-- ====================== ENCONTROS ====================== -->
   <section class="encontros" id="encontros">
-    <div class="container">
-      <div class="ecrest" aria-hidden="true"><%- include('partials/icon', { name: 'camera' }) %></div>
-      <h2 class="section-title section-title--center"><%= c.encontros.titulo %><span class="section-title__bar"></span></h2>
-      <% if (c.encontros.subtitulo) { %>
-        <p class="esub"><%= c.encontros.subtitulo %></p>
-      <% } %>
+    <%
+      var g = c.encontros.galeria || {};
+      var tiras = (g.fotos || []).slice(0, 5);
+      var temContador = g.titulo || g.subtitulo || g.botao_texto;
+      var cards = (c.encontros.cards && c.encontros.cards.length) ? c.encontros.cards : [{}];
+    %>
+    <div class="container elayout">
 
-      <% var cards = (c.encontros.cards && c.encontros.cards.length) ? c.encontros.cards : [{}]; %>
+      <!-- coluna da esquerda -->
+      <aside class="eside">
+        <div class="ecrest" aria-hidden="true"><%- include('partials/icon', { name: 'camera' }) %></div>
+        <h2 class="etitle"><%= c.encontros.titulo %><span class="etitle__bar"></span></h2>
+        <% if (c.encontros.subtitulo) { %>
+          <p class="esub"><%= c.encontros.subtitulo %></p>
+        <% } %>
+
+        <% if (c.encontros.botao_texto) { %>
+          <a href="<%= c.encontros.botao_link || '#' %>" class="btn btn--navy btn--icon eside__btn"><%= c.encontros.botao_texto %><%- include('partials/icon', { name: 'arrow', cls: 'btn__arrow' }) %></a>
+        <% } %>
+
+        <% if (temContador) { %>
+          <div class="econta econta--claro">
+            <div class="econta__topo">
+              <%- include('partials/icon', { name: 'photos', cls: 'econta__icone' }) %>
+              <div>
+                <% if (g.titulo) { %><strong class="econta__total"><%= g.titulo %></strong><% } %>
+                <% if (g.subtitulo) { %><span class="econta__sub"><%= g.subtitulo %></span><% } %>
+              </div>
+            </div>
+            <% if (g.botao_texto) { %>
+              <a href="<%= g.botao_link || '#' %>" class="btn btn--outline btn--icon econta__btn"><%= g.botao_texto %><%- include('partials/icon', { name: 'arrow', cls: 'btn__arrow' }) %></a>
+            <% } %>
+          </div>
+        <% } %>
+      </aside>
+
+      <!-- mosaico: sem miniaturas cadastradas o destaque ocupa a largura toda -->
+      <div class="emosaico<%= tiras.length ? '' : ' emosaico--solo' %>">
       <div class="ehero" id="encontrosCarousel">
         <% cards.forEach(function(card, i){ %>
           <article class="eslide<%= i === 0 ? ' is-active' : '' %>">
             <% if (card.foto) { %>
-              <img class="eslide__img" src="<%= card.foto %>" alt="<%= card.titulo || 'Foto do encontro' %>" loading="lazy"
+              <img class="eslide__img" src="<%= card.foto %>" alt="<%= card.titulo || 'Foto do encontro' %>"
+                   loading="<%= i === 0 ? 'eager' : 'lazy' %>" decoding="async"
                    style="--zoom: <%= (Number(card.zoom) || 100) / 100 %>" />
             <% } %>
 
@@ -199,34 +230,13 @@
         </div>
       </div>
 
-      <% var g = c.encontros.galeria || {};
-         var tiras = (g.fotos || []).slice(0, 5);
-         var temTile = g.titulo || g.subtitulo || g.botao_texto; %>
-      <% if (tiras.length || temTile) { %>
-        <div class="estrip">
-          <% tiras.forEach(function(foto){ %>
-            <a href="<%= foto %>" class="ethumb" data-lightbox>
-              <img src="<%= foto %>" alt="Foto do encontro" loading="lazy" />
-            </a>
-          <% }); %>
-          <% if (temTile) { %>
-            <div class="ethumb ethumb--conta">
-              <%- include('partials/icon', { name: 'photos', cls: 'ethumb__icon' }) %>
-              <% if (g.titulo) { %><strong class="ethumb__total"><%= g.titulo %></strong><% } %>
-              <% if (g.subtitulo) { %><span class="ethumb__sub"><%= g.subtitulo %></span><% } %>
-              <% if (g.botao_texto) { %>
-                <a href="<%= g.botao_link || '#' %>" class="btn btn--gold ethumb__btn"><%= g.botao_texto %></a>
-              <% } %>
-            </div>
-          <% } %>
-        </div>
-      <% } %>
-
-      <% if (c.encontros.botao_texto) { %>
-        <div class="center">
-          <a href="<%= c.encontros.botao_link || '#' %>" class="btn btn--outline btn--icon"><%= c.encontros.botao_texto %><%- include('partials/icon', { name: 'arrow', cls: 'btn__arrow' }) %></a>
-        </div>
-      <% } %>
+        <%- /* só fotos aqui: o contador e o botão da seção ficam na coluna da esquerda */ '' %>
+        <% tiras.forEach(function(foto){ %>
+          <a href="<%= foto %>" class="ethumb" data-lightbox>
+            <img src="<%= foto %>" alt="Foto do encontro" loading="lazy" />
+          </a>
+        <% }); %>
+      </div>
     </div>
   </section>
 
@@ -298,6 +308,7 @@
   <!-- ====================== EMPRESAS PARCEIRAS ====================== -->
   <section class="partners-section" id="parceiras">
     <div class="container">
+      <div class="pcrest" aria-hidden="true"><%- include('partials/icon', { name: 'handshake' }) %></div>
       <h2 class="section-title section-title--center"><%= c.parceiras.titulo %><span class="section-title__bar"></span></h2>
       <% if (c.parceiras.texto) { %>
         <p class="partners-section__text"><%= c.parceiras.texto %></p>
