@@ -136,14 +136,92 @@ const upload = multer({
 });
 
 // ----------------------------------------------------------------------------
+// Versoes reduzidas das imagens (srcset)
+// ----------------------------------------------------------------------------
+// Uma foto de 1555px encolhida pelo navegador para uma coluna de 310px perde
+// quase todo o detalhe, porque a reducao do navegador amostra poucos pixels.
+// Entregando o arquivo ja no tamanho de exibicao, a imagem fica igual em
+// qualquer tela -- e o navegador ainda sobe de variante sozinho quando o
+// usuario da zoom.
+const cacheSrcset = new Map();
+
+function srcsetDe(url) {
+  if (!url || typeof url !== 'string' || !url.startsWith('/uploads/')) return '';
+  if (cacheSrcset.has(url)) return cacheSrcset.get(url);
+
+  const nome = path.basename(url);
+  const original = path.join(UPLOAD_DIR, nome);
+  const itens = [];
+
+  for (const largura of png.LARGURAS_VARIANTE) {
+    const variante = png.nomeVariante(nome, largura);
+    if (fs.existsSync(path.join(UPLOAD_DIR, variante))) {
+      itens.push('/uploads/' + variante + ' ' + largura + 'w');
+    }
+  }
+
+  // sem variantes (JPG, ou PNG que o decodificador nao cobre) o <img> continua
+  // usando so o src normal
+  let saida = '';
+  if (itens.length) {
+    const dim = png.dimensoesArquivo(original);
+    if (dim) itens.push(url + ' ' + dim.w + 'w');
+    saida = itens.join(', ');
+  }
+
+  cacheSrcset.set(url, saida);
+  return saida;
+}
+
+/* true quando o PNG e grande o bastante para valer variantes e ainda nao tem */
+function precisaVariantes(nome) {
+  if (!/\.png$/i.test(nome) || /-\d+w\.png$/i.test(nome)) return false;  // pula as proprias variantes
+  const dim = png.dimensoesArquivo(path.join(UPLOAD_DIR, nome));
+  if (!dim) return false;
+  const alvos = png.LARGURAS_VARIANTE.filter((l) => l < dim.w);
+  if (!alvos.length) return false;                                       // ja e pequena
+  return !fs.existsSync(path.join(UPLOAD_DIR, png.nomeVariante(nome, alvos[0])));
+}
+
+/**
+ * Cria as variantes das imagens que ja estavam na pasta antes desta mudanca
+ * (e das que vierem junto com o disco persistente no deploy). Roda espacado,
+ * fora do caminho critico: o site ja responde enquanto isso acontece.
+ */
+function backfillVariantes() {
+  let pendentes;
+  try {
+    pendentes = fs.readdirSync(UPLOAD_DIR).filter(precisaVariantes);
+  } catch (e) {
+    return;
+  }
+  if (!pendentes.length) return;
+
+  console.log('  gerando versoes reduzidas de ' + pendentes.length + ' imagem(ns) ja existentes...');
+  let i = 0;
+  (function proxima() {
+    if (i >= pendentes.length) return;
+    const nome = pendentes[i++];
+    const feitas = png.gerarVariantes(path.join(UPLOAD_DIR, nome));
+    if (feitas.length) {
+      cacheSrcset.delete('/uploads/' + nome);
+      console.log('    ' + nome + ' -> ' + feitas.join('w, ') + 'w');
+    }
+    setTimeout(proxima, 50);
+  })();
+}
+
+// ----------------------------------------------------------------------------
 // App config
 // ----------------------------------------------------------------------------
 ensureDirs();
 semearDisco(); // popula o disco persistente no primeiro deploy
 readAdmin();   // garante criacao do admin.json na primeira execucao
+backfillVariantes(); // versoes reduzidas das imagens antigas, em segundo plano
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.locals.srcset = srcsetDe;
 
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -227,8 +305,16 @@ app.post('/api/upload', requireAuth, upload.single('imagem'), (req, res) => {
       console.log('  imagem tratada: ' + req.file.filename +
         ' (contaminacao ' + r.contaminacao + ', ' + r.bordas + ' bordas, ' + r.pintados + ' px preenchidos)');
     }
+
+    // versoes reduzidas para o srcset, para o navegador nunca precisar
+    // encolher o arquivo cheio na tela -- ver srcsetDe()
+    const variantes = png.gerarVariantes(req.file.path);
+    if (variantes.length) {
+      console.log('  variantes geradas: ' + variantes.join('w, ') + 'w');
+    }
   }
 
+  cacheSrcset.delete('/uploads/' + req.file.filename);
   res.json({ url: '/uploads/' + req.file.filename });
 });
 
