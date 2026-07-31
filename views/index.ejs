@@ -122,9 +122,20 @@
           <%- include('partials/icon', { name: 'crown', cls: 'pastoral__watermark' }) %>
 
           <% if (c.hero.pastoral_foto) { %>
+            <%
+              var pfZoom = (Number(c.hero.pastoral_foto_zoom) || 100) / 100;
+              var pfSrcset = srcset(c.hero.pastoral_foto);
+              /* a foto ocupa a coluna de 310px do card e, abaixo de 980px, a
+                 largura toda do container (92vw). O zoom e um scale() por cima
+                 disso, entao multiplica o tamanho que o navegador precisa. */
+              var pfSizes = '(max-width: 980px) ' + Math.round(92 * pfZoom) + 'vw, '
+                          + Math.round(310 * pfZoom) + 'px';
+            %>
             <div class="pastoral__photo">
-              <img src="<%= c.hero.pastoral_foto %>" alt="<%= c.hero.pastoral_autor || c.hero.pastoral_titulo %>"
-                   style="--zoom: <%= (Number(c.hero.pastoral_foto_zoom) || 100) / 100 %>" />
+              <img src="<%= c.hero.pastoral_foto %>"
+                   <% if (pfSrcset) { %>srcset="<%= pfSrcset %>" sizes="<%= pfSizes %>"<% } %>
+                   alt="<%= c.hero.pastoral_autor || c.hero.pastoral_titulo %>"
+                   <% if (pfZoom !== 1) { %>class="is-zoomed" style="--zoom: <%= pfZoom %>"<% } %> />
             </div>
           <% } %>
 
@@ -198,9 +209,11 @@
         <% cards.forEach(function(card, i){ %>
           <article class="eslide<%= i === 0 ? ' is-active' : '' %>">
             <% if (card.foto) { %>
+              <% var cZoom = (Number(card.zoom) || 100) / 100, cSrcset = srcset(card.foto); %>
               <img class="eslide__img" src="<%= card.foto %>" alt="<%= card.titulo || 'Foto do encontro' %>"
                    loading="<%= i === 0 ? 'eager' : 'lazy' %>" decoding="async"
-                   style="--zoom: <%= (Number(card.zoom) || 100) / 100 %>" />
+                   <% if (cSrcset) { %>srcset="<%= cSrcset %>" sizes="<%= Math.round(92 * cZoom) %>vw"<% } %>
+                   style="--zoom: <%= cZoom %>" />
             <% } %>
 
             <div class="eslide__body">
@@ -233,7 +246,10 @@
         <%- /* só fotos aqui: o contador e o botão da seção ficam na coluna da esquerda */ '' %>
         <% tiras.forEach(function(foto){ %>
           <a href="<%= foto %>" class="ethumb" data-lightbox>
-            <img src="<%= foto %>" alt="Foto do encontro" loading="lazy" />
+            <% var tSrcset = srcset(foto); %>
+            <%- /* o href continua apontando para o arquivo cheio, que e o que o lightbox abre */ '' %>
+            <img src="<%= foto %>" alt="Foto do encontro" loading="lazy"
+                 <% if (tSrcset) { %>srcset="<%= tSrcset %>" sizes="(max-width: 560px) 92vw, 300px"<% } %> />
           </a>
         <% }); %>
       </div>
@@ -261,7 +277,11 @@
                 <div class="dmember__photo">
                   <div class="dmember__frame">
                     <% if (m.foto) { %>
-                      <img src="<%= m.foto %>" alt="<%= m.nome %>" style="--zoom: <%= (Number(m.zoom) || 100) / 100 %>" />
+                      <% var mZoom = (Number(m.zoom) || 100) / 100, mSrcset = srcset(m.foto); %>
+                      <img src="<%= m.foto %>" alt="<%= m.nome %>"
+                           <% if (mSrcset) { %>srcset="<%= mSrcset %>"
+                           sizes="(max-width: 980px) <%= Math.round(260 * mZoom) %>px, <%= Math.round(155 * mZoom) %>px"<% } %>
+                           style="--zoom: <%= mZoom %>" />
                     <% } else { %>
                       <%- include('partials/icon', { name: 'user', cls: 'dmember__ph' }) %>
                     <% } %>
@@ -322,7 +342,11 @@
             <a class="pcard<%= hasLink ? '' : ' pcard--nolink' %>"<% if (hasLink) { %> href="<%= p.link %>" target="_blank" rel="noopener"<% } %> title="<%= p.nome %>">
               <div class="pcard__logo">
                 <% if (p.logo) { %>
-                  <img src="<%= p.logo %>" alt="<%= p.nome %>" style="--zoom: <%= (Number(p.zoom) || 108) / 100 %>" />
+                  <% var pZoom = (Number(p.zoom) || 108) / 100, pSrcset = srcset(p.logo); %>
+                  <img src="<%= p.logo %>" alt="<%= p.nome %>"
+                       <% if (pSrcset) { %>srcset="<%= pSrcset %>"
+                       sizes="(max-width: 560px) <%= Math.round(92 * pZoom) %>vw, <%= Math.round(420 * pZoom) %>px"<% } %>
+                       style="--zoom: <%= pZoom %>" />
                 <% } else { %>
                   <span class="pcard__logo-fallback"><%= p.nome %></span>
                 <% } %>

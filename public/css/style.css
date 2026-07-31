@@ -227,6 +227,11 @@ a { color: inherit; text-decoration: none; }
 .pastoral__photo img {
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: cover; object-position: center 22%;
+}
+/* o scale() so entra quando o painel realmente pediu zoom: com zoom 100 um
+   scale(1) inutil ainda cria contexto de composicao e deixa a foto na mao da
+   rasterizacao da GPU */
+.pastoral__photo img.is-zoomed {
   transform: scale(var(--zoom, 1)); transform-origin: center 22%;
 }
 
