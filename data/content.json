@@ -70,7 +70,7 @@
     "pastoral_foto": "/uploads/img_1785435223001_2762.png",
     "pastoral_foto_zoom": "100",
     "pastoral_autor_cargo": "PASTOR PRESIDENTE ",
-    "pastoral_botao_texto": "LER MENSAGEM COMPLETA",
+    "pastoral_botao_texto": "",
     "pastoral_botao_link": "#"
   },
   "numeros": {
@@ -138,7 +138,7 @@
         "botao_link": "#"
       },
       {
-        "foto": "",
+        "foto": "/uploads/img_1785459326273_67413.jpeg",
         "zoom": 100,
         "selo": "",
         "badge": "",
@@ -154,7 +154,11 @@
       "fotos": [
         "/uploads/img_1785446342612_376371.jpeg",
         "/uploads/img_1785446347722_829006.jpeg",
-        "/uploads/img_1785446352474_500600.jpeg"
+        "/uploads/img_1785446352474_500600.jpeg",
+        "/uploads/img_1785459379062_820934.jpeg",
+        "/uploads/img_1785459392326_811676.jpeg",
+        "/uploads/img_1785459396092_847190.jpeg",
+        "/uploads/img_1785459399196_118039.jpeg"
       ],
       "titulo": "",
       "subtitulo": "",
@@ -188,7 +192,7 @@
         "instagram": ""
       }
     ],
-    "botao_texto": "CONHEÇA NOSSA DIRETORIA",
+    "botao_texto": "",
     "botao_link": "#"
   },
   "parceiras": {
@@ -259,7 +263,7 @@
   "footer": {
     "titulo": "EMPREENDEDORES DO REINO",
     "subtitulo": "3 ANOS CONECTANDO PROPÓSITOS E TRANSFORMANDO VIDAS.",
-    "instagram": "#",
+    "instagram": "https://www.instagram.com/edrtoledo/",
     "facebook": "#",
     "whatsapp": "#"
   }
