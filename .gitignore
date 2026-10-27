@@ -6,3 +6,6 @@ npm-debug.log*
 .DS_Store
 _preview.png
 .env*
+
+.vercel
+.env*
