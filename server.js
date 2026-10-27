@@ -63,9 +63,18 @@ function semearDisco() {
   }
 }
 
+// Blocos adicionados depois do primeiro deploy: o content.json do disco
+// persistente nao os tem, entao o site e o painel recebem valores vazios.
+function comPadroes(c) {
+  c.config = Object.assign({ whatsapp_grupo: '', logo_extra: '', logo_extra_nome: '', instagram_extra: '', instagram_extra_nome: '' }, c.config);
+  c.sobre = Object.assign({ titulo: 'SOBRE NÓS', intro: '', itens: [], insta_titulo: '', insta_texto: '', insta_botao: '' }, c.sobre);
+  if (c.encontros && !Array.isArray(c.encontros.albuns)) c.encontros.albuns = [];
+  return c;
+}
+
 function readContent() {
   try {
-    return JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf8'));
+    return comPadroes(JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf8')));
   } catch (e) {
     console.error('Erro ao ler content.json:', e.message);
     return {};
@@ -173,6 +182,44 @@ function srcsetDe(url) {
   return saida;
 }
 
+// ----------------------------------------------------------------------------
+// Texto longo do painel -> blocos prontos para o EJS
+// ----------------------------------------------------------------------------
+// A carta pastoral e digitada num textarea, entao chega aqui como texto corrido
+// com quebras de linha. Cada linha vira um bloco: linha comecando com marcador
+// (• - *) entra numa lista, linha aberta com aspas vira versiculo e o resto vira
+// paragrafo. Linhas em branco so separam -- nao geram bloco vazio.
+const RE_MARCADOR = /^(?:[•·◦]\s*|[*\-–—]\s+)/;
+const RE_VERSICULO = /^["“„«]/;
+
+function blocosDeTexto(texto) {
+  if (!texto || typeof texto !== 'string') return [];
+
+  const blocos = [];
+  let lista = null;
+
+  for (const bruta of texto.replace(/\r/g, '').split('\n')) {
+    const linha = bruta.replace(/^[\s ]+|[\s ]+$/g, '');
+    if (!linha) { lista = null; continue; }
+
+    if (RE_MARCADOR.test(linha)) {
+      const item = linha.replace(RE_MARCADOR, '').trim();
+      if (!item) continue;
+      if (!lista) { lista = { tipo: 'lista', itens: [] }; blocos.push(lista); }
+      lista.itens.push(item);
+      continue;
+    }
+
+    lista = null;
+    blocos.push({
+      tipo: RE_VERSICULO.test(linha) ? 'versiculo' : 'paragrafo',
+      texto: linha
+    });
+  }
+
+  return blocos;
+}
+
 /* true quando o PNG e grande o bastante para valer variantes e ainda nao tem */
 function precisaVariantes(nome) {
   if (!/\.png$/i.test(nome) || /-\d+w\.png$/i.test(nome)) return false;  // pula as proprias variantes
@@ -222,6 +269,7 @@ backfillVariantes(); // versoes reduzidas das imagens antigas, em segundo plano
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.locals.srcset = srcsetDe;
+app.locals.blocos = blocosDeTexto;
 
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -248,6 +296,10 @@ function requireAuth(req, res, next) {
 // ----------------------------------------------------------------------------
 app.get('/', (req, res) => {
   res.render('index', { c: readContent() });
+});
+
+app.get('/parceiras', (req, res) => {
+  res.render('parceiras', { c: readContent() });
 });
 
 // ----------------------------------------------------------------------------
@@ -303,7 +355,9 @@ app.post('/api/upload', requireAuth, upload.single('imagem'), (req, res) => {
     const r = png.limparArquivo(req.file.path);
     if (r) {
       console.log('  imagem tratada: ' + req.file.filename +
-        ' (contaminacao ' + r.contaminacao + ', ' + r.bordas + ' bordas, ' + r.pintados + ' px preenchidos)');
+        ' (contaminacao ' + r.contaminacao + ', ' + r.bordas + ' bordas, ' + r.pintados + ' px preenchidos' +
+        (r.recorte ? ', recortada de ' + r.recorte.antes.w + 'x' + r.recorte.antes.h +
+                     ' para ' + r.recorte.depois.w + 'x' + r.recorte.depois.h : '') + ')');
     }
 
     // versoes reduzidas para o srcset, para o navegador nunca precisar

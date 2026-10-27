@@ -12,7 +12,11 @@
     },
     {
       "label": "SOBRE NÓS",
-      "href": "#inicio"
+      "href": "#sobre"
+    },
+    {
+      "label": "EMPRESAS PARCEIRAS",
+      "href": "#parceiras"
     },
     {
       "label": "ENCONTROS",
@@ -21,10 +25,6 @@
     {
       "label": "DIRETORIA",
       "href": "#diretoria"
-    },
-    {
-      "label": "EMPRESAS PARCEIRAS",
-      "href": "#parceiras"
     },
     {
       "label": "CONTATO",
@@ -38,15 +38,49 @@
       "O Empreendedores do Reino (EDR) é um movimento cristão que reúne empresários e profissionais liberais com o propósito de conectar pessoas, fortalecer relacionamentos e promover crescimento pessoal, profissional e espiritual.",
       "Acreditamos que quando os negócios são conduzidos com princípios do Reino, transformamos ambientes, impactamos vidas e geramos um legado que honra a Deus."
     ],
-    "imagem": "/uploads/img_1785261203579_727284.webp",
+    "imagem": "/uploads/img_1785435802820_861978.jpeg",
     "imagem_legenda": "CONECTANDO PROPÓSITOS. GERANDO IMPACTO.",
     "pastoral_titulo": "PALAVRA PASTORAL",
     "pastoral_texto": "Empreender também é servir, transformar e gerar oportunidades para outras pessoas.",
+    "pastoral_saudacao": "Seja bem-vindo ao",
+    "pastoral_marca": "EMPREENDEDORES",
+    "pastoral_marca_destaque": "DO REINO",
+    "pastoral_carta": "O Empreendedores do Reino nasceu no coração de Deus com o propósito de fortalecer empresários, profissionais e empreendedores cristãos. Acreditamos que empreender é mais do que construir negócios: é servir pessoas, administrar talentos com sabedoria e glorificar a Deus por meio da excelência, da integridade e do propósito.\nNossa missão é incentivar uma geração de empreendedores comprometidos em honrar a Deus, abençoar famílias, impactar vidas e ser luz no mercado, caminhando sempre sob a direção do Espírito Santo.\nQue este projeto inspire crescimento, novas oportunidades e uma jornada de fé, liderança e perseverança.",
+    "pastoral_valores_titulo": "NOSSOS VALORES",
+    "pastoral_valores": [
+      {
+        "icone": "crown",
+        "titulo": "HONRAR A DEUS",
+        "texto": "Colocamos Deus em primeiro lugar em tudo o que fazemos."
+      },
+      {
+        "icone": "users",
+        "titulo": "ABENÇOAR FAMÍLIAS",
+        "texto": "Geramos impacto positivo e duradouro nas famílias."
+      },
+      {
+        "icone": "handshake",
+        "titulo": "SERVIR PESSOAS",
+        "texto": "Empreendemos para fazer a diferença na vida das pessoas."
+      },
+      {
+        "icone": "globe",
+        "titulo": "IMPACTAR VIDAS",
+        "texto": "Usamos nossos talentos para transformar realidades."
+      },
+      {
+        "icone": "briefcase",
+        "titulo": "EMPREENDER COM PROPÓSITO",
+        "texto": "Negócios com propósito são instrumentos do Reino de Deus."
+      }
+    ],
+    "pastoral_verso": "Confia ao Senhor as tuas obras, e teus pensamentos serão estabelecidos.",
+    "pastoral_verso_ref": "Provérbios 16:3",
     "eyebrow": "EMPREENDEDORES DO REINO",
     "botao1_texto": "CONHEÇA O EDR",
     "botao1_link": "https://www.instagram.com/edrtoledo/",
     "botao2_texto": "QUERO PARTICIPAR",
-    "botao2_link": "#rodape",
+    "botao2_link": "",
     "destaques": [
       {
         "icone": "users",
@@ -69,9 +103,7 @@
     "pastoral_autor": "PR. VICENTE MARIANO",
     "pastoral_foto": "/uploads/img_1785435223001_2762.png",
     "pastoral_foto_zoom": "100",
-    "pastoral_autor_cargo": "PASTOR PRESIDENTE ",
-    "pastoral_botao_texto": "",
-    "pastoral_botao_link": "#"
+    "pastoral_autor_cargo": "PASTOR PRESIDENTE"
   },
   "numeros": {
     "itens": [
@@ -166,10 +198,25 @@
       "botao_link": "#"
     },
     "botao_texto": "",
-    "botao_link": "#"
+    "botao_link": "#",
+    "albuns": [
+      {
+        "mes": 7,
+        "ano": 2026,
+        "fotos": [
+          "/uploads/img_1785446342612_376371.jpeg",
+          "/uploads/img_1785446347722_829006.jpeg",
+          "/uploads/img_1785446352474_500600.jpeg",
+          "/uploads/img_1785459379062_820934.jpeg",
+          "/uploads/img_1785459392326_811676.jpeg",
+          "/uploads/img_1785459396092_847190.jpeg",
+          "/uploads/img_1785459399196_118039.jpeg"
+        ]
+      }
+    ]
   },
   "diretoria": {
-    "titulo": "DIRETORIA EDR",
+    "titulo": "NOSSA DIRETORIA",
     "membros": [
       {
         "nome": "JOCIMAR LIRA",
@@ -182,9 +229,19 @@
         "instagram": "https://www.instagram.com/jocimarlira_imoveis/"
       },
       {
-        "nome": "NOME",
-        "cargo": "CARGO",
+        "nome": "PASTOR ALCEU",
+        "cargo": "PASTOR",
         "foto": "",
+        "zoom": 100,
+        "descricao": "",
+        "email": "",
+        "linkedin": "",
+        "instagram": ""
+      },
+      {
+        "nome": "PASTOR VICENTE",
+        "cargo": "PASTOR",
+        "foto": "/uploads/pastor_vicente.png",
         "zoom": 100,
         "descricao": "",
         "email": "",
@@ -192,20 +249,22 @@
         "instagram": ""
       }
     ],
-    "botao_texto": "",
-    "botao_link": "#"
+    "botao_texto": "Conheça nossa diretoria",
+    "botao_link": "#",
+    "eyebrow": "DIRETORIA EDR",
+    "subtitulo": "Pessoas que acreditam no poder do empreendedorismo e no impacto positivo para nossa comunidade."
   },
   "parceiras": {
     "titulo": "EMPRESAS PARCEIRAS",
     "texto": "Conheça as empresas que caminham conosco e fazem parte dessa rede que transforma.",
-    "botao_texto": "CONHECER PARCEIROS",
-    "botao_link": "#parceiras",
+    "botao_texto": "VER EMPRESAS PARCEIRAS",
+    "botao_link": "/parceiras",
     "lista": [
       {
         "nome": "Magston",
         "logo": "/uploads/img_1782783406366_505624.jpeg",
         "link": "https://www.magston.com.br/",
-        "segmento": "",
+        "segmento": "Imobiliária",
         "descricao": "",
         "zoom": 108
       },
@@ -213,7 +272,7 @@
         "nome": "Edilu",
         "logo": "/uploads/img_1785275242401_363571.png",
         "link": "https://www.instagram.com/edilulingerie?igsh=ZnRxbXJ3Y3hrN2k1",
-        "segmento": "",
+        "segmento": "Varejo",
         "descricao": "",
         "zoom": "137"
       },
@@ -221,7 +280,7 @@
         "nome": "Ultragaz",
         "logo": "/uploads/img_1785265973595_591271.png",
         "link": "https://www.instagram.com/ultragaztoledo?igsh=MW9xcG13c2UzeGF0YQ==",
-        "segmento": "",
+        "segmento": "Gás e Energia",
         "descricao": "",
         "zoom": "156"
       },
@@ -229,7 +288,7 @@
         "nome": "OesteVans ",
         "logo": "/uploads/img_1785266329842_971493.png",
         "link": "https://api.whatsapp.com/send/?phone=%2B554599573846&text&type=phone_number&app_absent=0",
-        "segmento": "",
+        "segmento": "Transporte",
         "descricao": "",
         "zoom": 108
       }
@@ -266,5 +325,36 @@
     "instagram": "https://www.instagram.com/edrtoledo/",
     "facebook": "#",
     "whatsapp": "#"
+  },
+  "config": {
+    "whatsapp_grupo": "https://chat.whatsapp.com/COLE-AQUI-O-CONVITE",
+    "logo_extra": "",
+    "logo_extra_nome": "",
+    "instagram_extra": "",
+    "instagram_extra_nome": ""
+  },
+  "sobre": {
+    "titulo": "SOBRE NÓS",
+    "intro": "Acreditamos que quando os negócios são conduzidos com princípios do Reino, transformamos ambientes, impactamos vidas e geramos um legado que honra a Deus.",
+    "itens": [
+      {
+        "icone": "target",
+        "titulo": "PROPÓSITO",
+        "texto": "Conectar pessoas, fortalecer relacionamentos e promover crescimento pessoal, profissional e espiritual."
+      },
+      {
+        "icone": "crown",
+        "titulo": "MISSÃO",
+        "texto": "Incentivar uma geração de empreendedores comprometidos em honrar a Deus, abençoar famílias, impactar vidas e ser luz no mercado."
+      },
+      {
+        "icone": "users",
+        "titulo": "O QUE FAZEMOS",
+        "texto": "Networking, mentorias, capacitações e trocas que impulsionam empresários e profissionais liberais."
+      }
+    ],
+    "insta_titulo": "CONHECENDO O EDR",
+    "insta_texto": "Acompanhe os encontros, as novidades e os empreendedores do movimento no nosso Instagram.",
+    "insta_botao": "Conheça no Instagram"
   }
 }

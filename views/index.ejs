@@ -54,8 +54,8 @@
           <span class="hero__title-2"><%= c.hero.titulo2 %></span>
         </h1>
 
-        <div class="hero__text" id="sobre">
-          <% (c.hero.paragrafos || []).forEach(function(p){ %>
+        <div class="hero__text">
+          <% (c.hero.paragrafos || []).slice(0, 1).forEach(function(p){ %>
             <p><%= p %></p>
           <% }); %>
         </div>
@@ -65,7 +65,8 @@
             <a href="<%= c.hero.botao1_link || '#' %>" class="btn btn--navy btn--icon"><%= c.hero.botao1_texto %><%- include('partials/icon', { name: 'arrow', cls: 'btn__arrow' }) %></a>
           <% } %>
           <% if (c.hero.botao2_texto) { %>
-            <a href="<%= c.hero.botao2_link || '#' %>" class="btn btn--outline"><%= c.hero.botao2_texto %></a>
+            <% var linkParticipar = c.config.whatsapp_grupo || c.hero.botao2_link || '#rodape'; %>
+            <a href="<%= linkParticipar %>" class="btn btn--outline"<% if (/^https?:/.test(linkParticipar)) { %> target="_blank" rel="noopener"<% } %>><%= c.hero.botao2_texto %></a>
           <% } %>
         </div>
       </div>
@@ -114,56 +115,46 @@
     </section>
   <% } %>
 
-  <!-- ====================== PALAVRA PASTORAL ====================== -->
-  <% if (c.hero.pastoral_titulo || c.hero.pastoral_texto) { %>
-    <section class="pastoral-band">
-      <div class="container">
-        <div class="pastoral<%= c.hero.pastoral_foto ? '' : ' pastoral--sem-foto' %>">
-          <%- include('partials/icon', { name: 'crown', cls: 'pastoral__watermark' }) %>
-
-          <% if (c.hero.pastoral_foto) { %>
-            <%
-              var pfZoom = (Number(c.hero.pastoral_foto_zoom) || 100) / 100;
-              var pfSrcset = srcset(c.hero.pastoral_foto);
-              /* a foto ocupa a coluna de 310px do card e, abaixo de 980px, a
-                 largura toda do container (92vw). O zoom e um scale() por cima
-                 disso, entao multiplica o tamanho que o navegador precisa. */
-              var pfSizes = '(max-width: 980px) ' + Math.round(92 * pfZoom) + 'vw, '
-                          + Math.round(310 * pfZoom) + 'px';
-            %>
-            <div class="pastoral__photo">
-              <img src="<%= c.hero.pastoral_foto %>"
-                   <% if (pfSrcset) { %>srcset="<%= pfSrcset %>" sizes="<%= pfSizes %>"<% } %>
-                   alt="<%= c.hero.pastoral_autor || c.hero.pastoral_titulo %>"
-                   <% if (pfZoom !== 1) { %>class="is-zoomed" style="--zoom: <%= pfZoom %>"<% } %> />
-            </div>
-          <% } %>
-
-          <div class="pastoral__body">
-            <%- include('partials/icon', { name: 'quote', cls: 'pastoral__quote' }) %>
-            <% if (c.hero.pastoral_titulo) { %><h2 class="pastoral__title"><%= c.hero.pastoral_titulo %></h2><% } %>
-            <% if (c.hero.pastoral_texto) { %><p class="pastoral__text"><%= c.hero.pastoral_texto %></p><% } %>
-
-            <% var temAutor = c.hero.pastoral_autor || c.hero.pastoral_autor_cargo;
-               var temBotao = c.hero.pastoral_botao_texto; %>
-            <% if (temAutor || temBotao) { %>
-              <div class="pastoral__foot">
-                <% if (temAutor) { %>
-                  <div class="pastoral__author">
-                    <% if (c.hero.pastoral_autor) { %><span class="pastoral__author-name"><%= c.hero.pastoral_autor %></span><% } %>
-                    <% if (c.hero.pastoral_autor_cargo) { %><span class="pastoral__author-role"><%= c.hero.pastoral_autor_cargo %></span><% } %>
-                  </div>
-                <% } %>
-                <% if (temBotao) { %>
-                  <a href="<%= c.hero.pastoral_botao_link || '#' %>" class="btn btn--outline-light"><%= c.hero.pastoral_botao_texto %></a>
-                <% } %>
-              </div>
-            <% } %>
-          </div>
+  <!-- ====================== SOBRE NÓS ====================== -->
+  <section class="sobre" id="sobre">
+    <div class="container">
+      <h2 class="section-title section-title--center"><%= c.sobre.titulo %><span class="section-title__bar"></span></h2>
+      <% if (c.sobre.intro) { %><p class="sobre__intro"><%= c.sobre.intro %></p><% } %>
+      <% if (c.sobre.itens && c.sobre.itens.length) { %>
+        <div class="sobre__grid">
+          <% c.sobre.itens.forEach(function(it){ %>
+            <article class="sitem">
+              <span class="sitem__icon"><%- include('partials/icon', { name: it.icone || 'crown' }) %></span>
+              <h3 class="sitem__title"><%= it.titulo %></h3>
+              <p class="sitem__text"><%= it.texto %></p>
+            </article>
+          <% }); %>
         </div>
+      <% } %>
+      <% if (c.sobre.insta_titulo && c.footer.instagram && c.footer.instagram !== '#') { %>
+        <div class="sinsta">
+          <span class="sinsta__icon"><%- include('partials/icon', { name: 'instagram' }) %></span>
+          <div class="sinsta__body">
+            <h3 class="sinsta__title"><%= c.sobre.insta_titulo %></h3>
+            <% if (c.sobre.insta_texto) { %><p><%= c.sobre.insta_texto %></p><% } %>
+          </div>
+          <a href="<%= c.footer.instagram %>" target="_blank" rel="noopener" class="btn btn--navy btn--icon"><%= c.sobre.insta_botao || 'Conheça no Instagram' %><%- include('partials/icon', { name: 'arrow', cls: 'btn__arrow' }) %></a>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <!-- ====================== EMPRESAS PARCEIRAS (chamada; a lista fica em /parceiras) ====================== -->
+  <section class="partners-section" id="parceiras">
+    <div class="container">
+      <div class="pcrest" aria-hidden="true"><%- include('partials/icon', { name: 'handshake' }) %></div>
+      <h2 class="section-title section-title--center"><%= c.parceiras.titulo %><span class="section-title__bar"></span></h2>
+      <% if (c.parceiras.texto) { %><p class="partners-section__text"><%= c.parceiras.texto %></p><% } %>
+      <div class="center">
+        <a href="/parceiras" class="btn btn--navy btn--icon"><%= c.parceiras.botao_texto || 'Ver empresas parceiras' %><%- include('partials/icon', { name: 'arrow', cls: 'btn__arrow' }) %></a>
       </div>
-    </section>
-  <% } %>
+    </div>
+  </section>
 
   <!-- ====================== ENCONTROS ====================== -->
   <section class="encontros" id="encontros">
@@ -256,116 +247,198 @@
     </div>
   </section>
 
-  <!-- ====================== DIRETORIA ====================== -->
-  <section class="dual" id="diretoria">
-    <div class="container">
-      <div class="board board--solo">
-        <div class="board__crest" aria-hidden="true">
-          <span></span><%- include('partials/icon', { name: 'crown' }) %><span></span>
-        </div>
-        <h2 class="section-title section-title--center"><%= c.diretoria.titulo %><span class="section-title__bar"></span></h2>
-        <% if (c.diretoria.subtitulo) { %>
-          <p class="board__sub"><%= c.diretoria.subtitulo %></p>
-        <% } %>
-
-        <div class="dcarousel" id="diretoriaCarousel">
-          <button type="button" class="dnav dnav--prev" data-dnav="prev" aria-label="Membro anterior"><%- include('partials/icon', { name: 'chevron' }) %></button>
-
-          <div class="dtrack">
-            <% (c.diretoria.membros || []).forEach(function(m, i){ %>
-              <article class="dmember<%= i === 0 ? ' is-active' : (i === 1 ? ' is-next' : '') %>">
-                <div class="dmember__photo">
-                  <div class="dmember__frame">
-                    <% if (m.foto) { %>
-                      <% var mZoom = (Number(m.zoom) || 100) / 100, mSrcset = srcset(m.foto); %>
-                      <img src="<%= m.foto %>" alt="<%= m.nome %>"
-                           <% if (mSrcset) { %>srcset="<%= mSrcset %>"
-                           sizes="(max-width: 980px) <%= Math.round(260 * mZoom) %>px, <%= Math.round(155 * mZoom) %>px"<% } %>
-                           style="--zoom: <%= mZoom %>" />
-                    <% } else { %>
-                      <%- include('partials/icon', { name: 'user', cls: 'dmember__ph' }) %>
-                    <% } %>
-                  </div>
-                  <span class="dmember__crown"><%- include('partials/icon', { name: 'crown' }) %></span>
-                </div>
-
-                <div class="dmember__info">
-                  <% if (m.cargo) { %><span class="dmember__role"><%= m.cargo %></span><% } %>
-                  <% if (m.nome) { %><h3 class="dmember__name"><%= m.nome %></h3><% } %>
-                  <span class="dmember__rule"></span>
-                  <% if (m.descricao) { %><p class="dmember__bio"><%= m.descricao %></p><% } %>
-
-                  <% if (m.email || m.linkedin || m.instagram) { %>
-                    <div class="dmember__social">
-                      <% if (m.email) { %>
-                        <a class="dsocial" href="mailto:<%= m.email %>" aria-label="E-mail de <%= m.nome %>"><%- include('partials/icon', { name: 'mail' }) %></a>
-                      <% } %>
-                      <% if (m.linkedin) { %>
-                        <a class="dsocial" href="<%= m.linkedin %>" target="_blank" rel="noopener" aria-label="LinkedIn de <%= m.nome %>"><%- include('partials/icon', { name: 'linkedin' }) %></a>
-                      <% } %>
-                      <% if (m.instagram) { %>
-                        <a class="dsocial" href="<%= m.instagram %>" target="_blank" rel="noopener" aria-label="Instagram de <%= m.nome %>"><%- include('partials/icon', { name: 'instagram' }) %></a>
-                      <% } %>
-                    </div>
-                  <% } %>
-                </div>
-              </article>
-            <% }); %>
+  <!-- ====================== GALERIA POR MÊS ====================== -->
+  <%
+    var MESES = ['', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+    var albuns = (c.encontros.albuns || []).filter(function (a) { return a.fotos && a.fotos.length; })
+      .sort(function (a, b) { return (Number(b.ano) * 12 + Number(b.mes)) - (Number(a.ano) * 12 + Number(a.mes)); });
+  %>
+  <% if (albuns.length) { %>
+    <section class="galeria" id="galeria">
+      <div class="container">
+        <h2 class="section-title section-title--center">GALERIA DE ENCONTROS<span class="section-title__bar"></span></h2>
+        <% albuns.forEach(function (a) { %>
+          <div class="album">
+            <h3 class="album__title">Encontro de <%= MESES[Number(a.mes)] || '' %> <span><%= a.ano %></span></h3>
+            <div class="album__grid">
+              <% a.fotos.forEach(function (foto) { var gs = srcset(foto); %>
+                <a href="<%= foto %>" class="album__foto" data-lightbox>
+                  <img src="<%= foto %>" alt="Encontro de <%= MESES[Number(a.mes)] || '' %> <%= a.ano %>" loading="lazy"
+                       <% if (gs) { %>srcset="<%= gs %>" sizes="(max-width: 560px) 46vw, 300px"<% } %> />
+                </a>
+              <% }); %>
+            </div>
           </div>
-
-          <button type="button" class="dnav dnav--next" data-dnav="next" aria-label="Próximo membro"><%- include('partials/icon', { name: 'chevron' }) %></button>
-        </div>
-
-        <% if (c.diretoria.botao_texto) { %>
-          <div class="center">
-            <a href="<%= c.diretoria.botao_link || '#' %>" class="btn btn--navy btn--icon"><%= c.diretoria.botao_texto %><%- include('partials/icon', { name: 'arrow', cls: 'btn__arrow' }) %></a>
-          </div>
-        <% } %>
+        <% }); %>
       </div>
-    </div>
-  </section>
+    </section>
+  <% } %>
 
-  <!-- ====================== EMPRESAS PARCEIRAS ====================== -->
-  <section class="partners-section" id="parceiras">
+  <!-- ====================== DIRETORIA ====================== -->
+  <section class="diretoria" id="diretoria">
     <div class="container">
-      <div class="pcrest" aria-hidden="true"><%- include('partials/icon', { name: 'handshake' }) %></div>
-      <h2 class="section-title section-title--center"><%= c.parceiras.titulo %><span class="section-title__bar"></span></h2>
-      <% if (c.parceiras.texto) { %>
-        <p class="partners-section__text"><%= c.parceiras.texto %></p>
-      <% } %>
+      <% if (c.diretoria.eyebrow) { %><span class="diretoria__eyebrow"><%= c.diretoria.eyebrow %></span><% } %>
+      <h2 class="diretoria__title"><%= c.diretoria.titulo %></h2>
+      <% if (c.diretoria.subtitulo) { %><p class="diretoria__sub"><%= c.diretoria.subtitulo %></p><% } %>
 
-      <% if (c.parceiras.lista && c.parceiras.lista.length) { %>
-        <div class="pgrid">
-          <% c.parceiras.lista.forEach(function(p){
-               var hasLink = p.link && p.link !== '#';
-               var hasInfo = p.segmento || p.descricao; %>
-            <a class="pcard<%= hasLink ? '' : ' pcard--nolink' %>"<% if (hasLink) { %> href="<%= p.link %>" target="_blank" rel="noopener"<% } %> title="<%= p.nome %>">
-              <div class="pcard__logo">
-                <% if (p.logo) { %>
-                  <% var pZoom = (Number(p.zoom) || 108) / 100, pSrcset = srcset(p.logo); %>
-                  <img src="<%= p.logo %>" alt="<%= p.nome %>"
-                       <% if (pSrcset) { %>srcset="<%= pSrcset %>"
-                       sizes="(max-width: 560px) <%= Math.round(92 * pZoom) %>vw, <%= Math.round(420 * pZoom) %>px"<% } %>
-                       style="--zoom: <%= pZoom %>" />
-                <% } else { %>
-                  <span class="pcard__logo-fallback"><%= p.nome %></span>
-                <% } %>
-              </div>
-              <% if (hasInfo) { %>
-                <div class="pcard__body">
-                  <% if (p.segmento) { %><span class="pcard__tag"><%= p.segmento %></span><% } %>
-                  <% if (p.descricao) { %><p class="pcard__desc"><%= p.descricao %></p><% } %>
+      <div class="coord">
+        <% (c.diretoria.membros || []).forEach(function(m){ %>
+          <article class="ccard" data-membro tabindex="0" role="button" aria-label="Mais informações de <%= m.nome %>">
+            <div class="ccard__photo">
+              <% if (m.foto) { %>
+                <% var mZoom = (Number(m.zoom) || 100) / 100, mSrcset = srcset(m.foto); %>
+                <img src="<%= m.foto %>" alt="<%= m.nome %>" loading="lazy"
+                     <% if (mSrcset) { %>srcset="<%= mSrcset %>" sizes="(max-width: 560px) 80vw, 300px"<% } %>
+                     style="--zoom: <%= mZoom %>" />
+              <% } else { %>
+                <%- include('partials/icon', { name: 'user', cls: 'ccard__ph' }) %>
+              <% } %>
+            </div>
+            <div class="ccard__body">
+              <% if (m.cargo) { %><span class="ccard__role"><%= m.cargo %></span><% } %>
+              <h3 class="ccard__name"><%= m.nome %></h3>
+              <span class="ccard__more" aria-hidden="true"><%- include('partials/icon', { name: 'arrow' }) %></span>
+            </div>
+
+            <%- /* conteudo completo, copiado para o modal ao clicar */ '' %>
+            <div class="ccard__full" hidden>
+              <% if (m.cargo) { %><span class="ccard__role"><%= m.cargo %></span><% } %>
+              <h3 class="ccard__name"><%= m.nome %></h3>
+              <% if (m.descricao) { %><p class="cmodal__bio"><%= m.descricao %></p><% } %>
+              <% if (m.email || m.linkedin || m.instagram) { %>
+                <div class="dmember__social">
+                  <% if (m.instagram) { %><a class="dsocial" href="<%= m.instagram %>" target="_blank" rel="noopener" aria-label="Instagram de <%= m.nome %>"><%- include('partials/icon', { name: 'instagram' }) %></a><% } %>
+                  <% if (m.linkedin) { %><a class="dsocial" href="<%= m.linkedin %>" target="_blank" rel="noopener" aria-label="LinkedIn de <%= m.nome %>"><%- include('partials/icon', { name: 'linkedin' }) %></a><% } %>
+                  <% if (m.email) { %><a class="dsocial" href="mailto:<%= m.email %>" aria-label="E-mail de <%= m.nome %>"><%- include('partials/icon', { name: 'mail' }) %></a><% } %>
                 </div>
               <% } %>
-              <% if (hasLink) { %><span class="pcard__cta">Visitar empresa ↗</span><% } %>
-            </a>
-          <% }); %>
+            </div>
+          </article>
+        <% }); %>
+      </div>
+
+      <% if (c.diretoria.botao_texto) { %>
+        <% var dLink = c.diretoria.botao_link; var dAbre = !dLink || dLink === '#'; %>
+        <div class="center">
+          <%- /* sem link configurado, o botao abre o perfil completo do primeiro integrante */ '' %>
+          <a href="<%= dAbre ? '#diretoria' : dLink %>" class="btn btn--gold btn--icon"<% if (dAbre) { %> data-membro-primeiro<% } %>><%= c.diretoria.botao_texto %><%- include('partials/icon', { name: 'arrow', cls: 'btn__arrow' }) %></a>
         </div>
-      <% } else { %>
-        <p class="ppage-empty">Em breve apresentaremos nossas empresas parceiras.</p>
       <% } %>
     </div>
   </section>
+
+  <div class="pmodal" id="membroModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="pmodal__box cmodal">
+      <button type="button" class="pmodal__close" data-membro-close aria-label="Fechar">&times;</button>
+      <div class="cmodal__content" id="membroConteudo"></div>
+    </div>
+  </div>
+
+  <!-- ====================== PALAVRA PASTORAL (compacta) ====================== -->
+  <%
+    /* a carta chega do painel como texto corrido; blocos() separa paragrafos,
+       lista de marcadores e versiculo -- ver blocosDeTexto() no server.js */
+    var carta = blocos(c.hero.pastoral_carta);
+  %>
+  <% if (c.hero.pastoral_titulo || c.hero.pastoral_texto || carta.length) { %>
+    <section class="pastoral-band" id="pastoral">
+      <div class="container">
+        <div class="pmini">
+          <% if (c.hero.pastoral_foto) { %>
+            <div class="pmini__photo">
+              <img src="<%= c.hero.pastoral_foto %>"
+                   <% var pfSrcset = srcset(c.hero.pastoral_foto); if (pfSrcset) { %>srcset="<%= pfSrcset %>" sizes="140px"<% } %>
+                   alt="<%= c.hero.pastoral_autor || c.hero.pastoral_titulo %>" loading="lazy" />
+            </div>
+          <% } %>
+          <div class="pmini__body">
+            <% if (c.hero.pastoral_titulo) { %><h2 class="pmini__title"><%= c.hero.pastoral_titulo %></h2><% } %>
+            <% if (c.hero.pastoral_texto) { %><p class="pmini__text"><%= c.hero.pastoral_texto %></p><% } %>
+            <% if (c.hero.pastoral_autor) { %>
+              <span class="pmini__author"><%= c.hero.pastoral_autor %><% if (c.hero.pastoral_autor_cargo) { %> · <%= c.hero.pastoral_autor_cargo %><% } %></span>
+            <% } %>
+          </div>
+          <button type="button" class="btn btn--gold btn--icon pmini__btn" data-pastoral-open aria-haspopup="dialog" aria-controls="pastoralModal">Ler Palavra Pastoral<%- include('partials/icon', { name: 'arrow', cls: 'btn__arrow' }) %></button>
+        </div>
+      </div>
+    </section>
+
+    <div class="pmodal" id="pastoralModal" role="dialog" aria-modal="true" aria-label="<%= c.hero.pastoral_titulo || 'Palavra Pastoral' %>" aria-hidden="true">
+      <div class="pmodal__box">
+        <button type="button" class="pmodal__close" data-pastoral-close aria-label="Fechar">&times;</button>
+  <div class="pastoral pastoral--sem-foto">
+            <div class="pastoral__head">
+              <%- include('partials/icon', { name: 'quote', cls: 'pastoral__quote' }) %>
+              <% if (c.hero.pastoral_titulo) { %><h2 class="pastoral__title"><%= c.hero.pastoral_titulo %></h2><% } %>
+              <% if (c.hero.pastoral_texto) { %><p class="pastoral__text"><%= c.hero.pastoral_texto %></p><% } %>
+
+              <% var temBoasVindas = c.hero.pastoral_saudacao || c.hero.pastoral_marca; %>
+              <% if (c.hero.pastoral_texto && (temBoasVindas || carta.length)) { %>
+                <span class="pastoral__rule"></span>
+              <% } %>
+
+              <% if (temBoasVindas) { %>
+                <p class="pwelcome">
+                  <% if (c.hero.pastoral_saudacao) { %><span class="pwelcome__sup"><%= c.hero.pastoral_saudacao %></span><% } %>
+                  <% if (c.hero.pastoral_marca) { %>
+                    <span class="pwelcome__name"><%= c.hero.pastoral_marca %><% if (c.hero.pastoral_marca_destaque) { %> <em><%= c.hero.pastoral_marca_destaque %></em><% } %></span>
+                  <% } %>
+                </p>
+              <% } %>
+
+              <% carta.forEach(function (b) { %>
+                <% if (b.tipo === 'lista') { %>
+                  <ul class="pastoral__list">
+                    <% b.itens.forEach(function (item) { %><li><%= item %></li><% }); %>
+                  </ul>
+                <% } else { %>
+                  <p class="pastoral__p<%= b.tipo === 'versiculo' ? ' pastoral__p--verso' : '' %>"><%= b.texto %></p>
+                <% } %>
+              <% }); %>
+            </div>
+
+            <% var valores = c.hero.pastoral_valores || []; %>
+            <% if (valores.length) { %>
+              <div class="pvalores">
+                <% if (c.hero.pastoral_valores_titulo) { %>
+                  <div class="pvalores__head"><span><%= c.hero.pastoral_valores_titulo %></span></div>
+                <% } %>
+                <ul class="pvalores__grid">
+                  <% valores.forEach(function (v) { %>
+                    <li class="pvalor">
+                      <%- include('partials/icon', { name: v.icone || 'crown', cls: 'pvalor__icon' }) %>
+                      <% if (v.titulo) { %><h3 class="pvalor__title"><%= v.titulo %></h3><% } %>
+                      <% if (v.texto) { %><p class="pvalor__text"><%= v.texto %></p><% } %>
+                    </li>
+                  <% }); %>
+                </ul>
+              </div>
+            <% } %>
+
+            <% var temAutor = c.hero.pastoral_autor || c.hero.pastoral_autor_cargo; %>
+            <% if (c.hero.pastoral_verso || temAutor) { %>
+              <div class="pastoral__foot">
+                <% if (c.hero.pastoral_verso) { %>
+                  <div class="pverse">
+                    <%- include('partials/icon', { name: 'quote', cls: 'pverse__icon' }) %>
+                    <div>
+                      <p class="pverse__text"><%= c.hero.pastoral_verso %></p>
+                      <% if (c.hero.pastoral_verso_ref) { %><span class="pverse__ref"><%= c.hero.pastoral_verso_ref %></span><% } %>
+                    </div>
+                  </div>
+                <% } %>
+                <% if (temAutor) { %>
+                  <div class="pastoral__author">
+                    <% if (c.hero.pastoral_autor) { %><span class="pastoral__author-name"><%= c.hero.pastoral_autor %></span><% } %>
+                    <% if (c.hero.pastoral_autor_cargo) { %><span class="pastoral__author-role"><%= c.hero.pastoral_autor_cargo %></span><% } %>
+                  </div>
+                <% } %>
+              </div>
+            <% } %>
+          </div>
+      </div>
+    </div>
+  <% } %>
 
   <!-- ====================== PILARES ====================== -->
   <section class="pilares">
@@ -388,11 +461,14 @@
   <!-- ====================== RODAPÉ ====================== -->
   <footer class="footer" id="rodape">
     <div class="container footer__inner">
+      <% if (c.config.logo_extra) { %><img src="<%= c.config.logo_extra %>" alt="<%= c.config.logo_extra_nome || '' %>" class="footer__logo-extra" /><% } %>
       <div class="footer__text">
         <h2 class="footer__title"><%= c.footer.titulo %></h2>
         <p class="footer__subtitle"><%= c.footer.subtitulo %></p>
       </div>
       <div class="footer__social">
+        <% if (c.config.whatsapp_grupo) { %><a href="<%= c.config.whatsapp_grupo %>" class="btn btn--gold footer__join" target="_blank" rel="noopener">QUERO PARTICIPAR</a><% } %>
+        <% if (c.config.instagram_extra) { %><a href="<%= c.config.instagram_extra %>" class="social" target="_blank" rel="noopener" aria-label="<%= c.config.instagram_extra_nome || 'Instagram' %>" title="<%= c.config.instagram_extra_nome || '' %>"><%- include('partials/icon', { name: 'instagram' }) %></a><% } %>
         <% if (c.footer.instagram) { %><a href="<%= c.footer.instagram %>" class="social" target="_blank" rel="noopener" aria-label="Instagram"><%- include('partials/icon', { name: 'instagram' }) %></a><% } %>
         <% if (c.footer.facebook) { %><a href="<%= c.footer.facebook %>" class="social" target="_blank" rel="noopener" aria-label="Facebook"><%- include('partials/icon', { name: 'facebook' }) %></a><% } %>
         <% if (c.footer.whatsapp) { %><a href="<%= c.footer.whatsapp %>" class="social" target="_blank" rel="noopener" aria-label="WhatsApp"><%- include('partials/icon', { name: 'whatsapp' }) %></a><% } %>

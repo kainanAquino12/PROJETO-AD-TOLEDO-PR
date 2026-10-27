@@ -96,6 +96,53 @@
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLightbox(); });
 
+  /* ---------- carta pastoral (modal) ---------- */
+  var pModal = document.getElementById('pastoralModal');
+  function setPastoral(aberto) {
+    if (!pModal) return;
+    pModal.classList.toggle('is-open', aberto);
+    pModal.setAttribute('aria-hidden', aberto ? 'false' : 'true');
+    document.body.style.overflow = aberto ? 'hidden' : '';
+  }
+  document.querySelectorAll('[data-pastoral-open]').forEach(function (b) {
+    b.addEventListener('click', function () { setPastoral(true); });
+  });
+  document.querySelectorAll('[data-pastoral-close]').forEach(function (b) {
+    b.addEventListener('click', function () { setPastoral(false); });
+  });
+  if (pModal) pModal.addEventListener('click', function (e) { if (e.target === pModal) setPastoral(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setPastoral(false); });
+
+  /* ---------- diretoria: informacoes completas do integrante ---------- */
+  var mModal = document.getElementById('membroModal');
+  var mConteudo = document.getElementById('membroConteudo');
+  function setMembro(aberto) {
+    if (!mModal) return;
+    mModal.classList.toggle('is-open', aberto);
+    mModal.setAttribute('aria-hidden', aberto ? 'false' : 'true');
+    document.body.style.overflow = aberto ? 'hidden' : '';
+  }
+  document.querySelectorAll('[data-membro]').forEach(function (card) {
+    function abre(e) {
+      if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      mConteudo.innerHTML = card.querySelector('.ccard__full').innerHTML;
+      setMembro(true);
+    }
+    card.addEventListener('click', abre);
+    card.addEventListener('keydown', abre);
+  });
+  var btnPrimeiro = document.querySelector('[data-membro-primeiro]');
+  if (btnPrimeiro) btnPrimeiro.addEventListener('click', function (e) {
+    var primeiro = document.querySelector('[data-membro]');
+    if (primeiro) { e.preventDefault(); primeiro.click(); }
+  });
+  document.querySelectorAll('[data-membro-close]').forEach(function (b) {
+    b.addEventListener('click', function () { setMembro(false); });
+  });
+  if (mModal) mModal.addEventListener('click', function (e) { if (e.target === mModal) setMembro(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMembro(false); });
+
   /* ---------- carrossel dos encontros (passa sozinho) ---------- */
   var ecar = document.getElementById('encontrosCarousel');
   if (ecar) {

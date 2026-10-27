@@ -43,8 +43,8 @@
       '<input type="text" data-bind="' + path + '" value="' + escAttr(getByPath(data, path)) +
       '" placeholder="' + escAttr(placeholder || '') + '"></div>';
   }
-  function fieldArea(label, path, placeholder) {
-    return '<div class="field"><label>' + label + '</label>' +
+  function fieldArea(label, path, placeholder, cls) {
+    return '<div class="field' + (cls ? ' ' + cls : '') + '"><label>' + label + '</label>' +
       '<textarea data-bind="' + path + '" placeholder="' + escAttr(placeholder || '') + '">' +
       escHtml(getByPath(data, path)) + '</textarea></div>';
   }
@@ -66,7 +66,8 @@
   }
 
   // icones disponiveis em views/partials/icon.ejs
-  var ICONS = ['crown', 'users', 'growth', 'target', 'handshake', 'calendar', 'coffee', 'impact', 'quote', 'user'];
+  var ICONS = ['crown', 'users', 'growth', 'target', 'handshake', 'calendar', 'coffee', 'impact',
+               'globe', 'briefcase', 'quote', 'user'];
 
   function fieldRange(label, path, opt) {
     var val = getByPath(data, path);
@@ -182,9 +183,18 @@
     html += '<button type="button" class="btn-add" data-action="add" data-arr="hero.destaques">+ Adicionar destaque</button></div>';
 
     html += '<div class="card"><div class="card__title">Palavra Pastoral</div>' +
-      '<div class="panel__desc" style="margin-bottom:14px">O card escuro logo abaixo da faixa de números. Deixe o título e o texto vazios para esconder a seção inteira.</div>' +
+      '<div class="panel__desc" style="margin-bottom:14px">O card escuro logo abaixo da faixa de números. Deixe o título, a frase e a carta vazios para esconder a seção inteira.</div>' +
       fieldText('Título (o rótulo dourado)', 'hero.pastoral_titulo') +
-      fieldArea('Texto / frase', 'hero.pastoral_texto') +
+      fieldArea('Frase de destaque (texto grande ao lado da foto)', 'hero.pastoral_texto',
+        'As aspas já entram sozinhas — escreva só a frase.') +
+      '<div class="grid-3">' +
+        fieldText('Boas-vindas (linha menor)', 'hero.pastoral_saudacao') +
+        fieldText('Nome em destaque (branco)', 'hero.pastoral_marca') +
+        fieldText('Complemento (dourado)', 'hero.pastoral_marca_destaque') +
+      '</div>' +
+      '<div class="panel__desc" style="margin:10px 0 8px">Texto da carta: cada linha vira um parágrafo — dê Enter para separar. ' +
+        'Linha começando com <strong>•</strong> ou <strong>-</strong> vira item de lista com bolinha dourada.</div>' +
+      fieldArea('Texto da carta', 'hero.pastoral_carta', '', 'field--alta') +
       '<div class="grid-2">' +
         fieldText('Nome do pastor (ex: Pr. Marcos Oliveira)', 'hero.pastoral_autor') +
         fieldText('Cargo (ex: Líder do EDR Toledo/PR)', 'hero.pastoral_autor_cargo') +
@@ -193,7 +203,27 @@
       fieldRange('Zoom da foto', 'hero.pastoral_foto_zoom', { min: 100, max: 250, padrao: 100, rotuloMin: 'foto inteira', rotuloMax: 'perto do rosto' }) +
       '</div>';
 
-    html += cardBotao('Botão da Palavra Pastoral (vazio esconde o botão)', 'hero.pastoral_botao_texto', 'hero.pastoral_botao_link');
+    html += '<div class="card"><div class="card__title">Valores (faixa de ícones da Palavra Pastoral)</div>' +
+      '<div class="panel__desc" style="margin-bottom:14px">A faixa com os ícones dourados no meio do card escuro. Sem nenhum valor, a faixa some.</div>' +
+      fieldText('Título da faixa (ex: NOSSOS VALORES)', 'hero.pastoral_valores_titulo');
+    (data.hero.pastoral_valores || []).forEach(function (v, i) {
+      html += '<div class="repeat-item"><div class="repeat-item__head">' +
+        '<span class="repeat-item__label">Valor ' + (i + 1) + '</span>' +
+        '<button type="button" class="btn-remove" data-action="remove" data-arr="hero.pastoral_valores" data-index="' + i + '">Remover</button>' +
+        '</div>' +
+        fieldIcon('Ícone', 'hero.pastoral_valores.' + i + '.icone') +
+        fieldText('Título (ex: HONRAR A DEUS)', 'hero.pastoral_valores.' + i + '.titulo') +
+        fieldText('Descrição', 'hero.pastoral_valores.' + i + '.texto') +
+        '</div>';
+    });
+    html += '<button type="button" class="btn-add" data-action="add" data-arr="hero.pastoral_valores">+ Adicionar valor</button></div>';
+
+    html += '<div class="card"><div class="card__title">Versículo (rodapé do card)</div>' +
+      '<div class="panel__desc" style="margin-bottom:14px">Fica na faixa final da Palavra Pastoral, ao lado da assinatura do pastor. As aspas entram sozinhas.</div>' +
+      fieldArea('Versículo', 'hero.pastoral_verso') +
+      fieldText('Referência (ex: Provérbios 16:3)', 'hero.pastoral_verso_ref') +
+      '</div>';
+
     return html;
   };
 
@@ -276,8 +306,9 @@
   };
 
   builders.diretoria = function () {
-    var html = panelHead('Diretoria', 'O primeiro membro aparece em destaque; os outros entram no carrossel pelas setas.');
+    var html = panelHead('Diretoria', 'Cada pessoa aparece num card com foto, cargo e nome; ao clicar abre a descrição completa e as redes.');
     html += '<div class="card">' +
+      fieldText('Linha pequena acima do título (ex: DIRETORIA EDR)', 'diretoria.eyebrow') +
       fieldText('Título da seção', 'diretoria.titulo') +
       fieldText('Subtítulo (frase abaixo do título)', 'diretoria.subtitulo') +
       '</div><div class="card"><div class="card__title">Membros</div>' +
@@ -292,7 +323,7 @@
         fieldText('Nome', 'diretoria.membros.' + i + '.nome') +
         fieldText('Cargo', 'diretoria.membros.' + i + '.cargo') +
         '</div>' +
-        fieldArea('Descrição (só aparece no membro em destaque)', 'diretoria.membros.' + i + '.descricao') +
+        fieldArea('Descrição (aparece ao clicar no card)', 'diretoria.membros.' + i + '.descricao') +
         fieldText('E-mail', 'diretoria.membros.' + i + '.email') +
         '<div class="grid-2">' +
         fieldText('LinkedIn (link completo)', 'diretoria.membros.' + i + '.linkedin') +
@@ -320,9 +351,9 @@
         fieldRange('Zoom da logo', 'parceiras.lista.' + i + '.zoom', { min: 100, max: 220, padrao: 108, rotuloMin: 'logo inteira', rotuloMax: 'sem margem sobrando' }) +
         '<div class="grid-2">' +
         fieldText('Nome', 'parceiras.lista.' + i + '.nome') +
-        fieldText('Link (site)', 'parceiras.lista.' + i + '.link') +
+        fieldText('Link (site ou Instagram — abre em nova aba)', 'parceiras.lista.' + i + '.link') +
         '</div>' +
-        fieldText('Segmento / Ramo (ex: Tecnologia, Construção)', 'parceiras.lista.' + i + '.segmento') +
+        fieldText('Categoria (ex: Imobiliária, Varejo, Supermercado) — agrupa na página de parceiras', 'parceiras.lista.' + i + '.segmento') +
         fieldArea('Descrição (mais informações sobre a empresa)', 'parceiras.lista.' + i + '.descricao') +
         '</div>';
     });
@@ -332,6 +363,62 @@
       fieldText('Link do botão', 'parceiras.botao_link') +
       '</div></div>';
     return html;
+  };
+
+  builders.sobre = function () {
+    var html = panelHead('Sobre nós', 'Texto de apresentação, os três blocos (propósito, missão…) e o convite para o Instagram.');
+    html += '<div class="card">' +
+      fieldText('Título da seção', 'sobre.titulo') +
+      fieldArea('Texto de abertura', 'sobre.intro') +
+      '</div><div class="card"><div class="card__title">Blocos</div>';
+    (data.sobre.itens || []).forEach(function (it, i) {
+      var p = 'sobre.itens.' + i + '.';
+      html += '<div class="repeat-item"><div class="repeat-item__head">' +
+        '<span class="repeat-item__label">Bloco ' + (i + 1) + '</span>' +
+        '<button type="button" class="btn-remove" data-action="remove" data-arr="sobre.itens" data-index="' + i + '">Remover</button>' +
+        '</div>' + fieldIcon('Ícone', p + 'icone') + fieldText('Título', p + 'titulo') + fieldArea('Texto', p + 'texto') + '</div>';
+    });
+    html += '<button type="button" class="btn-add" data-action="add" data-arr="sobre.itens">+ Adicionar bloco</button></div>';
+    html += '<div class="card"><div class="card__title">Conhecendo o EDR (usa o Instagram do Rodapé)</div>' +
+      fieldText('Título', 'sobre.insta_titulo') + fieldArea('Texto', 'sobre.insta_texto') +
+      fieldText('Texto do botão', 'sobre.insta_botao') + '</div>';
+    return html;
+  };
+
+  builders.albuns = function () {
+    var html = panelHead('Galeria por mês', 'Cada mês é um álbum. Os mais recentes aparecem primeiro no site; clicar numa foto abre ampliada.');
+    var meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+      .map(function (m, i) { return { value: String(i + 1), label: m }; });
+    (data.encontros.albuns || []).forEach(function (a, i) {
+      var p = 'encontros.albuns.' + i + '.';
+      html += '<div class="card"><div class="repeat-item__head">' +
+        '<span class="repeat-item__label">Álbum ' + (i + 1) + '</span>' +
+        '<button type="button" class="btn-remove" data-action="remove" data-arr="encontros.albuns" data-index="' + i + '">Remover álbum</button></div>' +
+        '<div class="grid-2">' + fieldSelect('Mês', p + 'mes', meses) + fieldText('Ano (ex: 2026)', p + 'ano') + '</div>' +
+        '<div class="photo-grid">';
+      (a.fotos || []).forEach(function (foto, k) {
+        html += '<div class="photo-tile"><img src="' + escAttr(foto) + '">' +
+          '<button type="button" class="photo-tile__del" data-action="remove" data-arr="' + p + 'fotos" data-index="' + k + '">&times;</button></div>';
+      });
+      var idu = 'upalb' + (++uid);
+      html += '</div><button type="button" class="btn-add" data-action="pick" data-target="' + idu + '">+ Adicionar foto(s)</button>' +
+        '<input type="file" accept="image/*" hidden multiple data-upload-arr="' + p + 'fotos" id="' + idu + '"></div>';
+    });
+    html += '<div class="card"><button type="button" class="btn-add" data-action="add" data-arr="encontros.albuns">+ Novo álbum (mês)</button></div>';
+    return html;
+  };
+
+  builders.links = function () {
+    return panelHead('Links e extras', 'Link do grupo de WhatsApp e itens adicionais do rodapé.') +
+      '<div class="card"><div class="card__title">Quero participar</div>' +
+        fieldText('Link de convite do grupo do WhatsApp (https://chat.whatsapp.com/…)', 'config.whatsapp_grupo') +
+      '</div>' +
+      '<div class="card"><div class="card__title">Logo adicional (rodapé)</div>' +
+        imgField('Logo', 'config.logo_extra') + fieldText('Nome (texto alternativo)', 'config.logo_extra_nome') +
+      '</div>' +
+      '<div class="card"><div class="card__title">Instagram adicional (rodapé)</div>' +
+        fieldText('Link completo do perfil', 'config.instagram_extra') + fieldText('Nome do perfil', 'config.instagram_extra_nome') +
+      '</div>';
   };
 
   builders.pilares = function () {
@@ -400,11 +487,14 @@
       case 'nav': return { label: 'NOVO', href: '#' };
       case 'hero.paragrafos': return '';
       case 'hero.destaques': return { icone: 'crown', titulo: 'NOVO DESTAQUE', texto: '' };
+      case 'hero.pastoral_valores': return { icone: 'crown', titulo: 'NOVO VALOR', texto: '' };
       case 'numeros.itens': return { icone: 'crown', valor: '+0', texto: 'DESCRIÇÃO' };
       case 'encontros.cards': return { foto: '', zoom: 100, selo: '', badge: 'ENCONTRO #', titulo: 'Novo encontro', data: '', local: '', publico: '', botao_texto: 'VER GALERIA COMPLETA', botao_link: '#' };
       case 'encontros.galeria.fotos': return '';
       case 'diretoria.membros': return { nome: 'NOME', cargo: 'CARGO', foto: '', zoom: 100, descricao: '', email: '', linkedin: '', instagram: '' };
       case 'parceiras.lista': return { nome: 'Empresa', logo: '', link: '#', segmento: '', descricao: '', zoom: 108 };
+      case 'sobre.itens': return { icone: 'crown', titulo: 'NOVO', texto: '' };
+      case 'encontros.albuns': return { mes: String(new Date().getMonth() + 1), ano: String(new Date().getFullYear()), fotos: [] };
       case 'pilares.itens': return { icone: 'crown', titulo: 'NOVO', descricao: '' };
       default: return {};
     }

@@ -120,8 +120,12 @@ a { color: inherit; }
   font-size: .95rem; font-family: var(--font-body); color: var(--ink); background: #fff; transition: border-color .2s;
 }
 .field textarea { min-height: 92px; resize: vertical; line-height: 1.55; }
+/* textos longos (carta pastoral) precisam de espaco para revisar de uma vez */
+.field--alta textarea { min-height: 300px; }
 .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--gold); }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 16px; }
+@media (max-width: 720px) { .grid-3 { grid-template-columns: 1fr; } }
 
 /* ------------------------------------------------ upload de imagem ----- */
 .imgfield { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
