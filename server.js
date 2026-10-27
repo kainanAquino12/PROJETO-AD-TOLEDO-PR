@@ -34,8 +34,13 @@ const SEMENTE_UPLOADS = path.join(__dirname, 'public', 'uploads');
 // Utilidades de armazenamento (JSON em arquivo)
 // ----------------------------------------------------------------------------
 function ensureDirs() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+  // na Vercel o disco da implantacao e somente leitura (EROFS): nao derruba o site
+  try {
+    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+    if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+  } catch (e) {
+    console.warn('  aviso: sem permissao de escrita em disco (' + e.code + ')');
+  }
 }
 
 /**
@@ -98,11 +103,21 @@ function hashPassword(password, salt) {
   return { salt, hash };
 }
 
+// credencial gerada quando nao da para gravar em disco (sistema somente leitura)
+let adminEmMemoria = null;
+
 function readAdmin() {
+  if (adminEmMemoria) return adminEmMemoria;
   if (!fs.existsSync(ADMIN_FILE)) {
     const { salt, hash } = hashPassword(DEFAULT_PASSWORD);
     const admin = { salt, hash };
-    fs.writeFileSync(ADMIN_FILE, JSON.stringify(admin, null, 2), 'utf8');
+    try {
+      fs.writeFileSync(ADMIN_FILE, JSON.stringify(admin, null, 2), 'utf8');
+    } catch (e) {
+      // EROFS na Vercel: usa a senha de ADMIN_PASSWORD so em memoria
+      adminEmMemoria = admin;
+      return admin;
+    }
     console.log('\n  >> Senha padrao do painel criada: "' + DEFAULT_PASSWORD + '"');
     console.log('  >> Acesse /admin e troque a senha o quanto antes.\n');
     return admin;
