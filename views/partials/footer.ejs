@@ -1,0 +1,16 @@
+<footer class="footer" id="rodape">
+  <div class="container footer__inner">
+    <div class="footer__text">
+      <% if (c.config.logo_extra) { %><img src="<%= c.config.logo_extra %>" alt="<%= c.config.logo_extra_nome || '' %>" class="footer__logo-extra" /><% } %>
+      <h2 class="footer__title"><%= c.footer.titulo %></h2>
+      <p class="footer__subtitle"><%= c.footer.subtitulo %></p>
+    </div>
+    <div class="footer__social">
+      <% if (c.config.whatsapp_grupo) { %><a href="<%= c.config.whatsapp_grupo %>" class="btn btn--gold" target="_blank" rel="noopener">Quero participar</a><% } %>
+      <% if (c.footer.instagram && c.footer.instagram !== '#') { %><a href="<%= c.footer.instagram %>" class="social" target="_blank" rel="noopener" aria-label="Instagram"><%- include('icon', { name: 'instagram' }) %></a><% } %>
+      <% if (c.config.instagram_extra) { %><a href="<%= c.config.instagram_extra %>" class="social" target="_blank" rel="noopener" aria-label="<%= c.config.instagram_extra_nome || 'Instagram' %>" title="<%= c.config.instagram_extra_nome || '' %>"><%- include('icon', { name: 'instagram' }) %></a><% } %>
+      <% if (c.footer.facebook && c.footer.facebook !== '#') { %><a href="<%= c.footer.facebook %>" class="social" target="_blank" rel="noopener" aria-label="Facebook"><%- include('icon', { name: 'facebook' }) %></a><% } %>
+      <% if (c.footer.whatsapp && c.footer.whatsapp !== '#') { %><a href="<%= c.footer.whatsapp %>" class="social" target="_blank" rel="noopener" aria-label="WhatsApp"><%- include('icon', { name: 'whatsapp' }) %></a><% } %>
+    </div>
+  </div>
+</footer>

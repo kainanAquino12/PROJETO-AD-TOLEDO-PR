@@ -96,23 +96,6 @@
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLightbox(); });
 
-  /* ---------- carta pastoral (modal) ---------- */
-  var pModal = document.getElementById('pastoralModal');
-  function setPastoral(aberto) {
-    if (!pModal) return;
-    pModal.classList.toggle('is-open', aberto);
-    pModal.setAttribute('aria-hidden', aberto ? 'false' : 'true');
-    document.body.style.overflow = aberto ? 'hidden' : '';
-  }
-  document.querySelectorAll('[data-pastoral-open]').forEach(function (b) {
-    b.addEventListener('click', function () { setPastoral(true); });
-  });
-  document.querySelectorAll('[data-pastoral-close]').forEach(function (b) {
-    b.addEventListener('click', function () { setPastoral(false); });
-  });
-  if (pModal) pModal.addEventListener('click', function (e) { if (e.target === pModal) setPastoral(false); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setPastoral(false); });
-
   /* ---------- diretoria: informacoes completas do integrante ---------- */
   var mModal = document.getElementById('membroModal');
   var mConteudo = document.getElementById('membroConteudo');
@@ -126,7 +109,7 @@
     function abre(e) {
       if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
       e.preventDefault();
-      mConteudo.innerHTML = card.querySelector('.ccard__full').innerHTML;
+      mConteudo.innerHTML = card.querySelector('.member__full').innerHTML;
       setMembro(true);
     }
     card.addEventListener('click', abre);
@@ -143,109 +126,9 @@
   if (mModal) mModal.addEventListener('click', function (e) { if (e.target === mModal) setMembro(false); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMembro(false); });
 
-  /* ---------- carrossel dos encontros (passa sozinho) ---------- */
-  var ecar = document.getElementById('encontrosCarousel');
-  if (ecar) {
-    var slides = Array.prototype.slice.call(ecar.querySelectorAll('.eslide'));
-    var esetas = Array.prototype.slice.call(ecar.querySelectorAll('[data-enav]'));
-    var eAtual = 0;
-    var INTERVALO = 6000;
-    var relogio = null;
-    var pausado = false;
-    var semMovimento = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function pintaEncontros() {
-      slides.forEach(function (el, i) { el.classList.toggle('is-active', i === eAtual); });
-    }
-    function vaiPara(i) {
-      eAtual = (i + slides.length) % slides.length;
-      pintaEncontros();
-    }
-    // reagenda do zero a cada troca, para o slide recém-aberto ter o tempo cheio
-    function agenda() {
-      clearTimeout(relogio);
-      if (semMovimento || pausado || document.hidden || slides.length < 2) return;
-      relogio = setTimeout(function () { vaiPara(eAtual + 1); agenda(); }, INTERVALO);
-    }
-
-    esetas.forEach(function (b) {
-      b.addEventListener('click', function () {
-        vaiPara(eAtual + (b.dataset.enav === 'prev' ? -1 : 1));
-        agenda();
-      });
-    });
-
-    // não troca embaixo do cursor nem enquanto navegam pelo teclado
-    ecar.addEventListener('mouseenter', function () { pausado = true; clearTimeout(relogio); });
-    ecar.addEventListener('mouseleave', function () { pausado = false; agenda(); });
-    ecar.addEventListener('focusin', function () { pausado = true; clearTimeout(relogio); });
-    ecar.addEventListener('focusout', function () { pausado = false; agenda(); });
-    document.addEventListener('visibilitychange', agenda);
-
-    if (slides.length < 2) {
-      var setas = ecar.querySelector('.enav');
-      if (setas) setas.style.display = 'none';
-    }
-
-    pintaEncontros();
-    agenda();
-  }
-
-  /* ---------- carrossel da diretoria ---------- */
-  var dcar = document.getElementById('diretoriaCarousel');
-  if (dcar) {
-    var membros = Array.prototype.slice.call(dcar.querySelectorAll('.dmember'));
-    var setas = Array.prototype.slice.call(dcar.querySelectorAll('[data-dnav]'));
-    var atual = 0;
-
-    function pintaDiretoria() {
-      membros.forEach(function (el, i) {
-        el.classList.remove('is-active', 'is-next');
-        if (i === atual) el.classList.add('is-active');
-        else if (membros.length > 1 && i === (atual + 1) % membros.length) el.classList.add('is-next');
-      });
-    }
-    // Troca em duas etapas: some o que está na tela, troca, e o novo entra.
-    // Sem a saída a mudança fica seca, porque os dois membros trocam de
-    // lugar de uma vez só.
-    var trilho = dcar.querySelector('.dtrack');
-    var trocando = false;
-    var semMovimentoD = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function trocaPara(i) {
-      if (trocando) return;
-      var destino = (i + membros.length) % membros.length;
-      if (destino === atual) return;
-      if (semMovimentoD || !trilho) { atual = destino; pintaDiretoria(); return; }
-
-      trocando = true;
-      trilho.classList.add('is-saindo');
-      setTimeout(function () {
-        atual = destino;
-        pintaDiretoria();
-        trilho.classList.remove('is-saindo');
-        trocando = false;
-      }, 220);
-    }
-
-    setas.forEach(function (b) {
-      b.addEventListener('click', function () { trocaPara(atual + (b.dataset.dnav === 'prev' ? -1 : 1)); });
-    });
-    // clicar no card compacto promove aquele membro a destaque
-    membros.forEach(function (el, i) {
-      el.addEventListener('click', function () {
-        if (el.classList.contains('is-next')) trocaPara(i);
-      });
-    });
-    // com um membro só não há o que navegar
-    if (membros.length < 2) setas.forEach(function (b) { b.style.display = 'none'; });
-
-    pintaDiretoria();
-  }
-
   /* ---------- reveal ao rolar ---------- */
   var revealTargets = document.querySelectorAll(
-    '.hero__left, .hero__right, .stat, .pastoral, .eside, .ehero, .ethumb, .board, .partners, .pilar, .footer__inner'
+    '.hero__text, .stat, .sobre__grid, .ecard, .album, .member, .pastoral__grid, .pilar'
   );
   revealTargets.forEach(function (el, i) {
     el.classList.add('reveal');

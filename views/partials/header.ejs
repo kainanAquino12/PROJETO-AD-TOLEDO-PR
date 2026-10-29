@@ -1,0 +1,27 @@
+<%
+  /* base: '' na home; '/' nas outras paginas, para as ancoras (#sobre) voltarem para a home */
+  var base = (typeof base !== 'undefined') ? base : '';
+%>
+<header class="header" id="header">
+  <div class="container header__inner">
+    <a href="<%= base || '#inicio' %>" class="brand" aria-label="<%= c.site.nome %>">
+      <% if (c.site.logo) { %>
+        <img src="<%= c.site.logo %>" alt="<%= c.site.nome %>" class="brand__img" />
+      <% } else { %>
+        <%- include('logo', { cls: 'erlogo--nav', cidade: c.site.cidade }) %>
+      <% } %>
+    </a>
+
+    <nav class="nav" id="nav">
+      <ul class="nav__list">
+        <% c.nav.forEach(function(item, i){ %>
+          <li><a href="<%= (base && item.href.charAt(0) === '#') ? base + item.href : item.href %>" class="nav__link<%= (!base && i === 0) ? ' is-active' : '' %>"><%= item.label %></a></li>
+        <% }); %>
+      </ul>
+    </nav>
+
+    <button class="nav__toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
