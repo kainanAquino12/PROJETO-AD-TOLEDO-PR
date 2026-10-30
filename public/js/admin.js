@@ -342,7 +342,14 @@
   builders.parceiras = function () {
     var html = panelHead('Empresas Parceiras', 'Texto e logos das empresas parceiras.');
     html += '<div class="card">' + fieldText('Título', 'parceiras.titulo') + fieldArea('Texto', 'parceiras.texto') + '</div>';
-    html += '<div class="card"><div class="card__title">Empresas</div>';
+    var usadas = [];
+    (data.parceiras.lista || []).forEach(function (q) {
+      var c = String(q.segmento || '').trim();
+      if (c && usadas.indexOf(c) < 0) usadas.push(c);
+    });
+    html += '<datalist id="listaCategorias">' + usadas.map(function (c) { return '<option value="' + escAttr(c) + '">'; }).join('') + '</datalist>';
+    html += '<div class="card"><div class="card__title">Empresas</div>' +
+      '<div class="panel__desc" style="margin-bottom:14px">Toda empresa precisa de uma <strong>Categoria</strong>; sem ela, aparece em "Outras".</div>';
     (data.parceiras.lista || []).forEach(function (p, i) {
       html += '<div class="repeat-item"><div class="repeat-item__head">' +
         '<span class="repeat-item__label">Empresa ' + (i + 1) + '</span>' +
@@ -353,7 +360,9 @@
         fieldText('Nome', 'parceiras.lista.' + i + '.nome') +
         fieldText('Link (site ou Instagram — abre em nova aba)', 'parceiras.lista.' + i + '.link') +
         '</div>' +
-        fieldText('Categoria (ex: Imobiliária, Varejo, Supermercado) — agrupa na página de parceiras', 'parceiras.lista.' + i + '.segmento') +
+        '<div class="field"><label>Categoria — empresas com a mesma categoria ficam juntas na página de parceiras</label>' +
+        '<input type="text" list="listaCategorias" data-bind="parceiras.lista.' + i + '.segmento" value="' + escAttr(p.segmento) +
+        '" placeholder="Escolha uma da lista ou digite uma nova"></div>' +
         fieldArea('Descrição (mais informações sobre a empresa)', 'parceiras.lista.' + i + '.descricao') +
         '</div>';
     });

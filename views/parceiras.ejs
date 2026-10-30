@@ -14,13 +14,18 @@
     /* as empresas entram por categoria (campo "segmento") e em ordem alfabetica
        dentro dela, para nenhuma ganhar mais destaque que outra */
     var porNome = function (a, b) { return String(a).trim().localeCompare(String(b).trim(), 'pt-BR', { sensitivity: 'base' }); };
-    var grupos = {};
+    /* a categoria e comparada sem acento, caixa ou espacos sobrando: "Imobiliaria " e
+       "imobiliária" caem no mesmo grupo (vale o primeiro nome digitado) */
+    var chave = function (t) { return String(t).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); };
+    var grupos = {}, rotulos = {};
     (c.parceiras.lista || []).forEach(function (p) {
-      var cat = (p.segmento || '').trim() || 'Outras';
-      (grupos[cat] = grupos[cat] || []).push(p);
+      var nome = (p.segmento || '').trim() || 'Outras';
+      var k = chave(nome);
+      if (!rotulos[k]) rotulos[k] = nome;
+      (grupos[k] = grupos[k] || []).push(p);
     });
     var cats = Object.keys(grupos).sort(function (a, b) {
-      if (a === 'Outras') return 1; if (b === 'Outras') return -1; return porNome(a, b);
+      if (a === 'outras') return 1; if (b === 'outras') return -1; return porNome(rotulos[a], rotulos[b]);
     });
     /* icone da categoria, escolhido pelo nome (sem acento); categorias novas caem no generico */
     function iconeDa(cat) {
@@ -45,13 +50,13 @@
       <% if (cats.length) { %>
         <div class="pfilters" role="tablist" aria-label="Categorias">
           <button type="button" class="pfilter is-active" data-cat="">Todas</button>
-          <% cats.forEach(function (cat) { %><button type="button" class="pfilter" data-cat="<%= cat %>"><%= cat %></button><% }); %>
+          <% cats.forEach(function (cat) { %><button type="button" class="pfilter" data-cat="<%= cat %>"><%= rotulos[cat] %></button><% }); %>
         </div>
 
         <div class="pcols">
           <% cats.forEach(function (cat) { %>
             <div class="pgroup" data-cat="<%= cat %>">
-              <h2 class="pgroup__title"><%- include('partials/icon', { name: iconeDa(cat), cls: 'pgroup__icon' }) %><span><%= cat %></span></h2>
+              <h2 class="pgroup__title"><%- include('partials/icon', { name: iconeDa(rotulos[cat]), cls: 'pgroup__icon' }) %><span><%= rotulos[cat] %></span></h2>
               <div class="plist">
                 <% grupos[cat].sort(function (a, b) { return porNome(a.nome, b.nome); }).forEach(function (p) {
                      var hasLink = p.link && p.link !== '#'; %>
