@@ -22,6 +22,16 @@
     var cats = Object.keys(grupos).sort(function (a, b) {
       if (a === 'Outras') return 1; if (b === 'Outras') return -1; return porNome(a, b);
     });
+    /* icone da categoria, escolhido pelo nome (sem acento); categorias novas caem no generico */
+    function iconeDa(cat) {
+      var n = String(cat).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      if (/gas|energia|combust/.test(n)) return 'flame';
+      if (/imobili|construc|engenharia/.test(n)) return 'home';
+      if (/transport|logistic|van|veicul|auto/.test(n)) return 'truck';
+      if (/supermerc|mercado|aliment/.test(n)) return 'cart';
+      if (/varejo|comerc|loja|moda/.test(n)) return 'bag';
+      return 'briefcase';
+    }
   %>
   <%- include('partials/header', { base: '/' }) %>
 
@@ -38,29 +48,31 @@
           <% cats.forEach(function (cat) { %><button type="button" class="pfilter" data-cat="<%= cat %>"><%= cat %></button><% }); %>
         </div>
 
-        <% cats.forEach(function (cat) { %>
-          <div class="pgroup" data-cat="<%= cat %>">
-            <h2 class="pgroup__title"><%= cat %></h2>
-            <div class="pgrid">
-              <% grupos[cat].sort(function (a, b) { return porNome(a.nome, b.nome); }).forEach(function (p) {
-                   var hasLink = p.link && p.link !== '#'; %>
-                <a class="pitem<%= hasLink ? '' : ' pitem--nolink' %>"<% if (hasLink) { %> href="<%= p.link %>" target="_blank" rel="noopener"<% } %> title="<%= p.nome %>">
-                  <span class="pitem__logo">
-                    <% if (p.logo) { %>
-                      <% var pZoom = (Number(p.zoom) || 108) / 100, pSrcset = srcset(p.logo); %>
-                      <img src="<%= p.logo %>" alt="<%= p.nome %>" loading="lazy"
-                           <% if (pSrcset) { %>srcset="<%= pSrcset %>" sizes="(max-width: 560px) 46vw, 260px"<% } %>
-                           style="--zoom: <%= pZoom %>" />
-                    <% } else { %>
-                      <span class="pitem__fallback"><%= p.nome %></span>
-                    <% } %>
-                  </span>
-                  <span class="pitem__name"><%= p.nome %></span>
-                </a>
-              <% }); %>
+        <div class="pcols">
+          <% cats.forEach(function (cat) { %>
+            <div class="pgroup" data-cat="<%= cat %>">
+              <h2 class="pgroup__title"><%- include('partials/icon', { name: iconeDa(cat), cls: 'pgroup__icon' }) %><span><%= cat %></span></h2>
+              <div class="plist">
+                <% grupos[cat].sort(function (a, b) { return porNome(a.nome, b.nome); }).forEach(function (p) {
+                     var hasLink = p.link && p.link !== '#'; %>
+                  <a class="pitem<%= hasLink ? '' : ' pitem--nolink' %>"<% if (hasLink) { %> href="<%= p.link %>" target="_blank" rel="noopener"<% } %> title="<%= p.nome %>">
+                    <span class="pitem__logo">
+                      <% if (p.logo) { %>
+                        <% var pZoom = (Number(p.zoom) || 108) / 100, pSrcset = srcset(p.logo); %>
+                        <img src="<%= p.logo %>" alt="<%= p.nome %>" loading="lazy"
+                             <% if (pSrcset) { %>srcset="<%= pSrcset %>" sizes="(max-width: 560px) 80vw, 300px"<% } %>
+                             style="--zoom: <%= pZoom %>" />
+                      <% } else { %>
+                        <span class="pitem__fallback"><%= p.nome %></span>
+                      <% } %>
+                    </span>
+                    <span class="pitem__name"><%= p.nome %></span>
+                  </a>
+                <% }); %>
+              </div>
             </div>
-          </div>
-        <% }); %>
+          <% }); %>
+        </div>
       <% } else { %>
         <p class="lead">Em breve apresentaremos nossas empresas parceiras.</p>
       <% } %>

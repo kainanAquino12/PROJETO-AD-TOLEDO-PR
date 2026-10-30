@@ -113,29 +113,53 @@
         <% if (c.encontros.subtitulo) { %><p class="lead"><%= c.encontros.subtitulo %></p><% } %>
       </header>
 
-      <% if (cards.length) { %>
-        <div class="egrid">
-          <% cards.forEach(function(card, i){ %>
-            <% var meta = [card.data, card.local, card.publico].filter(Boolean); %>
-            <article class="ecard">
-              <% if (card.foto) { %>
-                <% var cSrcset = srcset(card.foto), cZoom = (Number(card.zoom) || 100) / 100; %>
-                <a href="<%= card.foto %>" class="ecard__photo" data-lightbox>
-                  <img src="<%= card.foto %>" alt="<%= card.titulo || 'Foto do encontro' %>" loading="lazy" decoding="async"
-                       <% if (cSrcset) { %>srcset="<%= cSrcset %>" sizes="(max-width: 560px) 92vw, (max-width: 980px) 46vw, 270px"<% } %>
-                       style="--zoom: <%= cZoom %>" />
+      <%
+        /* destaque grande (primeiro encontro) + 4 fotos menores. As menores saem dos
+           demais encontros e, se faltar, das fotos da galeria. */
+        var destaque = cards[0];
+        var menores = cards.slice(1).filter(function (k) { return k.foto; })
+          .map(function (k) { return { foto: k.foto, zoom: k.zoom, alt: k.titulo || k.data || 'Foto do encontro' }; });
+        var pool = (g.fotos || []).concat.apply([], albuns.map(function (al) { return al.fotos; }));
+        pool.forEach(function (f) {
+          if (menores.length < 4 && f && menores.every(function (m) { return m.foto !== f; }) && (!destaque || destaque.foto !== f)) {
+            menores.push({ foto: f, zoom: 100, alt: 'Foto do encontro' });
+          }
+        });
+        menores = menores.slice(0, 4);
+        var dMeta = destaque ? [destaque.data, destaque.local, destaque.publico].filter(Boolean) : [];
+      %>
+      <% if (destaque) { %>
+        <div class="elayout">
+          <article class="efeature">
+            <% if (destaque.foto) { %>
+              <% var dSrcset = srcset(destaque.foto), dZoom = (Number(destaque.zoom) || 100) / 100; %>
+              <a href="<%= destaque.foto %>" class="efeature__photo" data-lightbox>
+                <img src="<%= destaque.foto %>" alt="<%= destaque.titulo || 'Foto do encontro' %>" decoding="async"
+                     <% if (dSrcset) { %>srcset="<%= dSrcset %>" sizes="(max-width: 980px) 92vw, 640px"<% } %>
+                     style="--zoom: <%= dZoom %>" />
+              </a>
+            <% } %>
+            <% if (destaque.selo || destaque.badge || destaque.titulo || dMeta.length || destaque.botao_texto) { %>
+              <div class="ecard__caption">
+                <% if (destaque.selo || destaque.badge) { %><span class="ecard__tag"><%= [destaque.selo, destaque.badge].filter(Boolean).join(' · ') %></span><% } %>
+                <% if (destaque.titulo) { %><h3 class="ecard__title"><%= destaque.titulo %></h3><% } %>
+                <% if (dMeta.length) { %><p class="ecard__meta"><%= dMeta.join(' · ') %></p><% } %>
+                <% if (destaque.botao_texto && destaque.botao_link && destaque.botao_link !== '#') { %><a href="<%= destaque.botao_link %>" class="link-arrow"><%= destaque.botao_texto %></a><% } %>
+              </div>
+            <% } %>
+          </article>
+
+          <% if (menores.length) { %>
+            <div class="esmall">
+              <% menores.forEach(function (m) { var ms = srcset(m.foto); %>
+                <a href="<%= m.foto %>" class="esmall__photo" data-lightbox title="<%= m.alt %>">
+                  <img src="<%= m.foto %>" alt="<%= m.alt %>" decoding="async"
+                       <% if (ms) { %>srcset="<%= ms %>" sizes="(max-width: 980px) 46vw, 260px"<% } %>
+                       style="--zoom: <%= (Number(m.zoom) || 100) / 100 %>" />
                 </a>
-              <% } %>
-              <% if (card.selo || card.badge || card.titulo || meta.length || card.botao_texto) { %>
-                <div class="ecard__caption">
-                  <% if (card.selo || card.badge) { %><span class="ecard__tag"><%= [card.selo, card.badge].filter(Boolean).join(' · ') %></span><% } %>
-                  <% if (card.titulo) { %><h3 class="ecard__title"><%= card.titulo %></h3><% } %>
-                  <% if (meta.length) { %><p class="ecard__meta"><%= meta.join(' · ') %></p><% } %>
-                  <% if (card.botao_texto && card.botao_link && card.botao_link !== '#') { %><a href="<%= card.botao_link %>" class="link-arrow"><%= card.botao_texto %></a><% } %>
-                </div>
-              <% } %>
-            </article>
-          <% }); %>
+              <% }); %>
+            </div>
+          <% } %>
         </div>
       <% } %>
 
