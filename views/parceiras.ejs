@@ -58,10 +58,10 @@
                   <a class="pitem<%= hasLink ? '' : ' pitem--nolink' %>"<% if (hasLink) { %> href="<%= p.link %>" target="_blank" rel="noopener"<% } %> title="<%= p.nome %>">
                     <span class="pitem__logo">
                       <% if (p.logo) { %>
-                        <% var pZoom = (Number(p.zoom) || 108) / 100, pSrcset = srcset(p.logo); %>
+                        <% var pSrcset = srcset(p.logo); %>
                         <img src="<%= p.logo %>" alt="<%= p.nome %>" loading="lazy"
                              <% if (pSrcset) { %>srcset="<%= pSrcset %>" sizes="(max-width: 560px) 80vw, 300px"<% } %>
-                             style="--zoom: <%= pZoom %>" />
+                             />
                       <% } else { %>
                         <span class="pitem__fallback"><%= p.nome %></span>
                       <% } %>
@@ -86,10 +86,56 @@
     (function () {
       var botoes = document.querySelectorAll('.pfilter');
       var grupos = document.querySelectorAll('.pgroup');
+
+      /* Ajuste automatico das logos: mede onde esta o desenho (ignorando o branco e a
+         transparencia em volta) e enquadra so essa parte na caixa. Assim nenhuma logo
+         e cortada, e as que vem com margem grande ficam do mesmo tamanho das demais.
+         Se o navegador nao deixar ler os pixels, a logo continua inteira (CSS puro). */
+      function aplica(img) {
+        var b = img.dataset.bbox; if (!b) return;
+        var box = img.parentNode, W = box.clientWidth, H = box.clientHeight;
+        if (!W || !H) return;
+        var v = b.split(',').map(Number), cw = v[2] - v[0], ch = v[3] - v[1];
+        var nw = img.naturalWidth, nh = img.naturalHeight;
+        var iw = Math.min((W * 0.86) / cw, (H * 0.86) / ch * (nw / nh)), ih = iw * nh / nw;
+        img.style.width = iw + 'px'; img.style.height = ih + 'px';
+        img.style.left = (W / 2 - (v[0] + v[2]) / 2 * iw) + 'px';
+        img.style.top = (H / 2 - (v[1] + v[3]) / 2 * ih) + 'px';
+        img.classList.add('is-fit');
+      }
+      function mede(img) {
+        var probe = new Image();
+        probe.crossOrigin = 'anonymous';
+        probe.onload = function () {
+          try {
+            var f = Math.min(1, 300 / Math.max(probe.naturalWidth, probe.naturalHeight));
+            var w = Math.max(1, Math.round(probe.naturalWidth * f)), h = Math.max(1, Math.round(probe.naturalHeight * f));
+            var c = document.createElement('canvas'); c.width = w; c.height = h;
+            var ctx = c.getContext('2d', { willReadFrequently: true });
+            ctx.drawImage(probe, 0, 0, w, h);
+            var d = ctx.getImageData(0, 0, w, h).data, x0 = w, y0 = h, x1 = -1, y1 = -1;
+            for (var y = 0; y < h; y++) for (var x = 0; x < w; x++) {
+              var i = (y * w + x) * 4;
+              if (d[i + 3] < 25 || (d[i] > 240 && d[i + 1] > 240 && d[i + 2] > 240)) continue;
+              if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+            }
+            if (x1 < 0) return;
+            img.dataset.bbox = [x0 / w, y0 / h, (x1 + 1) / w, (y1 + 1) / h].join(',');
+            aplica(img);
+          } catch (e) { /* imagem de outra origem sem permissao: fica o ajuste por CSS */ }
+        };
+        probe.src = img.getAttribute('src');
+      }
+      var logos = [].slice.call(document.querySelectorAll('.pitem__logo img'));
+      function refaz() { logos.forEach(aplica); }
+      logos.forEach(function (img) { if (img.complete) mede(img); else img.addEventListener('load', function () { mede(img); }); });
+      window.addEventListener('resize', refaz);
+
       botoes.forEach(function (b) {
         b.addEventListener('click', function () {
           botoes.forEach(function (x) { x.classList.toggle('is-active', x === b); });
           grupos.forEach(function (g) { g.hidden = !!b.dataset.cat && g.dataset.cat !== b.dataset.cat; });
+          refaz();
         });
       });
     })();
