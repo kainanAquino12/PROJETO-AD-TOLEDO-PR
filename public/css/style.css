@@ -324,7 +324,9 @@ a.pitem:hover { transform: translateY(-3px); box-shadow: 0 10px 22px -12px rgba(
   .hero__grid { min-height: 0; padding-top: 44px; padding-bottom: 36px; }
   .hero__text { width: 100%; }
   .hero__lead { margin-bottom: 26px; }
-  .hero__photo { position: static; width: 100%; aspect-ratio: 4 / 3; -webkit-mask-image: none; mask-image: none; }
+  /* foto inteira, sem cortar (a arte tem logo e elementos nas bordas) */
+  .hero__photo { position: static; width: 100%; -webkit-mask-image: none; mask-image: none; }
+  .hero__photo img { height: auto; transform: none; }
   /* celular e tablet: titulo, depois a foto, por ultimo a mensagem */
   .pastoral__grid { grid-template-columns: 1fr; grid-template-areas: "head" "photo" "body"; grid-template-rows: auto; }
   .pastoral__grid--solo { grid-template-areas: "head" "body"; }
@@ -333,7 +335,20 @@ a.pitem:hover { transform: translateY(-3px); box-shadow: 0 10px 22px -12px rgba(
 }
 @media (max-width: 560px) {
   :root { --header-h: 68px; }
-  .container { padding: 0 20px; }
+  .container { padding-left: 20px; padding-right: 20px; }
+  .hero__grid { padding-top: 36px; padding-bottom: 32px; }
+  .hero__title { font-size: clamp(1.9rem, 9vw, 2.4rem); }
+  .hero__lead { font-size: 1.02rem; margin: 18px 0 24px; }
+  .hero__text .btn { width: 100%; padding: 16px 24px; }
+  .nav__toggle { width: 48px; height: 48px; margin-right: -8px; }
+  .nav__link { padding: 16px 0; }
+  .link-arrow { padding-bottom: 4px; }
+  .slider__dot { width: 6px; height: 6px; }
+  .slider__dot.is-active { width: 18px; }
+  .slider__dots { gap: 6px; margin-top: 14px; }
+  .footer { padding: 44px 0; }
+  .footer__social { width: 100%; }
+  .footer__social .btn { flex: 1; }
   .section { padding: 52px 0; }
   .section__head { margin-bottom: 32px; }
   .stats { padding: 24px 0 4px; }
