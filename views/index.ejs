@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><%= c.site.nome %> — <%= c.site.cidade %></title>
   <meta name="description" content="<%= c.hero.paragrafos[0] || c.site.nome %>" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%23162f4a%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Arial,sans-serif%27 font-weight=%27700%27 font-size=%2717%27 text-anchor=%27middle%27 fill=%27%23c6a052%27%3EE%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Mulish:wght@300;400;500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet" />
@@ -92,7 +93,7 @@
         <h2 class="title"><%= c.parceiras.titulo %></h2>
         <% if (c.parceiras.texto) { %><p class="lead"><%= c.parceiras.texto %></p><% } %>
       </div>
-      <a href="/parceiras" class="btn btn--outline"><%= c.parceiras.botao_texto || 'Ver empresas parceiras' %></a>
+      <a href="/parceiras" class="btn btn--cta"><%= c.parceiras.botao_texto || 'Ver empresas parceiras' %></a>
     </div>
   </section>
 
@@ -114,81 +115,56 @@
       </header>
 
       <%
-        /* destaque grande (primeiro encontro) + 4 fotos menores. As menores saem dos
-           demais encontros e, se faltar, das fotos da galeria. */
-        var destaque = cards[0];
-        var menores = cards.slice(1).filter(function (k) { return k.foto; })
-          .map(function (k) { return { foto: k.foto, zoom: k.zoom, alt: k.titulo || k.data || 'Foto do encontro' }; });
-        var pool = (g.fotos || []).concat.apply([], albuns.map(function (al) { return al.fotos; }));
-        pool.forEach(function (f) {
-          if (menores.length < 4 && f && menores.every(function (m) { return m.foto !== f; }) && (!destaque || destaque.foto !== f)) {
-            menores.push({ foto: f, zoom: 100, alt: 'Foto do encontro' });
-          }
+        /* um unico carrossel: primeiro as fotos dos encontros em destaque (com legenda),
+           depois as fotos da galeria/albuns, sem repetir nenhuma. */
+        var slides = [], vistas = {};
+        cards.forEach(function (k) {
+          if (!k.foto || vistas[k.foto]) return; vistas[k.foto] = 1;
+          var meta = [k.data, k.local, k.publico].filter(Boolean);
+          var titulo = k.titulo || '';
+          /* sem titulo, a unica linha de texto (ex.: "Conexao, proposito...") vira o titulo */
+          if (!titulo && meta.length) titulo = meta.shift();
+          slides.push({ foto: k.foto, zoom: k.zoom, alt: titulo || 'Foto do encontro', tag: [k.selo, k.badge].filter(Boolean).join(' · '), titulo: titulo, meta: meta.join(' · '), botao_texto: k.botao_texto, botao_link: k.botao_link });
         });
-        menores = menores.slice(0, 4);
-        var dMeta = destaque ? [destaque.data, destaque.local, destaque.publico].filter(Boolean) : [];
+        var extras = [];
+        (g.fotos || []).forEach(function (f) { extras.push({ foto: f, alt: 'Foto do encontro' }); });
+        albuns.forEach(function (al) {
+          var rotulo = 'Encontro de ' + (MESES[Number(al.mes)] || '') + ' ' + al.ano;
+          al.fotos.forEach(function (f) { extras.push({ foto: f, alt: rotulo }); });
+        });
+        extras.forEach(function (e) {
+          if (!e.foto || vistas[e.foto]) return; vistas[e.foto] = 1;
+          slides.push({ foto: e.foto, zoom: 100, alt: e.alt });
+        });
       %>
-      <% if (destaque) { %>
-        <div class="elayout">
-          <article class="efeature">
-            <% if (destaque.foto) { %>
-              <% var dSrcset = srcset(destaque.foto), dZoom = (Number(destaque.zoom) || 100) / 100; %>
-              <a href="<%= destaque.foto %>" class="efeature__photo" data-lightbox>
-                <img src="<%= destaque.foto %>" alt="<%= destaque.titulo || 'Foto do encontro' %>" decoding="async"
-                     <% if (dSrcset) { %>srcset="<%= dSrcset %>" sizes="(max-width: 980px) 92vw, 640px"<% } %>
-                     style="--zoom: <%= dZoom %>" />
-              </a>
-            <% } %>
-            <% if (destaque.selo || destaque.badge || destaque.titulo || dMeta.length || destaque.botao_texto) { %>
-              <div class="ecard__caption">
-                <% if (destaque.selo || destaque.badge) { %><span class="ecard__tag"><%= [destaque.selo, destaque.badge].filter(Boolean).join(' · ') %></span><% } %>
-                <% if (destaque.titulo) { %><h3 class="ecard__title"><%= destaque.titulo %></h3><% } %>
-                <% if (dMeta.length) { %><p class="ecard__meta"><%= dMeta.join(' · ') %></p><% } %>
-                <% if (destaque.botao_texto && destaque.botao_link && destaque.botao_link !== '#') { %><a href="<%= destaque.botao_link %>" class="link-arrow"><%= destaque.botao_texto %></a><% } %>
-              </div>
-            <% } %>
-          </article>
-
-          <% if (menores.length) { %>
-            <div class="esmall">
-              <% menores.forEach(function (m) { var ms = srcset(m.foto); %>
-                <a href="<%= m.foto %>" class="esmall__photo" data-lightbox title="<%= m.alt %>">
-                  <img src="<%= m.foto %>" alt="<%= m.alt %>" decoding="async"
-                       <% if (ms) { %>srcset="<%= ms %>" sizes="(max-width: 980px) 46vw, 260px"<% } %>
-                       style="--zoom: <%= (Number(m.zoom) || 100) / 100 %>" />
-                </a>
+      <% if (slides.length) { %>
+        <div class="slider" id="encontrosSlider" role="region" aria-roledescription="carrossel" aria-label="Fotos dos encontros">
+          <div class="slider__viewport">
+            <ul class="slider__track" tabindex="0" aria-label="Fotos dos encontros (use as setas do teclado)">
+              <% slides.forEach(function (s, i) { var ss = srcset(s.foto); %>
+                <li class="slide" role="group" aria-roledescription="slide" aria-label="<%= (i + 1) %> de <%= slides.length %>">
+                  <a href="<%= s.foto %>" class="slide__photo" data-lightbox aria-label="Ampliar foto: <%= s.alt %>">
+                    <img src="<%= s.foto %>" alt="<%= s.alt %>" decoding="async" draggable="false"
+                         <% if (i > 2) { %>loading="lazy"<% } %>
+                         <% if (ss) { %>srcset="<%= ss %>" sizes="(max-width: 640px) 86vw, (max-width: 980px) 46vw, 360px"<% } %>
+                         style="--zoom: <%= (Number(s.zoom) || 100) / 100 %>" />
+                  </a>
+                  <% if (s.tag || s.titulo || s.meta || (s.botao_texto && s.botao_link && s.botao_link !== '#')) { %>
+                    <div class="ecard__caption">
+                      <% if (s.tag) { %><span class="ecard__tag"><%= s.tag %></span><% } %>
+                      <% if (s.titulo) { %><h3 class="ecard__title"><%= s.titulo %></h3><% } %>
+                      <% if (s.meta) { %><p class="ecard__meta"><%= s.meta %></p><% } %>
+                      <% if (s.botao_texto && s.botao_link && s.botao_link !== '#') { %><a href="<%= s.botao_link %>" class="link-arrow"><%= s.botao_texto %></a><% } %>
+                    </div>
+                  <% } %>
+                </li>
               <% }); %>
-            </div>
-          <% } %>
-        </div>
-      <% } %>
-
-      <% if (albuns.length || soltas.length) { %>
-        <div class="galeria" id="galeria">
-          <% albuns.forEach(function (a) { %>
-            <div class="album">
-              <h3 class="album__title">Encontro de <%= MESES[Number(a.mes)] || '' %> <%= a.ano %></h3>
-              <div class="album__grid">
-                <% a.fotos.forEach(function (foto) { var gs = srcset(foto); %>
-                  <a href="<%= foto %>" class="album__foto" data-lightbox>
-                    <img src="<%= foto %>" alt="Encontro de <%= MESES[Number(a.mes)] || '' %> <%= a.ano %>" loading="lazy"
-                         <% if (gs) { %>srcset="<%= gs %>" sizes="(max-width: 560px) 46vw, 200px"<% } %> />
-                  </a>
-                <% }); %>
-              </div>
-            </div>
-          <% }); %>
-          <% if (soltas.length) { %>
-            <div class="album">
-              <div class="album__grid">
-                <% soltas.forEach(function (foto) { var gs = srcset(foto); %>
-                  <a href="<%= foto %>" class="album__foto" data-lightbox>
-                    <img src="<%= foto %>" alt="Foto do encontro" loading="lazy"
-                         <% if (gs) { %>srcset="<%= gs %>" sizes="(max-width: 560px) 46vw, 200px"<% } %> />
-                  </a>
-                <% }); %>
-              </div>
-            </div>
+            </ul>
+          </div>
+          <% if (slides.length > 1) { %>
+            <button type="button" class="slider__btn slider__btn--prev" aria-label="Fotos anteriores" data-slider-prev><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg></button>
+            <button type="button" class="slider__btn slider__btn--next" aria-label="Próximas fotos" data-slider-next><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg></button>
+            <div class="slider__dots" data-slider-dots aria-hidden="true"></div>
           <% } %>
         </div>
       <% } %>
@@ -338,9 +314,9 @@
   <%- include('partials/footer') %>
 
   <!-- Lightbox -->
-  <div class="lightbox" id="lightbox" aria-hidden="true">
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Foto ampliada" aria-hidden="true">
     <button class="lightbox__close" id="lightboxClose" aria-label="Fechar">&times;</button>
-    <img src="" alt="" id="lightboxImg" />
+    <img alt="" id="lightboxImg" />
   </div>
 
   <script src="/js/main.js"></script>

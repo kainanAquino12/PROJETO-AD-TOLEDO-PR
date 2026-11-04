@@ -96,6 +96,59 @@
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeLightbox(); });
 
+  /* ---------- carrossel dos encontros ---------- */
+  document.querySelectorAll('.slider').forEach(function (sl) {
+    var track = sl.querySelector('.slider__track');
+    var prev = sl.querySelector('[data-slider-prev]');
+    var next = sl.querySelector('[data-slider-next]');
+    var dotsBox = sl.querySelector('[data-slider-dots]');
+    var slides = [].slice.call(track.children);
+    var reduz = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var dots = [];
+
+    function passo() {
+      return slides.length > 1 ? slides[1].offsetLeft - slides[0].offsetLeft : track.clientWidth;
+    }
+    function indiceAtual() {
+      return Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollLeft / passo())));
+    }
+    function vaPara(i) {
+      i = Math.max(0, Math.min(slides.length - 1, i));
+      track.scrollTo({ left: i * passo(), behavior: reduz ? 'auto' : 'smooth' });
+    }
+    function atualiza() {
+      var fim = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
+      var ini = track.scrollLeft <= 2;
+      if (prev) prev.disabled = ini;
+      if (next) next.disabled = fim;
+      var i = fim ? dots.length - 1 : Math.min(indiceAtual(), dots.length - 1);
+      dots.forEach(function (d, k) { d.classList.toggle('is-active', k === i); });
+    }
+    function montaPontos() {
+      if (!dotsBox) return;
+      var visiveis = Math.max(1, Math.round(track.clientWidth / passo()));
+      var n = Math.max(1, slides.length - visiveis + 1);
+      if (n === dots.length) return;
+      dotsBox.innerHTML = ''; dots = [];
+      for (var k = 0; k < n; k++) { var d = document.createElement('span'); d.className = 'slider__dot'; dotsBox.appendChild(d); dots.push(d); }
+    }
+
+    if (prev) prev.addEventListener('click', function () { vaPara(indiceAtual() - 1); });
+    if (next) next.addEventListener('click', function () { vaPara(indiceAtual() + 1); });
+    track.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); vaPara(indiceAtual() + 1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); vaPara(indiceAtual() - 1); }
+    });
+
+    var ag = false;
+    track.addEventListener('scroll', function () {
+      if (ag) return; ag = true;
+      window.requestAnimationFrame(function () { ag = false; atualiza(); });
+    }, { passive: true });
+    window.addEventListener('resize', function () { montaPontos(); atualiza(); });
+    montaPontos(); atualiza();
+  });
+
   /* ---------- diretoria: informacoes completas do integrante ---------- */
   var mModal = document.getElementById('membroModal');
   var mConteudo = document.getElementById('membroConteudo');
