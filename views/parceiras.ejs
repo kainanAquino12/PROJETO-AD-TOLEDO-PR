@@ -133,11 +133,50 @@
       logos.forEach(function (img) { if (img.complete) mede(img); else img.addEventListener('load', function () { mede(img); }); });
       window.addEventListener('resize', refaz);
 
+      /* Filtro animado (FLIP): so usa transform e opacity, que rodam na GPU e nao
+         travam nem no celular. Quem sai some suave; quem fica desliza para o novo lugar;
+         quem entra aparece subindo. Sem animacao se o aparelho pedir movimento reduzido. */
+      var reduz = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var suave = !reduz && typeof Element.prototype.animate === 'function';
+      var atual = '', espera = null;
+      var EASE = 'cubic-bezier(.2, .8, .2, 1)';
+
+      function troca(cat) {
+        var antes = new Map();
+        itens.forEach(function (it) { if (!it.hidden) antes.set(it, it.getBoundingClientRect()); });
+        itens.forEach(function (it) { it.hidden = !!cat && it.dataset.cat !== cat; });
+        refaz();
+        if (!suave) return;
+        var n = 0;
+        itens.forEach(function (it) {
+          if (it.hidden) return;
+          var r = it.getBoundingClientRect(), o = antes.get(it);
+          if (o) {
+            var dx = o.left - r.left, dy = o.top - r.top;
+            if (!dx && !dy) return;
+            it.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }], { duration: 420, easing: EASE });
+          } else {
+            it.animate([{ opacity: 0, transform: 'translateY(14px) scale(.96)' }, { opacity: 1, transform: 'none' }],
+              { duration: 380, delay: Math.min(n++, 8) * 30, easing: EASE, fill: 'backwards' });
+          }
+        });
+      }
+
+      function filtra(cat) {
+        if (cat === atual) return;
+        atual = cat;
+        clearTimeout(espera);
+        itens.forEach(function (it) { it.getAnimations().forEach(function (an) { an.cancel(); }); });
+        if (!suave) { troca(cat); return; }
+        var saem = [].filter.call(itens, function (it) { return !it.hidden && !!cat && it.dataset.cat !== cat; });
+        saem.forEach(function (it) { it.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.96)' }], { duration: 150, easing: 'ease-out', fill: 'forwards' }); });
+        espera = setTimeout(function () { itens.forEach(function (it) { it.getAnimations().forEach(function (an) { an.cancel(); }); }); troca(cat); }, saem.length ? 150 : 0);
+      }
+
       botoes.forEach(function (b) {
         b.addEventListener('click', function () {
           botoes.forEach(function (x) { x.classList.toggle('is-active', x === b); x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
-          itens.forEach(function (it) { it.hidden = !!b.dataset.cat && it.dataset.cat !== b.dataset.cat; });
-          refaz();
+          filtra(b.dataset.cat || '');
         });
       });
     })();
