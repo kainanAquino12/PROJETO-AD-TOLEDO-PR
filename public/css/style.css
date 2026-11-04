@@ -249,16 +249,15 @@ button { font: inherit; }
 
 /* -------------------------------------------------------- pagina de parceiras */
 .partners-page { min-height: 60vh; }
-.pfilters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 48px; }
+.pfilters { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 1040px; margin-left: auto; margin-right: auto; margin-bottom: 48px; }
 .pfilter { padding: 9px 18px; border: 1.5px solid var(--line); border-radius: 999px; background: var(--white); cursor: pointer; color: var(--muted); font-family: var(--font-display); font-weight: 600; font-size: .74rem; letter-spacing: 1.1px; text-transform: uppercase; transition: background .2s ease, color .2s ease, border-color .2s ease; }
 .pfilter:hover { color: var(--navy); border-color: var(--navy); }
 .pfilter:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .pfilter.is-active { background: var(--navy); border-color: var(--navy); color: #fff; }
-.pcols { display: flex; flex-direction: column; gap: 52px; }
-.pgroup[hidden] { display: none; }
-.pgroup__title { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid var(--line); color: var(--navy); font-family: var(--font-display); font-weight: 700; font-size: .85rem; letter-spacing: 1.6px; text-transform: uppercase; }
-.pgroup__icon { width: 24px; height: 24px; color: var(--gold); flex: none; }
-.plist { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+.partners-page .section__head { margin-bottom: 36px; }
+.partners-page .lead { margin-left: auto; margin-right: auto; }
+.plist { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 240px)); justify-content: center; gap: 24px; max-width: 1040px; margin: 0 auto; }
+.pitem[hidden] { display: none; }
 .pitem {
   display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 0; overflow: hidden;
   background: var(--white); border: 1px solid var(--line); border-radius: 8px;
@@ -348,11 +347,10 @@ a.pitem:hover { transform: translateY(-3px); box-shadow: 0 10px 22px -12px rgba(
   .btn--cta { width: 100%; }
   .team { gap: 32px 16px; }
   .member { width: calc(50% - 8px); }
-  .plist { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .plist { grid-template-columns: repeat(auto-fit, minmax(130px, 170px)); gap: 12px; }
   .pitem__logo { height: 110px; }
   .pfilters { gap: 8px; margin-bottom: 36px; }
   .pfilter { padding: 8px 14px; }
-  .pcols { gap: 40px; }
   .pvalores { grid-template-columns: 1fr; gap: 0; }
   .pvalor__title { min-height: 0; }
   .pvalor { padding: 14px 0; border-bottom: 1px solid var(--line); }

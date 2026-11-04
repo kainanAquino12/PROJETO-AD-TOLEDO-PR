@@ -28,6 +28,9 @@
     var cats = Object.keys(grupos).sort(function (a, b) {
       if (a === 'outras') return 1; if (b === 'outras') return -1; return porNome(rotulos[a], rotulos[b]);
     });
+    var todas = [];
+    cats.forEach(function (k) { grupos[k].forEach(function (p) { todas.push(Object.assign({}, p, { cat: k })); }); });
+    todas.sort(function (a, b) { return porNome(a.nome, b.nome); });
     /* icone da categoria, escolhido pelo nome (sem acento); categorias novas caem no generico */
     function iconeDa(cat) {
       var n = String(cat).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -43,40 +46,33 @@
 
   <main class="section partners-page">
     <div class="container">
-      <header class="section__head">
+      <header class="section__head section__head--center">
         <h1 class="title"><%= c.parceiras.titulo %></h1>
         <% if (c.parceiras.texto) { %><p class="lead"><%= c.parceiras.texto %></p><% } %>
       </header>
 
       <% if (cats.length) { %>
-        <div class="pfilters" role="tablist" aria-label="Categorias">
-          <button type="button" class="pfilter is-active" data-cat="">Todas</button>
-          <% cats.forEach(function (cat) { %><button type="button" class="pfilter" data-cat="<%= cat %>"><%= rotulos[cat] %></button><% }); %>
+        <div class="pfilters" role="group" aria-label="Filtrar por categoria">
+          <button type="button" class="pfilter is-active" data-cat="" aria-pressed="true">Todas</button>
+          <% cats.forEach(function (cat) { %><button type="button" class="pfilter" data-cat="<%= cat %>" aria-pressed="false"><%= rotulos[cat] %></button><% }); %>
         </div>
 
-        <div class="pcols">
-          <% cats.forEach(function (cat) { %>
-            <div class="pgroup" data-cat="<%= cat %>">
-              <h2 class="pgroup__title"><%- include('partials/icon', { name: iconeDa(rotulos[cat]), cls: 'pgroup__icon' }) %><span><%= rotulos[cat] %></span></h2>
-              <div class="plist">
-                <% grupos[cat].sort(function (a, b) { return porNome(a.nome, b.nome); }).forEach(function (p) {
-                     var hasLink = p.link && p.link !== '#'; %>
-                  <a class="pitem<%= hasLink ? '' : ' pitem--nolink' %>"<% if (hasLink) { %> href="<%= p.link %>" target="_blank" rel="noopener"<% } %> title="<%= p.nome %>">
-                    <span class="pitem__logo">
-                      <% if (p.logo) { %>
-                        <% var pSrcset = srcset(p.logo); %>
-                        <img src="<%= p.logo %>" alt="<%= p.nome %>" loading="lazy"
-                             <% if (pSrcset) { %>srcset="<%= pSrcset %>" sizes="(max-width: 560px) 80vw, 300px"<% } %>
-                             />
-                      <% } else { %>
-                        <span class="pitem__fallback"><%= p.nome %></span>
-                      <% } %>
-                    </span>
-                    <span class="pitem__name"><%= p.nome %></span>
-                  </a>
-                <% }); %>
-              </div>
-            </div>
+        <div class="plist" id="plist">
+          <% todas.forEach(function (p) {
+               var hasLink = p.link && p.link !== '#'; %>
+            <a class="pitem<%= hasLink ? '' : ' pitem--nolink' %>" data-cat="<%= p.cat %>"<% if (hasLink) { %> href="<%= p.link %>" target="_blank" rel="noopener"<% } %> title="<%= p.nome %>">
+              <span class="pitem__logo">
+                <% if (p.logo) { %>
+                  <% var pSrcset = srcset(p.logo); %>
+                  <img src="<%= p.logo %>" alt="<%= p.nome %>" loading="lazy"
+                       <% if (pSrcset) { %>srcset="<%= pSrcset %>" sizes="(max-width: 560px) 80vw, 300px"<% } %>
+                       />
+                <% } else { %>
+                  <span class="pitem__fallback"><%= p.nome %></span>
+                <% } %>
+              </span>
+              <span class="pitem__name"><%= p.nome %></span>
+            </a>
           <% }); %>
         </div>
       <% } else { %>
@@ -91,7 +87,7 @@
   <script>
     (function () {
       var botoes = document.querySelectorAll('.pfilter');
-      var grupos = document.querySelectorAll('.pgroup');
+      var itens = document.querySelectorAll('.pitem');
 
       /* Ajuste automatico das logos: mede onde esta o desenho (ignorando o branco e a
          transparencia em volta) e enquadra so essa parte na caixa. Assim nenhuma logo
@@ -139,8 +135,8 @@
 
       botoes.forEach(function (b) {
         b.addEventListener('click', function () {
-          botoes.forEach(function (x) { x.classList.toggle('is-active', x === b); });
-          grupos.forEach(function (g) { g.hidden = !!b.dataset.cat && g.dataset.cat !== b.dataset.cat; });
+          botoes.forEach(function (x) { x.classList.toggle('is-active', x === b); x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+          itens.forEach(function (it) { it.hidden = !!b.dataset.cat && it.dataset.cat !== b.dataset.cat; });
           refaz();
         });
       });
