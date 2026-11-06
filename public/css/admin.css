@@ -214,3 +214,16 @@ a { color: inherit; }
   .grid-2 { grid-template-columns: 1fr; }
   .admin-top { flex-wrap: wrap; gap: 10px; }
 }
+
+/* caixa de marcar (ex.: empresa em destaque) */
+.field--check { padding: 12px 14px; border: 1px solid var(--line, #e7e3da); border-radius: 8px; background: #fbfaf7; }
+.field .check { display: flex; flex-direction: row; align-items: center; gap: 12px; cursor: pointer; font-weight: 600; font-size: .95rem; color: var(--navy); margin: 0; }
+.check input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.check__box { flex: none; width: 22px; height: 22px; border: 2px solid #b9b2a2; border-radius: 6px; background: #fff; display: grid; place-items: center; transition: background .2s, border-color .2s; }
+.check__box::after { content: ""; width: 6px; height: 11px; margin-top: -2px; border: solid #fff; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg) scale(0); transition: transform .15s; }
+.check input:checked + .check__box { background: var(--gold, #c6a052); border-color: var(--gold, #c6a052); }
+.check input:checked + .check__box::after { transform: rotate(45deg) scale(1); }
+.check input:focus-visible + .check__box { outline: 2px solid var(--navy, #162f4a); outline-offset: 2px; }
+.field__help { margin-top: 6px; color: #6b7480; font-size: .84rem; line-height: 1.45; }
+.field input[type=number] { width: 100%; padding: 10px 12px; border: 1px solid var(--line, #e7e3da); border-radius: 6px; font-size: .95rem; font-family: var(--font-body); background: #fff; }
+.field input[type=number]:focus { outline: none; border-color: var(--gold, #c6a052); }

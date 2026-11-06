@@ -148,6 +148,83 @@ a, button, .pitem, .slide__photo { -webkit-tap-highlight-color: transparent; tou
 .sitem__title { margin-bottom: 8px; color: var(--navy); font-family: var(--font-display); font-weight: 700; font-size: .8rem; letter-spacing: 1.6px; text-transform: uppercase; }
 .sitem__title::before { content: ""; display: inline-block; width: 22px; height: 2px; margin-right: 12px; vertical-align: middle; background: var(--gold); }
 
+/* ------------------------------------------------- empresas em destaque -- */
+.featured { margin: 0 auto 64px; }
+.featured__head { display: flex; align-items: center; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap; margin-bottom: 8px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.featured__title { display: flex; align-items: center; gap: 12px; color: var(--navy); font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; line-height: 1.3; }
+.featured__title--all { margin-bottom: 24px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.featured__star { width: 26px; height: 26px; color: var(--gold); flex: none; }
+.featured__tag { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 999px; background: #f6efdd; color: var(--gold-d); font-family: var(--font-display); font-weight: 600; font-size: .72rem; letter-spacing: .4px; }
+.featured__tagicon { width: 16px; height: 16px; }
+
+.fslider { --gap: 24px; --per: 3; --centered: 0; --emphasis: 1; position: relative; }
+.fslider__viewport { container-type: inline-size; }
+.fslider__track {
+  --w: calc((100cqw - 2 * var(--gap)) / var(--per));
+  display: flex; gap: var(--gap); list-style: none; position: relative; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+  padding: 40px 0 28px; scroll-padding: 0;
+}
+.fslider__track::-webkit-scrollbar { display: none; }
+.fslider__track:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 8px; }
+.fslide { flex: 0 0 var(--w); min-width: 0; scroll-snap-align: start; display: flex; transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
+.fcard {
+  position: relative; display: flex; flex-direction: column; width: 100%; background: var(--white);
+  border: 1.5px solid #ecd9a8; border-radius: 12px; box-shadow: 0 8px 22px -12px rgba(22, 47, 74, .28);
+  transition: border-color .35s ease, box-shadow .35s ease;
+  user-select: none; -webkit-user-drag: none;
+}
+a.fcard:hover { border-color: var(--gold); }
+.fcard--nolink { cursor: default; }
+.fcard .pitem__logo { height: 165px; border-radius: 11px 11px 0 0; }
+.fcard__info { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 16px 16px; border-top: 1px solid var(--line); background: var(--soft); border-radius: 0 0 11px 11px; }
+.fcard__name { color: var(--navy); font-family: var(--font-display); font-weight: 700; font-size: .95rem; text-align: center; line-height: 1.3; }
+.fcard__badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; background: #f6efdd; color: var(--gold-d); font-family: var(--font-display); font-weight: 600; font-size: .72rem; }
+.fcard__badge .icon { width: 14px; height: 14px; color: var(--gold); }
+.fcard__crown { position: absolute; left: 50%; top: -24px; z-index: 2; width: 38px; height: 38px; margin-left: -19px; color: var(--gold); opacity: 0; transform: translateY(6px); transition: opacity .35s ease, transform .35s ease; pointer-events: none; }
+.fcard__crown .icon { width: 100%; height: 100%; filter: drop-shadow(0 2px 3px rgba(198, 160, 82, .45)); }
+@media (min-width: 981px) {
+  .fslide.is-center { transform: scale(1.07); z-index: 1; }
+  .fslide.is-center .fcard { border-color: var(--gold); box-shadow: 0 18px 38px -16px rgba(198, 160, 82, .75), 0 0 0 3px rgba(198, 160, 82, .16); }
+  .fslide.is-center .fcard__crown { opacity: 1; transform: none; }
+}
+.fslider.is-static .fslider__track { justify-content: center; overflow: visible; }
+.fslider.is-static .fslider__btn, .fslider.is-static .fslider__dots { display: none; }
+.fslider__btn {
+  position: absolute; top: calc(50% - 22px); z-index: 3; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0;
+  border: 0; border-radius: 50%; background: #fff; color: var(--navy); cursor: pointer; box-shadow: 0 6px 18px -4px rgba(22, 47, 74, .35);
+  transition: background .2s ease, color .2s ease, opacity .2s ease, transform .15s ease;
+}
+.fslider__btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.fslider__btn:hover { background: var(--navy); color: #fff; }
+.fslider__btn:active { transform: scale(.94); }
+.fslider__btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.fslider__btn[disabled] { opacity: 0; pointer-events: none; }
+.fslider__btn--prev { left: -22px; }
+.fslider__btn--next { right: -22px; }
+.fslider__dots { display: flex; justify-content: center; gap: 8px; margin-top: 6px; }
+.fslider__dot { width: 8px; height: 8px; border-radius: 99px; background: var(--line); transition: width .25s ease, background .25s ease; }
+.fslider__dot.is-active { width: 24px; background: var(--gold); }
+@media (max-width: 980px) {
+  .fslider { --per: 2; --emphasis: 0; --gap: 20px; }
+  .fslider__track { padding: 24px 0 24px; }
+  .fcard__crown { display: none; }
+}
+@media (max-width: 560px) {
+  .fslider { --per: 1; --centered: 1; --gap: 14px; }
+  .fslider__viewport { margin: 0 -20px; }
+  .fslider__track { --w: calc(100cqw - 64px); padding: 20px calc((100cqw - var(--w)) / 2) 18px; }
+  .fslide { scroll-snap-align: center; }
+  .fslider__btn { display: none; }
+  .fslider.is-static .fslider__track { padding-left: 0; padding-right: 0; }
+  .fcard .pitem__logo { height: 140px; }
+  .featured { margin-bottom: 48px; }
+  .fslider__dot { width: 6px; height: 6px; }
+  .fslider__dot.is-active { width: 18px; }
+  .fslider__dots { gap: 6px; }
+}
+@media (prefers-reduced-motion: reduce) { .fslide, .fcard, .fcard__crown { transition: none; } }
+
 /* ---------------------------------------------------------------- parceiras -- */
 .partners__inner { display: flex; align-items: center; justify-content: space-between; gap: 40px; }
 .partners__inner .lead { max-width: 34em; }

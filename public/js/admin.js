@@ -89,6 +89,19 @@
       '<select data-bind="' + path + '">' + opts + '</select></div>';
   }
 
+  /* caixa de marcar: guarda true/false (nao usa data-bind, que so entende texto) */
+  function fieldNumber(label, path, ajuda) {
+    return '<div class="field"><label>' + label + '</label>' +
+      '<input type="number" min="1" step="1" inputmode="numeric" data-bind="' + path + '" value="' + escAttr(getByPath(data, path)) + '">' +
+      (ajuda ? '<div class="field__help">' + ajuda + '</div>' : '') + '</div>';
+  }
+  function fieldCheck(label, path, ajuda) {
+    return '<div class="field field--check"><label class="check">' +
+      '<input type="checkbox" data-check="' + path + '"' + (getByPath(data, path) === true ? ' checked' : '') + '>' +
+      '<span class="check__box" aria-hidden="true"></span><span class="check__text">' + label + '</span></label>' +
+      (ajuda ? '<div class="field__help">' + ajuda + '</div>' : '') + '</div>';
+  }
+
   function fieldIcon(label, path) {
     var atual = getByPath(data, path);
     var opts = ICONS.map(function (ic) {
@@ -364,6 +377,10 @@
         '<input type="text" list="listaCategorias" data-bind="parceiras.lista.' + i + '.segmento" value="' + escAttr(p.segmento) +
         '" placeholder="Escolha uma da lista ou digite uma nova"></div>' +
         fieldArea('Descrição (mais informações sobre a empresa)', 'parceiras.lista.' + i + '.descricao') +
+        fieldCheck('Exibir como empresa em destaque', 'parceiras.lista.' + i + '.destaque', 'Aparece no carrossel "Empresas em Destaque" (e continua na lista de todas as empresas).') +
+        (p.destaque === true
+          ? fieldNumber('Ordem no destaque (1 aparece primeiro)', 'parceiras.lista.' + i + '.destaque_ordem', 'Ex.: 1, 2, 3… Se deixar vazio, vai para o fim, em ordem alfabética.')
+          : '') +
         '</div>';
     });
     html += '<button type="button" class="btn-add" data-action="add" data-arr="parceiras.lista">+ Adicionar empresa</button></div>';
@@ -501,7 +518,7 @@
       case 'encontros.cards': return { foto: '', zoom: 100, selo: '', badge: 'ENCONTRO #', titulo: 'Novo encontro', data: '', local: '', publico: '', botao_texto: 'VER GALERIA COMPLETA', botao_link: '#' };
       case 'encontros.galeria.fotos': return '';
       case 'diretoria.membros': return { nome: 'NOME', cargo: 'CARGO', foto: '', zoom: 100, descricao: '', email: '', linkedin: '', instagram: '' };
-      case 'parceiras.lista': return { nome: 'Empresa', logo: '', link: '#', segmento: '', descricao: '', zoom: 108 };
+      case 'parceiras.lista': return { nome: 'Empresa', logo: '', link: '#', segmento: '', descricao: '', zoom: 108, destaque: false, destaque_ordem: '' };
       case 'sobre.itens': return { icone: 'crown', titulo: 'NOVO', texto: '' };
       case 'encontros.albuns': return { mes: String(new Date().getMonth() + 1), ano: String(new Date().getFullYear()), fotos: [] };
       case 'pilares.itens': return { icone: 'crown', titulo: 'NOVO', descricao: '' };
@@ -533,6 +550,7 @@
   });
   main.addEventListener('change', function (e) {
     var el = e.target;
+    if (el.dataset && el.dataset.check) { setByPath(data, el.dataset.check, !!el.checked); redesenha(); return; }
     if (el.dataset && el.dataset.bind) setByPath(data, el.dataset.bind, el.value);
 
     // upload simples (1 imagem)
