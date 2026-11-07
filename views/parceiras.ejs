@@ -19,7 +19,7 @@
        "imobiliária" caem no mesmo grupo (vale o primeiro nome digitado) */
     var chave = function (t) { return String(t).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); };
     var grupos = {}, rotulos = {};
-    (c.parceiras.lista || []).forEach(function (p) {
+    (c.parceiras.lista || []).filter(function (p) { return p.exibir_parceiras !== false; }).forEach(function (p) {
       var nome = (p.segmento || '').trim() || 'Outras';
       var k = chave(nome);
       if (!rotulos[k]) rotulos[k] = nome;

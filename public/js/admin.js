@@ -382,7 +382,9 @@
         '<input type="text" list="listaCategorias" data-bind="parceiras.lista.' + i + '.segmento" value="' + escAttr(p.segmento) +
         '" placeholder="Escolha uma da lista ou digite uma nova"></div>' +
         fieldArea('Descrição (mais informações sobre a empresa)', 'parceiras.lista.' + i + '.descricao') +
-        fieldCheck('Exibir como empresa em destaque', 'parceiras.lista.' + i + '.destaque', 'Aparece no carrossel "Empresas em Destaque" (e continua na lista de todas as empresas).') +
+        '<div class="field"><label>Onde esta empresa aparece</label></div>' +
+        fieldCheck('Exibir na página inicial (carrossel "Empresas em Destaque")', 'parceiras.lista.' + i + '.destaque', 'Marque para a empresa entrar no carrossel da página principal.') +
+        fieldCheck('Exibir na página "Empresas Parceiras" (lista geral)', 'parceiras.lista.' + i + '.exibir_parceiras', 'Desmarque para a empresa aparecer só na página inicial.') +
         (p.destaque === true
           ? fieldNumber('Ordem no destaque (1 aparece primeiro)', 'parceiras.lista.' + i + '.destaque_ordem', 'Ex.: 1, 2, 3… Se deixar vazio, vai para o fim, em ordem alfabética.')
           : '') +
@@ -555,7 +557,7 @@
       case 'encontros.cards': return { foto: '', zoom: 100, selo: '', badge: 'ENCONTRO #', titulo: 'Novo encontro', data: '', local: '', publico: '', botao_texto: 'VER GALERIA COMPLETA', botao_link: '#' };
       case 'encontros.galeria.fotos': return '';
       case 'diretoria.membros': return { nome: 'NOME', cargo: 'CARGO', foto: '', zoom: 100, descricao: '', email: '', linkedin: '', instagram: '' };
-      case 'parceiras.lista': return { nome: 'Empresa', logo: '', link: '#', segmento: '', descricao: '', zoom: 108, destaque: false, destaque_ordem: '' };
+      case 'parceiras.lista': return { nome: 'Empresa', logo: '', link: '#', segmento: '', descricao: '', zoom: 108, destaque: false, destaque_ordem: '', exibir_parceiras: true };
       case 'blog.posts': return { id: 'artigo-' + Date.now(), titulo: 'Novo artigo', resumo: '', conteudo: '', imagem: '', data: new Date().toISOString().slice(0, 10), publicado: true };
       case 'sobre.itens': return { icone: 'crown', titulo: 'NOVO', texto: '' };
       case 'encontros.albuns': return { mes: String(new Date().getMonth() + 1), ano: String(new Date().getFullYear()), fotos: [] };
@@ -709,6 +711,8 @@
       data.encontros.galeria = data.encontros.galeria || {}; data.encontros.galeria.fotos = data.encontros.galeria.fotos || [];
       data.diretoria = data.diretoria || {}; data.diretoria.membros = data.diretoria.membros || [];
       data.parceiras = data.parceiras || {}; data.parceiras.lista = data.parceiras.lista || [];
+      // empresas antigas não têm o campo: continuam aparecendo na lista de parceiras
+      data.parceiras.lista.forEach(function (p) { if (p.exibir_parceiras === undefined) p.exibir_parceiras = true; });
       data.blog = data.blog || {}; data.blog.posts = data.blog.posts || [];
       data.pilares = data.pilares || {}; data.pilares.itens = data.pilares.itens || [];
       data.footer = data.footer || {};
