@@ -518,6 +518,11 @@
         fieldText('Instagram', 'footer.instagram') +
         fieldText('Facebook', 'footer.facebook') +
         fieldText('WhatsApp (ex: https://wa.me/5545999999999)', 'footer.whatsapp') +
+      '</div>' +
+      '<div class="card"><div class="card__title">Créditos do desenvolvedor (linha no fim do rodapé)</div>' +
+        '<div class="grid-2">' + fieldText('Texto', 'footer.dev_texto') + fieldText('Nome (clicável quando há link)', 'footer.dev_nome') + '</div>' +
+        fieldText('Link do desenvolvedor (site ou Instagram)', 'footer.dev_link', 'https://…') +
+        '<div class="panel__desc">Deixe o nome vazio para esconder a linha.</div>' +
       '</div>';
   };
 

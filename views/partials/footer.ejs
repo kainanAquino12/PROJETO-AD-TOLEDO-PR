@@ -13,4 +13,10 @@
       <% if (c.footer.whatsapp && c.footer.whatsapp !== '#') { %><a href="<%= c.footer.whatsapp %>" class="social" target="_blank" rel="noopener" aria-label="WhatsApp"><%- include('icon', { name: 'whatsapp' }) %></a><% } %>
     </div>
   </div>
+  <% if (c.footer.dev_nome) { %>
+    <div class="container footer__dev">
+      <p><%= c.footer.dev_texto %>
+        <% if (c.footer.dev_link && c.footer.dev_link !== '#') { %><a href="<%= c.footer.dev_link %>" target="_blank" rel="noopener" class="footer__dev-link"><%= c.footer.dev_nome %></a><% } else { %><strong class="footer__dev-link"><%= c.footer.dev_nome %></strong><% } %></p>
+    </div>
+  <% } %>
 </footer>

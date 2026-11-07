@@ -77,6 +77,7 @@ function comPadroes(c) {
   c.sobre = Object.assign({ titulo: 'SOBRE NÓS', intro: '', itens: [], insta_titulo: '', insta_texto: '', insta_botao: '',
     parceira_intro: 'Uma iniciativa que caminha junto com a', parceira_nome: 'Assembleia de Deus Toledo – PR', parceira_logo: '/uploads/logo-ad-toledo.png', parceira_link: '' }, c.sobre);
   if (c.encontros && !Array.isArray(c.encontros.albuns)) c.encontros.albuns = [];
+  c.footer = Object.assign({ dev_texto: 'Desenvolvido por', dev_nome: 'B7', dev_link: '' }, c.footer);
   c.blog = Object.assign({ titulo: 'Blog', subtitulo: '', posts: [] }, c.blog);
   if (!Array.isArray(c.blog.posts)) c.blog.posts = [];
   atualizarTextos(c);

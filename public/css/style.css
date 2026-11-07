@@ -364,6 +364,11 @@ a.pitem:hover { transform: translateY(-3px); box-shadow: 0 10px 22px -12px rgba(
 .footer__logo-extra { max-height: 48px; width: auto; margin-bottom: 14px; }
 .footer__title { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; letter-spacing: 1.4px; text-transform: uppercase; }
 .footer__subtitle { margin-top: 6px; color: rgba(255, 255, 255, .7); font-size: .88rem; letter-spacing: .6px; text-transform: uppercase; }
+.footer__dev { margin-top: 32px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, .14); }
+.footer__dev p { color: rgba(255, 255, 255, .6); font-size: .8rem; letter-spacing: .6px; text-align: center; }
+.footer__dev-link { color: var(--gold); font-family: var(--font-display); font-weight: 700; letter-spacing: 1px; }
+a.footer__dev-link { border-bottom: 1px solid transparent; transition: border-color .2s ease, color .2s ease; }
+a.footer__dev-link:hover { color: #d9b66f; border-bottom-color: currentColor; }
 .footer__social { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; }
 .social { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid rgba(255, 255, 255, .35); border-radius: 50%; color: #fff; transition: border-color .2s ease, color .2s ease; }
 .social:hover { border-color: var(--gold); color: var(--gold); }
