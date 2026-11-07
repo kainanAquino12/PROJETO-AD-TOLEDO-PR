@@ -134,11 +134,36 @@
       for (var k = 0; k < n; k++) { var d = document.createElement('span'); d.className = 'slider__dot'; dotsBox.appendChild(d); dots.push(d); }
     }
 
-    if (prev) prev.addEventListener('click', function () { vaPara(indiceAtual() - 1); });
-    if (next) next.addEventListener('click', function () { vaPara(indiceAtual() + 1); });
+    /* troca automatica a cada 4 s; ao chegar na ultima foto volta suavemente para a primeira.
+       Um unico temporizador, reiniciado a cada acao manual (seta, tecla, toque, roda do mouse). */
+    var timerAuto = null, emFoco = false, visivel = true;
+    function ocupadoPorOutraCoisa() {
+      var lb = document.getElementById('lightbox');
+      return document.hidden || !visivel || emFoco || (lb && lb.classList.contains('is-open'));
+    }
+    function agenda() {
+      clearTimeout(timerAuto);
+      if (slides.length < 2) return;
+      timerAuto = setTimeout(function () {
+        if (!ocupadoPorOutraCoisa() && track.scrollWidth > track.clientWidth + 2) {
+          var fim = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
+          if (fim) track.scrollTo({ left: 0, behavior: reduz ? 'auto' : 'smooth' });
+          else vaPara(indiceAtual() + 1);
+        }
+        agenda();
+      }, 4000);
+    }
+    ['touchstart', 'pointerdown', 'wheel'].forEach(function (ev) { track.addEventListener(ev, agenda, { passive: true }); });
+    track.addEventListener('focusin', function () { emFoco = true; });
+    track.addEventListener('focusout', function () { emFoco = false; agenda(); });
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { visivel = es[0].isIntersecting; }).observe(sl);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) agenda(); });
+
+    if (prev) prev.addEventListener('click', function () { vaPara(indiceAtual() - 1); agenda(); });
+    if (next) next.addEventListener('click', function () { vaPara(indiceAtual() + 1); agenda(); });
     track.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight') { e.preventDefault(); vaPara(indiceAtual() + 1); }
-      else if (e.key === 'ArrowLeft') { e.preventDefault(); vaPara(indiceAtual() - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); vaPara(indiceAtual() + 1); agenda(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); vaPara(indiceAtual() - 1); agenda(); }
     });
 
     var ag = false;
@@ -147,7 +172,7 @@
       window.requestAnimationFrame(function () { ag = false; atualiza(); });
     }, { passive: true });
     window.addEventListener('resize', function () { montaPontos(); atualiza(); });
-    montaPontos(); atualiza();
+    montaPontos(); atualiza(); agenda();
   });
 
   /* ---------- carrossel de empresas em destaque ----------
