@@ -488,3 +488,7 @@ a.pitem:hover { transform: translateY(-3px); box-shadow: 0 10px 22px -12px rgba(
 .bpost__body blockquote { margin: 1.4em 0; padding-left: 18px; border-left: 3px solid var(--gold); font-family: var(--font-serif); font-style: italic; color: var(--navy); }
 @media (max-width: 980px) { .bgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .bgrid { grid-template-columns: 1fr; gap: 20px; } }
+
+/* paginas curtas (blog): o rodape fica no fim da tela, nao no meio */
+.page-flex { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+.page-flex > main { flex: 1 0 auto; }
