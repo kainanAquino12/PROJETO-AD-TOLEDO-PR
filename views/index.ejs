@@ -45,7 +45,7 @@
         <img src="<%= c.hero.imagem %>" alt="Encontro do <%= c.site.nome %>"
              <% if (hSrcset) { %>srcset="<%= hSrcset %>" sizes="(max-width: 860px) 100vw, 60vw"<% } %>
              style="--zoom: <%= (Number(c.hero.imagem_zoom) || 100) / 100 %>" />
-        <%- include('partials/logo', { cls: 'erlogo--light hero__mark' }) %>
+        <% if (c.hero.ocultar_logo !== true) { %><%- include('partials/logo', { cls: 'erlogo--light hero__mark' }) %><% } %>
       </figure>
     <% } %>
   </section>

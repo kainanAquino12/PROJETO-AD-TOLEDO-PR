@@ -156,6 +156,7 @@
     html += '<div class="card"><div class="card__title">Foto de fundo do topo</div>' +
       '<div class="panel__desc" style="margin-bottom:14px">Aparece atrás da logo, no lado escuro do topo. Use uma foto horizontal e larga — uma vista da cidade ou um encontro do EDR funcionam bem. Sem foto, o fundo fica azul-marinho liso.</div>' +
       imgField('Foto de fundo', 'hero.imagem', 'JPG ou PNG, até 8MB. De preferência com 1600px de largura ou mais.') +
+      fieldCheck('A foto já tem uma logo desenhada', 'hero.ocultar_logo', 'Marque se a foto enviada já traz a logo. Assim o site não desenha a logo ER por cima e ela não aparece duas vezes. Desmarcado, o site coloca a logo ER sobre o azul da foto.') +
       fieldRange('Zoom da foto', 'hero.imagem_zoom', { min: 100, max: 200, padrao: 100, rotuloMin: 'foto inteira', rotuloMax: 'bem aproximada' }) +
       fieldSelect('Intensidade da foto', 'hero.imagem_intensidade', [
         { value: 'suave', label: 'Suave — quase só uma textura' },
