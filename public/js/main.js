@@ -177,11 +177,16 @@
       i = Math.max(0, Math.min(max, i));
       track.scrollTo({ left: alvo(i), behavior: reduzMov ? 'auto' : 'smooth' });
     }
+    function ultimo() { return centrado() ? slides.length - 1 : slides.length - porTela(); }
     function pontos() {
-      var n = estatico() ? 0 : (centrado() ? slides.length : slides.length - porTela() + 1);
+      var n = estatico() ? 0 : ultimo() + 1;
       if (n === dots.length) return;
       dotsBox.innerHTML = ''; dots = [];
-      for (var k = 0; k < n; k++) { var d = document.createElement('span'); d.className = 'fslider__dot'; dotsBox.appendChild(d); dots.push(d); }
+      for (var k = 0; k < n; k++) {
+        var d = document.createElement('button'); d.type = 'button'; d.className = 'fslider__dot';
+        d.setAttribute('aria-label', 'Ir para a posição ' + (k + 1)); d.dataset.i = k;
+        dotsBox.appendChild(d); dots.push(d);
+      }
     }
     function atualiza() {
       var est = estatico(), i = -1;
@@ -190,16 +195,40 @@
       if (!est) {
         var fim = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
         i = fim && !centrado() ? dots.length - 1 : indice();
-        prev.disabled = track.scrollLeft <= 2; next.disabled = fim;
       }
       dots.forEach(function (d, k) { d.classList.toggle('is-active', k === i); });
     }
-    prev.addEventListener('click', function () { vaPara(indice() - 1); });
-    next.addEventListener('click', function () { vaPara(indice() + 1); });
+    /* em loop: depois da ultima volta para a primeira, e antes da primeira vai para a ultima */
+    function avanca(passos) {
+      var i = indice() + passos, max = ultimo();
+      vaPara(i > max ? 0 : (i < 0 ? max : i));
+    }
+    prev.addEventListener('click', function () { avanca(-1); });
+    next.addEventListener('click', function () { avanca(1); });
+    dotsBox.addEventListener('click', function (e) { var b = e.target.closest('[data-i]'); if (b) vaPara(parseInt(b.dataset.i, 10)); });
     track.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight') { e.preventDefault(); vaPara(indice() + 1); }
-      else if (e.key === 'ArrowLeft') { e.preventDefault(); vaPara(indice() - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); avanca(1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); avanca(-1); }
     });
+
+    /* reproducao automatica: a cada 4 s; pausa enquanto ha interacao (mouse em cima, toque,
+       foco, clique) e so volta depois de 6 s sem interagir. Nao roda com 1 empresa (estatico),
+       com a aba escondida, fora da tela ou se o aparelho pede movimento reduzido. */
+    var INTERVALO = 4000, RETOMA = 6000, ultimaAcao = 0, sobre = false, visivel = true;
+    function acao() { ultimaAcao = Date.now(); }
+    box.addEventListener('mouseenter', function () { sobre = true; });
+    box.addEventListener('mouseleave', function () { sobre = false; acao(); });
+    ['touchstart', 'pointerdown', 'wheel', 'keydown', 'focusin', 'click'].forEach(function (ev) { box.addEventListener(ev, acao, { passive: true }); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) { visivel = es[0].isIntersecting; }).observe(box);
+    }
+    if (!reduzMov) {
+      setInterval(function () {
+        if (estatico() || sobre || !visivel || document.hidden) return;
+        if (Date.now() - ultimaAcao < RETOMA) return;
+        avanca(1);
+      }, INTERVALO);
+    }
     var ag = false;
     track.addEventListener('scroll', function () { if (ag) return; ag = true; requestAnimationFrame(function () { ag = false; atualiza(); }); }, { passive: true });
     window.addEventListener('resize', atualiza);

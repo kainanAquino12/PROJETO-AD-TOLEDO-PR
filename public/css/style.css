@@ -187,11 +187,12 @@ a.fcard:hover { transform: translateY(-3px); box-shadow: 0 12px 26px -10px rgba(
 .fslider__btn:hover { background: var(--navy); color: #fff; }
 .fslider__btn:active { transform: scale(.94); }
 .fslider__btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-.fslider__btn[disabled] { opacity: .35; pointer-events: none; }
 .fslider__btn--prev { left: 0; }
 .fslider__btn--next { right: 0; }
 .fslider__dots { display: flex; justify-content: center; gap: 8px; margin-top: 4px; }
-.fslider__dot { width: 9px; height: 9px; border-radius: 99px; background: var(--line); transition: background .25s ease; }
+.fslider__dot { width: 9px; height: 9px; padding: 0; border: 0; cursor: pointer; border-radius: 99px; background: var(--line); transition: background .25s ease; position: relative; }
+.fslider__dot::after { content: ""; position: absolute; inset: -8px; }
+.fslider__dot:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .fslider__dot.is-active { background: var(--navy); }
 @media (max-width: 980px) {
   .fslider { --per: 2; --gap: 20px; }
