@@ -18,7 +18,13 @@
   <main>
 
   <!-- ====================== INÍCIO ====================== -->
-  <section class="hero" id="inicio">
+  <%
+    /* ajustes da foto do topo (painel > Inicio / Hero); sem valor usa o padrao */
+    var hNum = function (v, pad, min, max) { var n = parseFloat(v); if (isNaN(n)) n = pad; return Math.min(max, Math.max(min, n)); };
+    var hLarg = hNum(c.hero.imagem_largura, 72, 55, 100), hX = hNum(c.hero.imagem_x, 100, 0, 100), hY = hNum(c.hero.imagem_y, 50, 0, 100);
+    var hFade = hNum(c.hero.imagem_fade, 48, 10, 80), hAlt = hNum(c.hero.altura, 100, 90, 150) / 100;
+  %>
+  <section class="hero" id="inicio" style="--hero-k: <%= hAlt %>">
     <div class="container hero__grid">
       <div class="hero__text">
         <% if (c.hero.eyebrow) { %><span class="eyebrow"><%= c.hero.eyebrow %></span><% } %>
@@ -41,7 +47,7 @@
 
     <% if (c.hero.imagem) { %>
       <% var hSrcset = srcset(c.hero.imagem); %>
-      <figure class="hero__photo">
+      <figure class="hero__photo" style="--img-w: <%= hLarg %>%; --img-x: <%= hX %>%; --img-y: <%= hY %>%; --img-fade: <%= hFade %>%">
         <img src="<%= c.hero.imagem %>" alt="Encontro do <%= c.site.nome %>"
              <% if (hSrcset) { %>srcset="<%= hSrcset %>" sizes="(max-width: 860px) 100vw, 60vw"<% } %>
              style="--zoom: <%= (Number(c.hero.imagem_zoom) || 100) / 100 %>" />

@@ -158,6 +158,11 @@
       imgField('Foto de fundo', 'hero.imagem', 'JPG ou PNG, até 8MB. De preferência com 1600px de largura ou mais.') +
       fieldCheck('A foto já tem uma logo desenhada', 'hero.ocultar_logo', 'Marque se a foto enviada já traz a logo. Assim o site não desenha a logo ER por cima e ela não aparece duas vezes. Desmarcado, o site coloca a logo ER sobre o azul da foto.') +
       fieldRange('Zoom da foto', 'hero.imagem_zoom', { min: 100, max: 200, padrao: 100, rotuloMin: 'foto inteira', rotuloMax: 'bem aproximada' }) +
+      fieldRange('Posição na horizontal', 'hero.imagem_x', { min: 0, max: 100, padrao: 100, rotuloMin: 'mostra o lado esquerdo', rotuloMax: 'mostra o lado direito' }) +
+      fieldRange('Posição na vertical', 'hero.imagem_y', { min: 0, max: 100, padrao: 50, rotuloMin: 'mostra o topo', rotuloMax: 'mostra a parte de baixo' }) +
+      fieldRange('Largura da foto no topo', 'hero.imagem_largura', { min: 55, max: 100, padrao: 72, rotuloMin: 'mais estreita', rotuloMax: 'mais larga' }) +
+      fieldRange('Onde a foto termina de aparecer (degradê da esquerda)', 'hero.imagem_fade', { min: 10, max: 80, padrao: 48, rotuloMin: 'aparece mais cedo (mão mais nítida)', rotuloMax: 'aparece mais tarde' }) +
+      fieldRange('Altura do topo', 'hero.altura', { min: 90, max: 150, padrao: 100, rotuloMin: 'mais baixo', rotuloMax: 'mais alto (mostra mais da foto)' }) +
       fieldSelect('Intensidade da foto', 'hero.imagem_intensidade', [
         { value: 'suave', label: 'Suave — quase só uma textura' },
         { value: 'media', label: 'Média — equilibrada (padrão)' },

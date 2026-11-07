@@ -119,7 +119,7 @@ a, button, .pitem, .slide__photo { -webkit-tap-highlight-color: transparent; tou
 
 /* ------------------------------------------------------------------- hero -- */
 .hero { position: relative; overflow: hidden; background: var(--soft); }
-.hero__grid { position: relative; z-index: 2; display: flex; align-items: center; min-height: clamp(440px, 60vh, 560px); padding-top: 56px; padding-bottom: 56px; }
+.hero__grid { position: relative; z-index: 2; display: flex; align-items: center; min-height: calc(clamp(440px, 60vh, 560px) * var(--hero-k, 1)); padding-top: 56px; padding-bottom: 56px; }
 .hero__text { width: 44%; }
 .hero__title {
   font-family: var(--font-display); font-weight: 800; color: var(--navy);
@@ -129,11 +129,11 @@ a, button, .pitem, .slide__photo { -webkit-tap-highlight-color: transparent; tou
 .hero__lead { margin: 22px 0 32px; max-width: 30em; font-weight: 300; font-size: 1.1rem; }
 /* a arte (aperto de maos + faixa azul-marinho) ocupa a direita e se dissolve no fundo claro */
 .hero__photo {
-  position: absolute; top: 0; right: 0; bottom: 0; width: 72%; margin: 0; z-index: 1;
-  -webkit-mask-image: linear-gradient(to right, transparent 0, transparent 34%, rgba(0, 0, 0, .55) 50%, #000 66%);
-          mask-image: linear-gradient(to right, transparent 0, transparent 34%, rgba(0, 0, 0, .55) 50%, #000 66%);
+  position: absolute; top: 0; right: 0; bottom: 0; width: var(--img-w, 72%); margin: 0; z-index: 1;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, transparent calc(var(--img-fade, 48%) - 30%), rgba(0, 0, 0, .55) calc(var(--img-fade, 48%) - 14%), #000 var(--img-fade, 48%));
+          mask-image: linear-gradient(to right, transparent 0, transparent calc(var(--img-fade, 48%) - 30%), rgba(0, 0, 0, .55) calc(var(--img-fade, 48%) - 14%), #000 var(--img-fade, 48%));
 }
-.hero__photo img { width: 100%; height: 100%; object-fit: cover; object-position: right center; transform: scale(var(--zoom, 1)); transform-origin: right center; }
+.hero__photo img { width: 100%; height: 100%; object-fit: cover; object-position: var(--img-x, 100%) var(--img-y, 50%); transform: scale(var(--zoom, 1)); transform-origin: var(--img-x, 100%) var(--img-y, 50%); }
 /* a marca fica sobre o azul-marinho: branca e dourada, sem moldura, com um brilho suave que a funde ao fundo */
 .hero__mark { position: absolute; right: 9%; top: 26%; width: clamp(110px, 19%, 210px); height: auto; opacity: .94; filter: drop-shadow(0 0 28px rgba(198, 160, 82, .22)); pointer-events: none; }
 
@@ -405,7 +405,7 @@ a.pitem:hover { transform: translateY(-3px); box-shadow: 0 10px 22px -12px rgba(
 }
 @media (max-width: 1100px) {
   .hero__text { width: 48%; }
-  .hero__photo { width: 64%; }
+  .hero__photo { width: calc(var(--img-w, 72%) - 8%); }
 }
 @media (max-width: 860px) {
   .hero__grid { min-height: 0; padding-top: 44px; padding-bottom: 36px; }
