@@ -439,6 +439,12 @@
     html += '<div class="card"><div class="card__title">Conhecendo o EDR (usa o Instagram do Rodapé)</div>' +
       fieldText('Título', 'sobre.insta_titulo') + fieldArea('Texto', 'sobre.insta_texto') +
       fieldText('Texto do botão', 'sobre.insta_botao') + '</div>';
+    html += '<div class="card"><div class="card__title">Iniciativa junto com a Assembleia de Deus (abaixo do Instagram)</div>' +
+      '<div class="panel__desc" style="margin-bottom:14px">Bloco institucional com a logo. Deixe o nome e a logo vazios para esconder o bloco.</div>' +
+      fieldText('Frase de abertura', 'sobre.parceira_intro') +
+      fieldText('Nome da instituição', 'sobre.parceira_nome') +
+      imgField('Logo da instituição', 'sobre.parceira_logo', 'PNG com fundo transparente ou branco, de preferência com 1200px de largura ou mais. Exibida sem filtros.') +
+      fieldText('Link ao clicar na logo (opcional)', 'sobre.parceira_link', 'https://…') + '</div>';
     return html;
   };
 

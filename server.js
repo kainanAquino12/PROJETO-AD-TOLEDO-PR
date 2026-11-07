@@ -74,7 +74,8 @@ function semearDisco() {
 // persistente nao os tem, entao o site e o painel recebem valores vazios.
 function comPadroes(c) {
   c.config = Object.assign({ whatsapp_grupo: '', logo_extra: '', logo_extra_nome: '', instagram_extra: '', instagram_extra_nome: '' }, c.config);
-  c.sobre = Object.assign({ titulo: 'SOBRE NÓS', intro: '', itens: [], insta_titulo: '', insta_texto: '', insta_botao: '' }, c.sobre);
+  c.sobre = Object.assign({ titulo: 'SOBRE NÓS', intro: '', itens: [], insta_titulo: '', insta_texto: '', insta_botao: '',
+    parceira_intro: 'Uma iniciativa que caminha junto com a', parceira_nome: 'Assembleia de Deus Toledo – PR', parceira_logo: '/uploads/logo-ad-toledo.png', parceira_link: '' }, c.sobre);
   if (c.encontros && !Array.isArray(c.encontros.albuns)) c.encontros.albuns = [];
   c.blog = Object.assign({ titulo: 'Blog', subtitulo: '', posts: [] }, c.blog);
   if (!Array.isArray(c.blog.posts)) c.blog.posts = [];

@@ -73,6 +73,22 @@
         <% if (c.sobre.insta_titulo && c.footer.instagram && c.footer.instagram !== '#') { %>
           <a href="<%= c.footer.instagram %>" target="_blank" rel="noopener" class="link-arrow"><%= c.sobre.insta_botao || 'Conheça no Instagram' %></a>
         <% } %>
+        <% if (c.sobre.parceira_nome || c.sobre.parceira_logo) { %>
+          <%
+            var pLink = c.sobre.parceira_link && c.sobre.parceira_link !== '#' ? c.sobre.parceira_link : '';
+            var pSrcset = c.sobre.parceira_logo ? srcset(c.sobre.parceira_logo) : '';
+          %>
+          <div class="institucional">
+            <% if (c.sobre.parceira_intro) { %><p class="institucional__intro"><%= c.sobre.parceira_intro %></p><% } %>
+            <% if (c.sobre.parceira_nome) { %><p class="institucional__nome"><%= c.sobre.parceira_nome %></p><% } %>
+            <% if (c.sobre.parceira_logo) { %>
+              <% if (pLink) { %><a href="<%= pLink %>" target="_blank" rel="noopener" class="institucional__logo" aria-label="<%= c.sobre.parceira_nome || 'Assembleia de Deus' %>"><% } else { %><div class="institucional__logo"><% } %>
+                <img src="<%= c.sobre.parceira_logo %>" alt="<%= c.sobre.parceira_nome || 'Assembleia de Deus' %>" loading="lazy"
+                     <% if (pSrcset) { %>srcset="<%= pSrcset %>" sizes="(max-width: 560px) 80vw, 340px"<% } %> />
+              <% if (pLink) { %></a><% } else { %></div><% } %>
+            <% } %>
+          </div>
+        <% } %>
       </div>
       <% if (c.sobre.itens && c.sobre.itens.length) { %>
         <div class="sobre__itens">
