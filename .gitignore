@@ -9,3 +9,4 @@ _preview.png
 
 .vercel
 .env*
+.claude/settings.local.json
