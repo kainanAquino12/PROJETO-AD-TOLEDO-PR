@@ -32,12 +32,9 @@ a { color: inherit; }
 .login-card__logo { display: grid; place-items: center; margin-bottom: 14px; }
 /* logo SVG (reaproveitado na tela de login) */
 .erlogo { display: block; }
-.erlogo__ring  { fill: var(--gold); font-family: var(--font-display); font-weight: 600; }
 .erlogo__crown { fill: var(--gold); }
-.erlogo__disc  { fill: none; stroke: var(--navy); stroke-width: 6; }
-.erlogo__e     { fill: var(--navy); font-family: var(--font-display); font-weight: 900; font-size: 86px; }
-.erlogo__r     { fill: var(--gold); font-family: var(--font-display); font-weight: 900; font-size: 86px; }
-.erlogo__city  { fill: var(--navy); font-family: var(--font-display); font-weight: 700; font-size: 17px; }
+.erlogo__e     { fill: var(--navy); }
+.erlogo__r     { fill: var(--gold); }
 .erlogo--login { width: 130px; }
 .login-card__title { font-family: var(--font-display); font-weight: 800; color: var(--navy); font-size: 1.3rem; }
 .login-card__sub { color: var(--gold-dark); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: .72rem; margin-bottom: 22px; }
@@ -227,3 +224,7 @@ a { color: inherit; }
 .field__help { margin-top: 6px; color: #6b7480; font-size: .84rem; line-height: 1.45; }
 .field input[type=number] { width: 100%; padding: 10px 12px; border: 1px solid var(--line, #e7e3da); border-radius: 6px; font-size: .95rem; font-family: var(--font-body); background: #fff; }
 .field input[type=number]:focus { outline: none; border-color: var(--gold, #c6a052); }
+.repeat-item__order { display: inline-flex; gap: 6px; margin-left: auto; margin-right: 10px; }
+.btn-move { padding: 5px 10px; border: 1.5px solid var(--line); border-radius: 7px; background: #fff; color: var(--navy); font: 600 .76rem var(--font-body); cursor: pointer; }
+.btn-move:hover:not([disabled]) { border-color: var(--gold); background: #faf5e8; }
+.btn-move[disabled] { opacity: .35; cursor: default; }

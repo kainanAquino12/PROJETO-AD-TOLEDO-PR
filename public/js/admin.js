@@ -329,6 +329,10 @@
     (data.diretoria.membros || []).forEach(function (m, i) {
       html += '<div class="repeat-item"><div class="repeat-item__head">' +
         '<span class="repeat-item__label">Membro ' + (i + 1) + (i === 0 ? ' — em destaque' : '') + '</span>' +
+        '<span class="repeat-item__order">' +
+          '<button type="button" class="btn-move" data-action="move" data-dir="-1" data-arr="diretoria.membros" data-index="' + i + '"' + (i === 0 ? ' disabled' : '') + ' title="Subir">↑ Subir</button>' +
+          '<button type="button" class="btn-move" data-action="move" data-dir="1" data-arr="diretoria.membros" data-index="' + i + '"' + (i === (data.diretoria.membros.length - 1) ? ' disabled' : '') + ' title="Descer">↓ Descer</button>' +
+        '</span>' +
         '<button type="button" class="btn-remove" data-action="remove" data-arr="diretoria.membros" data-index="' + i + '">Remover</button>' +
         '</div>' + imgField('Foto', 'diretoria.membros.' + i + '.foto') +
         fieldRange('Zoom da foto', 'diretoria.membros.' + i + '.zoom', { min: 100, max: 250, padrao: 100, rotuloMin: 'foto inteira', rotuloMax: 'perto do rosto' }) +
@@ -621,6 +625,13 @@
       var arr = getByPath(data, arrP) || [];
       arr.push(makeNew(arrP));
       setByPath(data, arrP, arr); redesenha();
+    } else if (action === 'move') {
+      var mp = btn.dataset.arr, mi = parseInt(btn.dataset.index, 10), mj = mi + parseInt(btn.dataset.dir, 10);
+      var ma = getByPath(data, mp) || [];
+      if (mj >= 0 && mj < ma.length) {
+        var tmp = ma[mi]; ma[mi] = ma[mj]; ma[mj] = tmp;
+        setByPath(data, mp, ma); redesenha();
+      }
     } else if (action === 'remove') {
       var ap = btn.dataset.arr;
       var idx = parseInt(btn.dataset.index, 10);

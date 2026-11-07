@@ -93,6 +93,8 @@ function atualizarTextos(c) {
     const contato = c.nav.findIndex((i) => i && i.href === '#rodape');
     if (contato >= 0) c.nav.splice(contato, 0, blog); else c.nav.push(blog);
   }
+  // nova arte do banner (so troca a foto antiga original; uma foto enviada pelo painel e mantida)
+  if (c.hero) troca(c.hero, 'imagem', '/uploads/img_1785435812177_179635.jpeg', '/uploads/hero-aperto-de-maos.jpg');
   ((c.numeros && c.numeros.itens) || []).forEach((i) => troca(i, 'valor', '+30', '+40'));
   if (c.diretoria) {
     troca(c.diretoria, 'titulo', 'NOSSA DIRETORIA', 'NOSSA COORDENAÇÃO');

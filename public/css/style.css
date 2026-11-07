@@ -86,13 +86,14 @@ a, button, .pitem, .slide__photo { -webkit-tap-highlight-color: transparent; tou
 .brand { display: inline-flex; align-items: center; }
 .brand__img { max-height: 54px; width: auto; }
 .erlogo { display: block; }
-.erlogo__ring  { fill: var(--gold); font-family: var(--font-display); font-weight: 600; }
 .erlogo__crown { fill: var(--gold); }
-.erlogo__disc  { fill: none; stroke: var(--navy); stroke-width: 6; }
-.erlogo__e     { fill: var(--navy); font-family: var(--font-display); font-weight: 900; font-size: 86px; }
-.erlogo__r     { fill: var(--gold); font-family: var(--font-display); font-weight: 900; font-size: 86px; }
-.erlogo__city  { fill: var(--navy); font-family: var(--font-display); font-weight: 700; font-size: 17px; }
-.erlogo--nav { width: 58px; }
+.erlogo__e     { fill: var(--navy); }
+.erlogo__r     { fill: var(--gold); }
+.erlogo--light .erlogo__e { fill: #fff; }
+.erlogo--nav { width: 54px; }
+.brand { gap: 16px; }
+.brand__sep { width: 1px; height: 34px; background: var(--line); }
+.brand__city { color: var(--navy); font-family: var(--font-display); font-weight: 600; font-size: .72rem; letter-spacing: 1.6px; text-transform: uppercase; white-space: nowrap; }
 
 .nav__list { display: flex; gap: 30px; }
 .nav__link {
@@ -126,13 +127,15 @@ a, button, .pitem, .slide__photo { -webkit-tap-highlight-color: transparent; tou
 }
 .hero__title span { display: block; color: var(--gold); }
 .hero__lead { margin: 22px 0 32px; max-width: 30em; font-weight: 300; font-size: 1.1rem; }
-/* a foto ocupa a metade direita, na altura toda, e se dissolve no fundo bege */
+/* a arte (aperto de maos + faixa azul-marinho) ocupa a direita e se dissolve no fundo claro */
 .hero__photo {
-  position: absolute; top: 0; right: 0; bottom: 0; width: 54%; margin: 0; z-index: 1;
-  -webkit-mask-image: linear-gradient(to right, transparent 0, rgba(0, 0, 0, .5) 24%, #000 52%);
-          mask-image: linear-gradient(to right, transparent 0, rgba(0, 0, 0, .5) 24%, #000 52%);
+  position: absolute; top: 0; right: 0; bottom: 0; width: 72%; margin: 0; z-index: 1;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, transparent 34%, rgba(0, 0, 0, .55) 50%, #000 66%);
+          mask-image: linear-gradient(to right, transparent 0, transparent 34%, rgba(0, 0, 0, .55) 50%, #000 66%);
 }
-.hero__photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 72%; transform: scale(var(--zoom, 1)); }
+.hero__photo img { width: 100%; height: 100%; object-fit: cover; object-position: right center; transform: scale(var(--zoom, 1)); transform-origin: right center; }
+/* a marca fica sobre o azul-marinho: branca e dourada, sem moldura, com um brilho suave que a funde ao fundo */
+.hero__mark { position: absolute; right: 9%; top: 26%; width: clamp(110px, 19%, 210px); height: auto; opacity: .94; filter: drop-shadow(0 0 28px rgba(198, 160, 82, .22)); pointer-events: none; }
 
 /* ----------------------------------------------------------------- numeros -- */
 .stats { background: var(--white); padding: 32px 0 8px; }
@@ -388,15 +391,16 @@ a.pitem:hover { transform: translateY(-3px); box-shadow: 0 10px 22px -12px rgba(
 }
 @media (max-width: 1100px) {
   .hero__text { width: 48%; }
-  .hero__photo { width: 54%; }
+  .hero__photo { width: 64%; }
 }
 @media (max-width: 860px) {
   .hero__grid { min-height: 0; padding-top: 44px; padding-bottom: 36px; }
   .hero__text { width: 100%; }
   .hero__lead { margin-bottom: 26px; }
   /* foto inteira, sem cortar (a arte tem logo e elementos nas bordas) */
-  .hero__photo { position: static; width: 100%; -webkit-mask-image: none; mask-image: none; }
+  .hero__photo { position: relative; width: 100%; -webkit-mask-image: none; mask-image: none; }
   .hero__photo img { height: auto; transform: none; }
+  .hero__mark { right: 8%; top: 24%; width: 24%; }
   /* celular e tablet: titulo, depois a foto, por ultimo a mensagem */
   .pastoral__grid { grid-template-columns: 1fr; grid-template-areas: "head" "photo" "body"; grid-template-rows: auto; }
   .pastoral__grid--solo { grid-template-areas: "head" "body"; }

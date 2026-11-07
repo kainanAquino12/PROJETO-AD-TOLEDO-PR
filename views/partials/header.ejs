@@ -9,7 +9,8 @@
       <% if (c.site.logo) { %>
         <img src="<%= c.site.logo %>" alt="<%= c.site.nome %>" class="brand__img" />
       <% } else { %>
-        <%- include('logo', { cls: 'erlogo--nav', cidade: c.site.cidade }) %>
+        <%- include('logo', { cls: 'erlogo--nav' }) %>
+        <% if (c.site.cidade) { %><span class="brand__sep" aria-hidden="true"></span><span class="brand__city"><%= c.site.cidade %></span><% } %>
       <% } %>
     </a>
 

@@ -1,29 +1,10 @@
 <%
-/* Logo ER em SVG. Uso: include('partials/logo', { cls: 'logo--hero' }) */
+/* Logo ER em SVG (letras desenhadas como tracado: nitida em qualquer tamanho e sem depender de fonte).
+   Uso: include('partials/logo', { cls: 'erlogo--nav' }); 'erlogo--light' deixa o E branco (fundo escuro). */
 var cls = (typeof cls !== 'undefined') ? cls : '';
 %>
-<svg class="erlogo <%= cls %>" viewBox="0 0 220 252" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Empreendedores do Reino">
-  <defs>
-    <path id="er-arc" d="M 110,120 m -74,0 a 74,74 0 1,1 148,0 a 74,74 0 1,1 -148,0" />
-  </defs>
-
-  <!-- texto circular -->
-  <text class="erlogo__ring" font-size="13.5" letter-spacing="3.2">
-    <textPath href="#er-arc" startOffset="50%" text-anchor="middle">
-      EMPREENDEDORES&#160;&#160;&#8226;&#160;&#160;DO&#160;&#160;REINO&#160;&#160;&#8226;
-    </textPath>
-  </text>
-
-  <!-- coroa -->
-  <path class="erlogo__crown" d="M82 56 L90 74 L110 60 L130 74 L138 56 L134 80 L86 80 Z" />
-
-  <!-- circulo interno -->
-  <circle class="erlogo__disc" cx="110" cy="124" r="58" />
-
-  <!-- letras E R -->
-  <text class="erlogo__e" x="74" y="158" text-anchor="middle">E</text>
-  <text class="erlogo__r" x="138" y="158" text-anchor="middle">R</text>
-
-  <!-- cidade -->
-  <text class="erlogo__city" x="110" y="234" text-anchor="middle" letter-spacing="5"><%= (typeof cidade !== 'undefined' ? cidade : 'TOLEDO/PR') %></text>
+<svg class="erlogo <%= cls %>" viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Empreendedores do Reino">
+  <path class="erlogo__crown" d="M47 30 L49 14 L55.5 22 L60 11 L64.5 22 L71 14 L73 30 Z" />
+  <path class="erlogo__e" d="M8 40 H52 V52 H21 V62 H46 V73 H21 V84 H52 V96 H8 Z" />
+  <path class="erlogo__r" fill-rule="evenodd" d="M62 40 H90 C104 40 112 48 112 58 C112 66 107 72 100 75 L114 96 H98 L86 77 H75 V96 H62 Z M75 51 V66 H88 C94 66 99 63 99 58.5 C99 54 94 51 88 51 Z" />
 </svg>
