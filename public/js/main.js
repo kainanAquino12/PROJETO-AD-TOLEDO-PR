@@ -150,89 +150,162 @@
     montaPontos(); atualiza();
   });
 
-  /* ---------- carrossel de empresas em destaque ---------- */
+  /* ---------- carrossel de empresas em destaque ----------
+     Anel infinito movido por transform: as empresas reais ficam no meio e copias (clones) delas
+     nas pontas, entao "depois da ultima vem a primeira" sem salto. Um unico temporizador
+     (setTimeout reagendado) controla o automatico; qualquer navegacao manual reinicia a contagem. */
   (function () {
     var box = document.getElementById('destaques'); if (!box) return;
-    var track = box.querySelector('.fslider__track'), slides = [].slice.call(track.children);
+    var viewport = box.querySelector('.fslider__viewport');
+    var track = box.querySelector('.fslider__track');
     var prev = box.querySelector('[data-fprev]'), next = box.querySelector('[data-fnext]'), dotsBox = box.querySelector('[data-fdots]');
-    var dots = [], reduzMov = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var cs = function () { return getComputedStyle(box); };
-    var porTela = function () { return parseInt(cs().getPropertyValue('--per'), 10) || 1; };
-    var centrado = function () { return cs().getPropertyValue('--centered').trim() === '1'; };
-    var estatico = function () { return slides.length <= porTela(); };
-    var passo = function () { return slides.length > 1 ? slides[1].offsetLeft - slides[0].offsetLeft : 1; };
+    var reais = [].slice.call(track.children);       // so as empresas marcadas no painel, na ordem do painel
+    var n = reais.length; if (!n) return;
 
-    function alvo(i) {
-      var s = slides[i]; if (!s) return 0;
-      return s.offsetLeft - (centrado() ? (track.clientWidth - s.offsetWidth) / 2 : 0);
+    var INTERVALO = 4000, DURACAO = 600;
+    var reduzMov = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var K = 0;              // quantos clones em cada ponta
+    var gira = false;       // true = anel com navegacao; false = parado (poucas empresas)
+    var idx = 0;            // posicao logica: 0..n-1 (pode passar por -1 / n durante a animacao)
+    var ocupado = false, timerAnim = null, timerAuto = null, arrastando = false;
+    var porTelaAtual = 0, centradoAtual = null;
+
+    function css(nome) { return getComputedStyle(box).getPropertyValue(nome).trim(); }
+    function porTela() { return parseInt(css('--per'), 10) || 1; }
+    function centrado() { return css('--centered') === '1'; }
+    function mod(a) { return ((a % n) + n) % n; }
+    function filhos() { return [].slice.call(track.children); }
+    function passo() { var f = filhos(); return f.length > 1 ? f[1].offsetLeft - f[0].offsetLeft : 0; }
+    function x(i) { return -(K + i) * passo(); }
+
+    function posiciona(animado, i) {
+      track.style.transition = (animado && !reduzMov) ? 'transform ' + DURACAO + 'ms cubic-bezier(.22, .61, .36, 1)' : 'none';
+      track.style.transform = gira ? 'translate3d(' + x(i) + 'px,0,0)' : 'none';
     }
-    function indice() {
-      if (!centrado()) return Math.max(0, Math.min(slides.length - porTela(), Math.round(track.scrollLeft / passo())));
-      var meio = track.scrollLeft + track.clientWidth / 2, melhor = 0, d = Infinity;
-      slides.forEach(function (s, i) { var dd = Math.abs(s.offsetLeft + s.offsetWidth / 2 - meio); if (dd < d) { d = dd; melhor = i; } });
-      return melhor;
-    }
-    function vaPara(i) {
-      var max = centrado() ? slides.length - 1 : slides.length - porTela();
-      i = Math.max(0, Math.min(max, i));
-      track.scrollTo({ left: alvo(i), behavior: reduzMov ? 'auto' : 'smooth' });
-    }
-    function ultimo() { return centrado() ? slides.length - 1 : slides.length - porTela(); }
-    function pontos() {
-      var n = estatico() ? 0 : ultimo() + 1;
-      if (n === dots.length) return;
-      dotsBox.innerHTML = ''; dots = [];
-      for (var k = 0; k < n; k++) {
-        var d = document.createElement('button'); d.type = 'button'; d.className = 'fslider__dot';
-        d.setAttribute('aria-label', 'Ir para a posição ' + (k + 1)); d.dataset.i = k;
-        dotsBox.appendChild(d); dots.push(d);
+
+    /* (re)monta o anel conforme o tamanho da tela e a quantidade de empresas */
+    function monta() {
+      var per = porTela();
+      track.innerHTML = '';
+      reais.forEach(function (r) { track.appendChild(r); });
+      gira = n >= 3 || n > per;
+      box.classList.toggle('is-static', !gira);
+      prev.hidden = next.hidden = dotsBox.hidden = !gira;
+      K = 0;
+      if (gira) {
+        K = per + 1;
+        var clone = function (r) {
+          var c = r.cloneNode(true);
+          c.classList.add('fslide--clone'); c.setAttribute('aria-hidden', 'true');
+          [].forEach.call(c.querySelectorAll('a'), function (el) { el.tabIndex = -1; });
+          return c;
+        };
+        for (var j = 1; j <= K; j++) {
+          track.insertBefore(clone(reais[mod(-j)]), track.firstChild);   // ..., penultimo, ultimo | reais
+          track.appendChild(clone(reais[mod(j - 1)]));                    // reais | primeiro, segundo, ...
+        }
       }
-    }
-    function atualiza() {
-      var est = estatico(), i = -1;
-      box.classList.toggle('is-static', est);
+      porTelaAtual = per; centradoAtual = centrado();
       pontos();
-      if (!est) {
-        var fim = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
-        i = fim && !centrado() ? dots.length - 1 : indice();
-      }
-      dots.forEach(function (d, k) { d.classList.toggle('is-active', k === i); });
+      idx = mod(idx);
+      posiciona(false, idx);
+      marca();
     }
-    /* em loop: depois da ultima volta para a primeira, e antes da primeira vai para a ultima */
-    function avanca(passos) {
-      var i = indice() + passos, max = ultimo();
-      vaPara(i > max ? 0 : (i < 0 ? max : i));
-    }
-    prev.addEventListener('click', function () { avanca(-1); });
-    next.addEventListener('click', function () { avanca(1); });
-    dotsBox.addEventListener('click', function (e) { var b = e.target.closest('[data-i]'); if (b) vaPara(parseInt(b.dataset.i, 10)); });
-    track.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight') { e.preventDefault(); avanca(1); }
-      else if (e.key === 'ArrowLeft') { e.preventDefault(); avanca(-1); }
-    });
 
-    /* reproducao automatica: a cada 4 s; pausa enquanto ha interacao (mouse em cima, toque,
-       foco, clique) e so volta depois de 6 s sem interagir. Nao roda com 1 empresa (estatico),
-       com a aba escondida, fora da tela ou se o aparelho pede movimento reduzido. */
-    var INTERVALO = 4000, RETOMA = 6000, ultimaAcao = 0, sobre = false, visivel = true;
-    function acao() { ultimaAcao = Date.now(); }
-    box.addEventListener('mouseenter', function () { sobre = true; });
-    box.addEventListener('mouseleave', function () { sobre = false; acao(); });
-    ['touchstart', 'pointerdown', 'wheel', 'keydown', 'focusin', 'click'].forEach(function (ev) { box.addEventListener(ev, acao, { passive: true }); });
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (es) { visivel = es[0].isIntersecting; }).observe(box);
+    function pontos() {
+      dotsBox.innerHTML = '';
+      if (!gira) return;
+      for (var k = 0; k < n; k++) {
+        var d = document.createElement('button');
+        d.type = 'button'; d.className = 'fslider__dot'; d.dataset.i = k;
+        d.setAttribute('aria-label', 'Empresa ' + (k + 1) + ' de ' + n);
+        dotsBox.appendChild(d);
+      }
     }
-    if (!reduzMov) {
-      setInterval(function () {
-        if (estatico() || sobre || !visivel || document.hidden) return;
-        if (Date.now() - ultimaAcao < RETOMA) return;
-        avanca(1);
+    function marca() {
+      var ativo = mod(idx);
+      [].forEach.call(dotsBox.children, function (d, k) { d.classList.toggle('is-active', k === ativo); });
+    }
+
+    /* depois da animacao, se caiu num clone, volta ao real equivalente sem transicao (invisivel) */
+    function normaliza() {
+      timerAnim = null; ocupado = false;
+      if (idx < 0 || idx >= n) { idx = mod(idx); posiciona(false, idx); }
+    }
+    function vaPara(i, manual) {
+      if (!gira || ocupado) return;
+      ocupado = true;
+      idx = i;
+      posiciona(true, idx);
+      marca();
+      clearTimeout(timerAnim);
+      timerAnim = setTimeout(normaliza, reduzMov ? 30 : DURACAO + 40);
+      if (manual) agenda();
+    }
+    function avanca(passos, manual) { vaPara(idx + passos, manual); }
+
+    /* automatico: um unico temporizador, sempre reagendado; navegacao manual reinicia a contagem */
+    function agenda() {
+      clearTimeout(timerAuto);
+      timerAuto = setTimeout(function () {
+        if (gira && !document.hidden && !arrastando && !box.matches(':focus-within')) avanca(1, false);
+        agenda();
       }, INTERVALO);
     }
-    var ag = false;
-    track.addEventListener('scroll', function () { if (ag) return; ag = true; requestAnimationFrame(function () { ag = false; atualiza(); }); }, { passive: true });
-    window.addEventListener('resize', atualiza);
-    atualiza();
+
+    prev.addEventListener('click', function () { avanca(-1, true); });
+    next.addEventListener('click', function () { avanca(1, true); });
+    dotsBox.addEventListener('click', function (e) { var b = e.target.closest('[data-i]'); if (b) vaPara(parseInt(b.dataset.i, 10), true); });
+    track.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); avanca(1, true); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); avanca(-1, true); }
+    });
+
+    /* arrastar (toque e mouse): passa de empresa com um gesto horizontal; a rolagem vertical continua livre */
+    var ini = null, dx = 0, base = 0, moveu = false;
+    track.addEventListener('pointerdown', function (e) {
+      if (!gira || ocupado || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      ini = { x: e.clientX, y: e.clientY, id: e.pointerId }; dx = 0; moveu = false; base = x(idx);
+    });
+    track.addEventListener('pointermove', function (e) {
+      if (!ini || e.pointerId !== ini.id) return;
+      var mx = e.clientX - ini.x, my = e.clientY - ini.y;
+      if (!moveu) {
+        if (Math.abs(mx) < 8 || Math.abs(mx) < Math.abs(my)) return;
+        moveu = true; arrastando = true;
+        try { track.setPointerCapture(e.pointerId); } catch (err) { /* sem captura */ }
+      }
+      dx = mx;
+      track.style.transition = 'none';
+      track.style.transform = 'translate3d(' + (base + dx) + 'px,0,0)';
+    });
+    function solta(e) {
+      if (!ini || (e && e.pointerId !== ini.id)) return;
+      var d = dx, foi = moveu; ini = null; arrastando = false;
+      if (!foi) return;
+      var limiar = Math.min(60, passo() / 4);
+      if (d <= -limiar) { ocupado = false; avanca(1, true); }
+      else if (d >= limiar) { ocupado = false; avanca(-1, true); }
+      else { posiciona(true, idx); agenda(); }
+    }
+    track.addEventListener('pointerup', solta);
+    track.addEventListener('pointercancel', solta);
+    // depois de um arrasto o navegador dispararia o clique no link da empresa: bloqueia
+    track.addEventListener('click', function (e) { if (moveu) { e.preventDefault(); e.stopPropagation(); moveu = false; } }, true);
+
+    var agRe = false;
+    window.addEventListener('resize', function () {
+      if (agRe) return; agRe = true;
+      requestAnimationFrame(function () {
+        agRe = false;
+        if (porTela() !== porTelaAtual || centrado() !== centradoAtual) monta(); else posiciona(false, idx);
+      });
+    });
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) agenda(); });
+    window.addEventListener('load', function () { posiciona(false, idx); });
+
+    monta();
+    agenda();
   })();
 
   /* ---------- coordenacao: informacoes completas do integrante ---------- */

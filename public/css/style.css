@@ -157,16 +157,15 @@ a, button, .pitem, .slide__photo { -webkit-tap-highlight-color: transparent; tou
 .featured__star { width: 24px; height: 24px; color: var(--gold); flex: none; }
 
 .fslider { --gap: 24px; --per: 3; --centered: 0; position: relative; padding: 0 44px; }
-.fslider__viewport { container-type: inline-size; }
+.fslider__viewport { container-type: inline-size; overflow: hidden; padding: 16px 10px 20px; margin: 0 -10px; }
 .fslider__track {
   --w: calc((100cqw - 2 * var(--gap)) / var(--per));
-  display: flex; gap: var(--gap); list-style: none; position: relative; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
-  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-  padding: 16px 0 20px;
+  display: flex; gap: var(--gap); list-style: none; position: relative; will-change: transform;
+  touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab;
 }
-.fslider__track::-webkit-scrollbar { display: none; }
+.fslider__track:active { cursor: grabbing; }
 .fslider__track:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 8px; }
-.fslide { flex: 0 0 var(--w); min-width: 0; scroll-snap-align: start; display: flex; }
+.fslide { flex: 0 0 var(--w); min-width: 0; display: flex; }
 .fcard {
   display: flex; align-items: center; justify-content: center; width: 100%; background: var(--white);
   border-radius: 16px; box-shadow: 0 4px 18px -8px rgba(22, 47, 74, .18), 0 0 0 1px rgba(22, 47, 74, .04);
@@ -178,7 +177,7 @@ a.fcard:hover { transform: translateY(-3px); box-shadow: 0 12px 26px -10px rgba(
 .fcard__logo { display: flex; align-items: center; justify-content: center; width: 100%; height: 180px; padding: 20px 28px; }
 .fcard__logo img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
 .fslider.is-static { padding: 0; }
-.fslider.is-static .fslider__track { justify-content: center; overflow: visible; }
+.fslider.is-static .fslider__track { justify-content: center; cursor: default; }
 .fslider.is-static .fslide { flex: 0 1 var(--w); }
 .fslider.is-static .fslider__btn, .fslider.is-static .fslider__dots { display: none; }
 .fslider__btn {
@@ -202,15 +201,15 @@ a.fcard:hover { transform: translateY(-3px); box-shadow: 0 12px 26px -10px rgba(
 }
 @media (max-width: 560px) {
   .fslider { --per: 1; --centered: 1; --gap: 14px; padding: 0; }
-  .fslider__viewport { margin: 0 -20px; }
-  .fslider__track { --w: calc(100cqw - 64px); padding: 12px calc((100cqw - var(--w)) / 2) 16px; }
-  .fslide { scroll-snap-align: center; }
+  .fslider__viewport { margin: 0 -20px; padding: 12px 0 16px; }
+  .fslider__track { --w: calc(100cqw - 64px); padding: 0 calc((100cqw - var(--w)) / 2); }
   .fslider__btn { display: none; }
   .fslider.is-static .fslider__track { padding-left: 0; padding-right: 0; }
   .fcard__logo { height: 140px; }
   .featured { margin-top: 32px; }
 }
 @media (prefers-reduced-motion: reduce) { .fcard { transition: none; } }
+.fslider [hidden] { display: none !important; }
 
 /* ---------------------------------------------------------------- parceiras -- */
 .partners__inner { display: flex; align-items: center; justify-content: space-between; gap: 40px; }
