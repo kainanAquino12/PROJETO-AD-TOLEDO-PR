@@ -442,9 +442,9 @@
     html += '<div class="card"><div class="card__title">Iniciativa junto com a Assembleia de Deus (abaixo do Instagram)</div>' +
       '<div class="panel__desc" style="margin-bottom:14px">Bloco institucional com a logo. Deixe o nome e a logo vazios para esconder o bloco.</div>' +
       fieldText('Frase de abertura', 'sobre.parceira_intro') +
-      fieldText('Nome da instituição', 'sobre.parceira_nome') +
+      fieldText('Nome da instituição (leitores de tela e quando não há logo)', 'sobre.parceira_nome') +
       imgField('Logo da instituição', 'sobre.parceira_logo', 'PNG com fundo transparente ou branco, de preferência com 1200px de largura ou mais. Exibida sem filtros.') +
-      fieldText('Link ao clicar na logo (opcional)', 'sobre.parceira_link', 'https://…') + '</div>';
+      fieldText('Link ao clicar no cartão da logo (site ou Instagram da igreja; sem link, o cartão não é clicável)', 'sobre.parceira_link', 'https://…') + '</div>';
     return html;
   };
 

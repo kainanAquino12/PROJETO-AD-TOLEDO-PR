@@ -80,12 +80,15 @@
           %>
           <div class="institucional">
             <% if (c.sobre.parceira_intro) { %><p class="institucional__intro"><%= c.sobre.parceira_intro %></p><% } %>
-            <% if (c.sobre.parceira_nome) { %><p class="institucional__nome"><%= c.sobre.parceira_nome %></p><% } %>
             <% if (c.sobre.parceira_logo) { %>
-              <% if (pLink) { %><a href="<%= pLink %>" target="_blank" rel="noopener" class="institucional__logo" aria-label="<%= c.sobre.parceira_nome || 'Assembleia de Deus' %>"><% } else { %><div class="institucional__logo"><% } %>
-                <img src="<%= c.sobre.parceira_logo %>" alt="<%= c.sobre.parceira_nome || 'Assembleia de Deus' %>" loading="lazy"
-                     <% if (pSrcset) { %>srcset="<%= pSrcset %>" sizes="(max-width: 560px) 80vw, 340px"<% } %> />
+              <% var pAlt = c.sobre.parceira_nome || 'Assembleia de Deus Toledo – PR'; %>
+              <% if (pLink) { %><a href="<%= pLink %>" target="_blank" rel="noopener" class="institucional__card" aria-label="<%= pAlt %> (abre em nova aba)"><% } else { %><div class="institucional__card"><% } %>
+                <img src="<%= c.sobre.parceira_logo %>" alt="<%= pAlt %>" loading="lazy"
+                     <% if (pSrcset) { %>srcset="<%= pSrcset %>" sizes="(max-width: 560px) 70vw, 300px"<% } %> />
+                <% if (pLink) { %><svg class="institucional__go" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8" /></svg><% } %>
               <% if (pLink) { %></a><% } else { %></div><% } %>
+            <% } else if (c.sobre.parceira_nome) { %>
+              <p class="institucional__nome"><%= c.sobre.parceira_nome %></p>
             <% } %>
           </div>
         <% } %>
