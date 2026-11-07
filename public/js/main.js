@@ -32,6 +32,7 @@
   function topoDe(el) { return el.getBoundingClientRect().top + window.scrollY; }
 
   function marcarSecaoAtual() {
+    if (!alvos.some(Boolean)) return;             // pagina interna: o link ativo vem do servidor
     var y = window.scrollY + 130;                 // compensa o header fixo
     var alturaDoc = document.documentElement.scrollHeight;
     var noFim = window.scrollY + window.innerHeight >= alturaDoc - 2;
@@ -149,7 +150,63 @@
     montaPontos(); atualiza();
   });
 
-  /* ---------- diretoria: informacoes completas do integrante ---------- */
+  /* ---------- carrossel de empresas em destaque ---------- */
+  (function () {
+    var box = document.getElementById('destaques'); if (!box) return;
+    var track = box.querySelector('.fslider__track'), slides = [].slice.call(track.children);
+    var prev = box.querySelector('[data-fprev]'), next = box.querySelector('[data-fnext]'), dotsBox = box.querySelector('[data-fdots]');
+    var dots = [], reduzMov = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var cs = function () { return getComputedStyle(box); };
+    var porTela = function () { return parseInt(cs().getPropertyValue('--per'), 10) || 1; };
+    var centrado = function () { return cs().getPropertyValue('--centered').trim() === '1'; };
+    var estatico = function () { return slides.length <= porTela(); };
+    var passo = function () { return slides.length > 1 ? slides[1].offsetLeft - slides[0].offsetLeft : 1; };
+
+    function alvo(i) {
+      var s = slides[i]; if (!s) return 0;
+      return s.offsetLeft - (centrado() ? (track.clientWidth - s.offsetWidth) / 2 : 0);
+    }
+    function indice() {
+      if (!centrado()) return Math.max(0, Math.min(slides.length - porTela(), Math.round(track.scrollLeft / passo())));
+      var meio = track.scrollLeft + track.clientWidth / 2, melhor = 0, d = Infinity;
+      slides.forEach(function (s, i) { var dd = Math.abs(s.offsetLeft + s.offsetWidth / 2 - meio); if (dd < d) { d = dd; melhor = i; } });
+      return melhor;
+    }
+    function vaPara(i) {
+      var max = centrado() ? slides.length - 1 : slides.length - porTela();
+      i = Math.max(0, Math.min(max, i));
+      track.scrollTo({ left: alvo(i), behavior: reduzMov ? 'auto' : 'smooth' });
+    }
+    function pontos() {
+      var n = estatico() ? 0 : (centrado() ? slides.length : slides.length - porTela() + 1);
+      if (n === dots.length) return;
+      dotsBox.innerHTML = ''; dots = [];
+      for (var k = 0; k < n; k++) { var d = document.createElement('span'); d.className = 'fslider__dot'; dotsBox.appendChild(d); dots.push(d); }
+    }
+    function atualiza() {
+      var est = estatico(), i = -1;
+      box.classList.toggle('is-static', est);
+      pontos();
+      if (!est) {
+        var fim = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
+        i = fim && !centrado() ? dots.length - 1 : indice();
+        prev.disabled = track.scrollLeft <= 2; next.disabled = fim;
+      }
+      dots.forEach(function (d, k) { d.classList.toggle('is-active', k === i); });
+    }
+    prev.addEventListener('click', function () { vaPara(indice() - 1); });
+    next.addEventListener('click', function () { vaPara(indice() + 1); });
+    track.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); vaPara(indice() + 1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); vaPara(indice() - 1); }
+    });
+    var ag = false;
+    track.addEventListener('scroll', function () { if (ag) return; ag = true; requestAnimationFrame(function () { ag = false; atualiza(); }); }, { passive: true });
+    window.addEventListener('resize', atualiza);
+    atualiza();
+  })();
+
+  /* ---------- coordenacao: informacoes completas do integrante ---------- */
   var mModal = document.getElementById('membroModal');
   var mConteudo = document.getElementById('membroConteudo');
   function setMembro(aberto) {

@@ -115,7 +115,7 @@ a { color: inherit; }
 
 .field { margin-bottom: 16px; }
 .field > label { display: block; font-weight: 600; font-size: .82rem; color: var(--muted); margin-bottom: 6px; }
-.field input[type=text], .field input[type=url], .field input[type=password], .field textarea, .field select {
+.field input[type=text], .field input[type=url], .field input[type=password], .field input[type=date], .field input[type=number], .field textarea, .field select {
   width: 100%; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 9px;
   font-size: .95rem; font-family: var(--font-body); color: var(--ink); background: #fff; transition: border-color .2s;
 }

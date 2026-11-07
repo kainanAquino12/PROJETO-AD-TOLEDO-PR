@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= post.titulo %> — <%= c.blog.titulo || 'Blog' %> — <%= c.site.nome %></title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%23162f4a%27/%3E%3Ctext x=%2716%27 y=%2722.5%27 font-family=%27Arial,sans-serif%27 font-weight=%27700%27 font-size=%2717%27 text-anchor=%27middle%27 fill=%27%23c6a052%27%3EE%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Mulish:wght@300;400;500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <%
+    var fmtData = function (d) {
+      var t = new Date(String(d || '').slice(0, 10) + 'T12:00:00');
+      return isNaN(t) ? '' : t.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+    };
+  %>
+  <%- include('partials/header', { base: '/', ativo: '/blog' }) %>
+
+  <main class="section blog-page">
+    <div class="container container--narrow">
+      <a href="/blog" class="link-arrow link-arrow--back">Voltar ao Blog</a>
+      <article class="bpost">
+        <header class="bpost__head">
+          <% if (fmtData(post.data)) { %><time class="bcard__date" datetime="<%= String(post.data).slice(0, 10) %>"><%= fmtData(post.data) %></time><% } %>
+          <h1 class="title"><%= post.titulo %></h1>
+          <% if (post.resumo) { %><p class="lead"><%= post.resumo %></p><% } %>
+        </header>
+        <% if (post.imagem) { %>
+          <% var pSrcset = srcset(post.imagem); %>
+          <img class="bpost__img" src="<%= post.imagem %>" alt="<%= post.titulo %>"
+               <% if (pSrcset) { %>srcset="<%= pSrcset %>" sizes="(max-width: 780px) 100vw, 780px"<% } %> />
+        <% } %>
+        <div class="bpost__body">
+          <% blocos(post.conteudo).forEach(function (b) { %>
+            <% if (b.tipo === 'lista') { %>
+              <ul><% b.itens.forEach(function (i) { %><li><%= i %></li><% }); %></ul>
+            <% } else if (b.tipo === 'versiculo') { %>
+              <blockquote><%= b.texto %></blockquote>
+            <% } else { %>
+              <p><%= b.texto %></p>
+            <% } %>
+          <% }); %>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <%- include('partials/footer') %>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

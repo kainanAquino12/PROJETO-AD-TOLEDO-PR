@@ -23,8 +23,12 @@
       "href": "#encontros"
     },
     {
-      "label": "DIRETORIA",
+      "label": "COORDENAÇÃO",
       "href": "#diretoria"
+    },
+    {
+      "label": "BLOG",
+      "href": "/blog"
     },
     {
       "label": "CONTATO",
@@ -114,7 +118,7 @@
       },
       {
         "icone": "calendar",
-        "valor": "+30",
+        "valor": "+40",
         "texto": "ENCONTROS REALIZADOS"
       },
       {
@@ -216,7 +220,7 @@
     ]
   },
   "diretoria": {
-    "titulo": "NOSSA DIRETORIA",
+    "titulo": "NOSSA COORDENAÇÃO",
     "membros": [
       {
         "nome": "JOCIMAR LIRA",
@@ -249,9 +253,9 @@
         "instagram": ""
       }
     ],
-    "botao_texto": "Conheça nossa diretoria",
+    "botao_texto": "Conheça nossa coordenação",
     "botao_link": "#",
-    "eyebrow": "DIRETORIA EDR",
+    "eyebrow": "COORDENAÇÃO EDR",
     "subtitulo": "Pessoas que acreditam no poder do empreendedorismo e no impacto positivo para nossa comunidade."
   },
   "parceiras": {
@@ -356,5 +360,4 @@
     "insta_titulo": "CONHECENDO O EDR",
     "insta_texto": "Acompanhe os encontros, as novidades e os empreendedores do movimento no nosso Instagram.",
     "insta_botao": "Conheça no Instagram"
-  }
-}
+  },"blog": {"titulo": "Blog", "subtitulo": "Artigos, novidades e conteúdos do Empreendedores do Reino.", "posts": []}}

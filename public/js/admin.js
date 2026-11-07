@@ -319,9 +319,9 @@
   };
 
   builders.diretoria = function () {
-    var html = panelHead('Diretoria', 'Cada pessoa aparece num card com foto, cargo e nome; ao clicar abre a descrição completa e as redes.');
+    var html = panelHead('Coordenação', 'Cada pessoa aparece num card com foto, cargo e nome; ao clicar abre a descrição completa e as redes.');
     html += '<div class="card">' +
-      fieldText('Linha pequena acima do título (ex: DIRETORIA EDR)', 'diretoria.eyebrow') +
+      fieldText('Linha pequena acima do título (ex: COORDENAÇÃO EDR)', 'diretoria.eyebrow') +
       fieldText('Título da seção', 'diretoria.titulo') +
       fieldText('Subtítulo (frase abaixo do título)', 'diretoria.subtitulo') +
       '</div><div class="card"><div class="card__title">Membros</div>' +
@@ -388,6 +388,32 @@
       fieldText('Texto do botão', 'parceiras.botao_texto') +
       fieldText('Link do botão', 'parceiras.botao_link') +
       '</div></div>';
+    return html;
+  };
+
+  builders.blog = function () {
+    var html = panelHead('Blog', 'Artigos e publicações. Só aparecem no site os artigos marcados como publicados; os mais recentes ficam primeiro.');
+    html += '<div class="card"><div class="grid-2">' +
+      fieldText('Título da página', 'blog.titulo') +
+      fieldText('Subtítulo', 'blog.subtitulo') +
+      '</div></div>';
+    html += '<div class="card"><div class="card__title">Artigos</div>';
+    (data.blog.posts || []).forEach(function (p, i) {
+      var b = 'blog.posts.' + i + '.';
+      html += '<div class="repeat-item"><div class="repeat-item__head">' +
+        '<span class="repeat-item__label">Artigo ' + (i + 1) + (p.titulo ? ' — ' + escHtml(p.titulo) : '') + '</span>' +
+        '<button type="button" class="btn-remove" data-action="remove" data-arr="blog.posts" data-index="' + i + '">Remover</button>' +
+        '</div>' + imgField('Imagem de capa', b + 'imagem') +
+        '<div class="grid-2">' +
+        fieldText('Título', b + 'titulo') +
+        '<div class="field"><label>Data de publicação</label><input type="date" data-bind="' + b + 'data" value="' + escAttr(String(p.data || '').slice(0, 10)) + '"></div>' +
+        '</div>' +
+        fieldArea('Breve descrição (aparece no card)', b + 'resumo') +
+        fieldArea('Texto do artigo (cada linha é um parágrafo; linhas com • ou - viram lista)', b + 'conteudo', '', 'field--alta') +
+        fieldCheck('Publicado', b + 'publicado', 'Desmarque para guardar como rascunho (não aparece no site).') +
+        '</div>';
+    });
+    html += '<button type="button" class="btn-add" data-action="add" data-arr="blog.posts">+ Adicionar artigo</button></div>';
     return html;
   };
 
@@ -519,6 +545,7 @@
       case 'encontros.galeria.fotos': return '';
       case 'diretoria.membros': return { nome: 'NOME', cargo: 'CARGO', foto: '', zoom: 100, descricao: '', email: '', linkedin: '', instagram: '' };
       case 'parceiras.lista': return { nome: 'Empresa', logo: '', link: '#', segmento: '', descricao: '', zoom: 108, destaque: false, destaque_ordem: '' };
+      case 'blog.posts': return { id: 'artigo-' + Date.now(), titulo: 'Novo artigo', resumo: '', conteudo: '', imagem: '', data: new Date().toISOString().slice(0, 10), publicado: true };
       case 'sobre.itens': return { icone: 'crown', titulo: 'NOVO', texto: '' };
       case 'encontros.albuns': return { mes: String(new Date().getMonth() + 1), ano: String(new Date().getFullYear()), fotos: [] };
       case 'pilares.itens': return { icone: 'crown', titulo: 'NOVO', descricao: '' };
@@ -664,6 +691,7 @@
       data.encontros.galeria = data.encontros.galeria || {}; data.encontros.galeria.fotos = data.encontros.galeria.fotos || [];
       data.diretoria = data.diretoria || {}; data.diretoria.membros = data.diretoria.membros || [];
       data.parceiras = data.parceiras || {}; data.parceiras.lista = data.parceiras.lista || [];
+      data.blog = data.blog || {}; data.blog.posts = data.blog.posts || [];
       data.pilares = data.pilares || {}; data.pilares.itens = data.pilares.itens || [];
       data.footer = data.footer || {};
       showTab('identidade');

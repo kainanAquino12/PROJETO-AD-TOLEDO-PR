@@ -76,7 +76,29 @@ function comPadroes(c) {
   c.config = Object.assign({ whatsapp_grupo: '', logo_extra: '', logo_extra_nome: '', instagram_extra: '', instagram_extra_nome: '' }, c.config);
   c.sobre = Object.assign({ titulo: 'SOBRE NÓS', intro: '', itens: [], insta_titulo: '', insta_texto: '', insta_botao: '' }, c.sobre);
   if (c.encontros && !Array.isArray(c.encontros.albuns)) c.encontros.albuns = [];
+  c.blog = Object.assign({ titulo: 'Blog', subtitulo: '', posts: [] }, c.blog);
+  if (!Array.isArray(c.blog.posts)) c.blog.posts = [];
+  atualizarTextos(c);
   return c;
+}
+
+// O conteudo salvo no disco/Redis nao e sobrescrito por data/content.json, entao
+// as mudancas de texto pedidas aqui sao aplicadas tambem sobre ele. So mexe nos
+// valores antigos exatos: qualquer texto que o painel ja tenha editado e mantido.
+function atualizarTextos(c) {
+  const troca = (obj, campo, de, para) => { if (obj && obj[campo] === de) obj[campo] = para; };
+  (c.nav || []).forEach((i) => troca(i, 'label', 'DIRETORIA', 'COORDENAÇÃO'));
+  if (Array.isArray(c.nav) && !c.nav.some((i) => i && i.href === '/blog')) {
+    const blog = { label: 'BLOG', href: '/blog' };
+    const contato = c.nav.findIndex((i) => i && i.href === '#rodape');
+    if (contato >= 0) c.nav.splice(contato, 0, blog); else c.nav.push(blog);
+  }
+  ((c.numeros && c.numeros.itens) || []).forEach((i) => troca(i, 'valor', '+30', '+40'));
+  if (c.diretoria) {
+    troca(c.diretoria, 'titulo', 'NOSSA DIRETORIA', 'NOSSA COORDENAÇÃO');
+    troca(c.diretoria, 'eyebrow', 'DIRETORIA EDR', 'COORDENAÇÃO EDR');
+    troca(c.diretoria, 'botao_texto', 'Conheça nossa diretoria', 'Conheça nossa coordenação');
+  }
 }
 
 async function readContent() {
@@ -356,6 +378,26 @@ app.get('/', ah(async (req, res) => {
 app.get('/parceiras', ah(async (req, res) => {
   const [c] = await Promise.all([readContent(), carregarVariantes()]);
   res.render('parceiras', { c });
+}));
+
+// artigos publicados (publicado !== false), do mais recente para o mais antigo
+function postsPublicados(c) {
+  return (c.blog.posts || [])
+    .map((p, i) => Object.assign({}, p, { id: p.id || 'artigo-' + (i + 1) }))
+    .filter((p) => p.publicado !== false && p.titulo)
+    .sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')));
+}
+
+app.get('/blog', ah(async (req, res) => {
+  const [c] = await Promise.all([readContent(), carregarVariantes()]);
+  res.render('blog', { c, posts: postsPublicados(c) });
+}));
+
+app.get('/blog/:id', ah(async (req, res) => {
+  const [c] = await Promise.all([readContent(), carregarVariantes()]);
+  const post = postsPublicados(c).find((p) => p.id === req.params.id);
+  if (!post) return res.redirect('/blog');
+  res.render('blog-post', { c, post });
 }));
 
 // ----------------------------------------------------------------------------

@@ -1,0 +1,37 @@
+<%
+  /* empresas marcadas no painel ("Exibir como empresa em destaque"), na ordem escolhida;
+     sem ordem, vao para o fim, em ordem alfabetica */
+  var porNomeD = function (a, b) { return String(a.nome).trim().localeCompare(String(b.nome).trim(), 'pt-BR', { sensitivity: 'base' }); };
+  var ordemD = function (p) { var n = parseInt(p.destaque_ordem, 10); return n > 0 ? n : 1e9; };
+  var emDestaque = ((c.parceiras && c.parceiras.lista) || []).filter(function (p) { return p.destaque === true; })
+    .sort(function (a, b) { return (ordemD(a) - ordemD(b)) || porNomeD(a, b); });
+%>
+<% if (emDestaque.length) { %>
+  <div class="featured" aria-labelledby="destaquesTitulo">
+    <h3 class="featured__title" id="destaquesTitulo"><%- include('icon', { name: 'star', cls: 'featured__star' }) %>Empresas em Destaque</h3>
+    <div class="fslider" id="destaques" role="region" aria-roledescription="carrossel" aria-label="Empresas em destaque">
+      <div class="fslider__viewport">
+        <ul class="fslider__track" tabindex="0" aria-label="Empresas em destaque (use as setas do teclado)">
+          <% emDestaque.forEach(function (p, i) { var temLink = p.link && p.link !== '#'; %>
+            <li class="fslide" role="group" aria-roledescription="slide" aria-label="<%= (i + 1) %> de <%= emDestaque.length %>">
+              <a class="fcard<%= temLink ? '' : ' fcard--nolink' %>"<% if (temLink) { %> href="<%= p.link %>" target="_blank" rel="noopener"<% } %> title="<%= p.nome %>" draggable="false">
+                <span class="fcard__logo">
+                  <% if (p.logo) { %>
+                    <% var fSrcset = srcset(p.logo); %>
+                    <img src="<%= p.logo %>" alt="<%= p.nome %>" draggable="false"
+                         <% if (fSrcset) { %>srcset="<%= fSrcset %>" sizes="(max-width: 560px) 80vw, 340px"<% } %> />
+                  <% } else { %>
+                    <span class="pitem__fallback"><%= p.nome %></span>
+                  <% } %>
+                </span>
+              </a>
+            </li>
+          <% }); %>
+        </ul>
+      </div>
+      <button type="button" class="fslider__btn fslider__btn--prev" aria-label="Empresa anterior" data-fprev><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg></button>
+      <button type="button" class="fslider__btn fslider__btn--next" aria-label="Próxima empresa" data-fnext><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg></button>
+      <div class="fslider__dots" data-fdots aria-hidden="true"></div>
+    </div>
+  </div>
+<% } %>

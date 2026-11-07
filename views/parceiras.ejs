@@ -31,11 +31,6 @@
     var todas = [];
     cats.forEach(function (k) { grupos[k].forEach(function (p) { todas.push(Object.assign({}, p, { cat: k })); }); });
     todas.sort(function (a, b) { return porNome(a.nome, b.nome); });
-    /* empresas em destaque: marcadas no painel ("destaque"), na ordem escolhida;
-       sem ordem, vao para o fim, em ordem alfabetica */
-    var ordemDe = function (p) { var n = parseInt(p.destaque_ordem, 10); return n > 0 ? n : 1e9; };
-    var destaques = (c.parceiras.lista || []).filter(function (p) { return p.destaque === true; })
-      .sort(function (a, b) { return (ordemDe(a) - ordemDe(b)) || porNome(a.nome, b.nome); });
     /* icone da categoria, escolhido pelo nome (sem acento); categorias novas caem no generico */
     function iconeDa(cat) {
       var n = String(cat).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -56,46 +51,7 @@
         <% if (c.parceiras.texto) { %><p class="lead"><%= c.parceiras.texto %></p><% } %>
       </header>
 
-      <% if (destaques.length) { %>
-        <section class="featured" aria-labelledby="destaquesTitulo">
-          <div class="featured__head">
-            <h2 class="featured__title" id="destaquesTitulo"><%- include('partials/icon', { name: 'star', cls: 'featured__star' }) %>Empresas em Destaque</h2>
-            <span class="featured__tag"><%- include('partials/icon', { name: 'trend', cls: 'featured__tagicon' }) %>Maiores pagadoras da nossa rede</span>
-          </div>
-          <div class="fslider" id="destaques" role="region" aria-roledescription="carrossel" aria-label="Empresas em destaque">
-            <div class="fslider__viewport">
-              <ul class="fslider__track" tabindex="0" aria-label="Empresas em destaque (use as setas do teclado)">
-                <% destaques.forEach(function (p, i) { var hasLink = p.link && p.link !== '#'; %>
-                  <li class="fslide" role="group" aria-roledescription="slide" aria-label="<%= (i + 1) %> de <%= destaques.length %>">
-                    <a class="fcard<%= hasLink ? '' : ' fcard--nolink' %>"<% if (hasLink) { %> href="<%= p.link %>" target="_blank" rel="noopener"<% } %> title="<%= p.nome %>" draggable="false">
-                      <span class="fcard__crown"><%- include('partials/icon', { name: 'crown', cls: '' }) %></span>
-                      <span class="pitem__logo">
-                        <% if (p.logo) { %>
-                          <% var fSrcset = srcset(p.logo); %>
-                          <img src="<%= p.logo %>" alt="<%= p.nome %>" draggable="false"
-                               <% if (fSrcset) { %>srcset="<%= fSrcset %>" sizes="(max-width: 560px) 80vw, 340px"<% } %> />
-                        <% } else { %>
-                          <span class="pitem__fallback"><%= p.nome %></span>
-                        <% } %>
-                      </span>
-                      <span class="fcard__info">
-                        <span class="fcard__name"><%= p.nome %></span>
-                        <span class="fcard__badge"><%- include('partials/icon', { name: 'star', cls: '' }) %>Top Pagador</span>
-                      </span>
-                    </a>
-                  </li>
-                <% }); %>
-              </ul>
-            </div>
-            <button type="button" class="fslider__btn fslider__btn--prev" aria-label="Empresa anterior" data-fprev><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg></button>
-            <button type="button" class="fslider__btn fslider__btn--next" aria-label="Próxima empresa" data-fnext><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg></button>
-            <div class="fslider__dots" data-fdots aria-hidden="true"></div>
-          </div>
-        </section>
-      <% } %>
-
       <% if (cats.length) { %>
-        <% if (destaques.length) { %><h2 class="featured__title featured__title--all"><%- include('partials/icon', { name: 'handshake', cls: 'featured__star' }) %>Todas as Empresas</h2><% } %>
         <div class="pfilters" role="group" aria-label="Filtrar por categoria">
           <button type="button" class="pfilter is-active" data-cat="" aria-pressed="true">Todas</button>
           <% cats.forEach(function (cat) { %><button type="button" class="pfilter" data-cat="<%= cat %>" aria-pressed="false"><%= rotulos[cat] %></button><% }); %>
@@ -216,66 +172,6 @@
         saem.forEach(function (it) { it.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.96)' }], { duration: 150, easing: 'ease-out', fill: 'forwards' }); });
         espera = setTimeout(function () { itens.forEach(function (it) { it.getAnimations().forEach(function (an) { an.cancel(); }); }); troca(cat); }, saem.length ? 150 : 0);
       }
-
-      /* carrossel de destaques: scroll-snap nativo (toque, sem barra de rolagem) + setas e pontos.
-         No desktop o card do meio ganha destaque; com poucas empresas elas ficam centralizadas. */
-      (function () {
-        var box = document.getElementById('destaques'); if (!box) return;
-        var track = box.querySelector('.fslider__track'), slides = [].slice.call(track.children);
-        var prev = box.querySelector('[data-fprev]'), next = box.querySelector('[data-fnext]'), dotsBox = box.querySelector('[data-fdots]');
-        var dots = [], reduzMov = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        var cs = function () { return getComputedStyle(box); };
-        var porTela = function () { return parseInt(cs().getPropertyValue('--per'), 10) || 1; };
-        var centrado = function () { return cs().getPropertyValue('--centered').trim() === '1'; };
-        var destaca = function () { return cs().getPropertyValue('--emphasis').trim() === '1'; };
-        var estatico = function () { return slides.length <= porTela(); };
-        var passo = function () { return slides.length > 1 ? slides[1].offsetLeft - slides[0].offsetLeft : 1; };
-
-        function alvo(i) {
-          var s = slides[i]; if (!s) return 0;
-          return s.offsetLeft - (centrado() ? (track.clientWidth - s.offsetWidth) / 2 : 0);
-        }
-        function indice() {
-          if (!centrado()) return Math.max(0, Math.min(slides.length - porTela(), Math.round(track.scrollLeft / passo())));
-          var meio = track.scrollLeft + track.clientWidth / 2, melhor = 0, d = Infinity;
-          slides.forEach(function (s, i) { var dd = Math.abs(s.offsetLeft + s.offsetWidth / 2 - meio); if (dd < d) { d = dd; melhor = i; } });
-          return melhor;
-        }
-        function vaPara(i) {
-          var max = centrado() ? slides.length - 1 : slides.length - porTela();
-          i = Math.max(0, Math.min(max, i));
-          track.scrollTo({ left: alvo(i), behavior: reduzMov ? 'auto' : 'smooth' });
-        }
-        function pontos() {
-          var n = estatico() ? 0 : (centrado() ? slides.length : slides.length - porTela() + 1);
-          if (n === dots.length) return;
-          dotsBox.innerHTML = ''; dots = [];
-          for (var k = 0; k < n; k++) { var d = document.createElement('span'); d.className = 'fslider__dot'; dotsBox.appendChild(d); dots.push(d); }
-        }
-        function atualiza() {
-          var est = estatico(), i = -1;
-          box.classList.toggle('is-static', est);
-          pontos();
-          if (!est) {
-            var fim = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
-            i = fim && !centrado() ? dots.length - 1 : indice();
-            prev.disabled = track.scrollLeft <= 2; next.disabled = fim;
-          }
-          dots.forEach(function (d, k) { d.classList.toggle('is-active', k === i); });
-          var marca = est ? (slides.length % 2 ? (slides.length - 1) / 2 : -1) : (centrado() ? i : indice() + Math.floor(porTela() / 2));
-          slides.forEach(function (s, k) { s.classList.toggle('is-center', destaca() && k === marca); });
-        }
-        prev.addEventListener('click', function () { vaPara(indice() - 1); });
-        next.addEventListener('click', function () { vaPara(indice() + 1); });
-        track.addEventListener('keydown', function (e) {
-          if (e.key === 'ArrowRight') { e.preventDefault(); vaPara(indice() + 1); }
-          else if (e.key === 'ArrowLeft') { e.preventDefault(); vaPara(indice() - 1); }
-        });
-        var ag = false;
-        track.addEventListener('scroll', function () { if (ag) return; ag = true; requestAnimationFrame(function () { ag = false; atualiza(); }); }, { passive: true });
-        window.addEventListener('resize', atualiza);
-        atualiza();
-      })();
 
       botoes.forEach(function (b) {
         b.addEventListener('click', function () {
